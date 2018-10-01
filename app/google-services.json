@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "763115945996",
+    "firebase_url": "https://final-project-f6bf0.firebaseio.com",
+    "project_id": "final-project-f6bf0",
+    "storage_bucket": "final-project-f6bf0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:763115945996:android:fc935a7788294432",
+        "android_client_info": {
+          "package_name": "com.example.tjgaming.finalproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "763115945996-ovh2u8ntkrpam0a8fpkfdtr6pvp941qe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtQSD8aCx39fqjO3KuGKAWTFgGdBol_9M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
