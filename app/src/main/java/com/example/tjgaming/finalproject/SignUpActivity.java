@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 /**
- * Created by TJ Gaming on 10/1/2018.
+ * Created by TJ on 10/1/2018.
  */
 
 public class SignUpActivity extends AppCompatActivity {
@@ -102,18 +102,22 @@ public class SignUpActivity extends AppCompatActivity {
 //        String reEnterPassword = mReEnterPasswordText.getText().toString();
 
         mFirebaseAuth.createUserWithEmailAndPassword(email,password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
+                        progressDialog.dismiss();
+
                         if (task.isSuccessful()){
                             Log.d(TAG,"createUserSuccess");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
-                            progressDialog.dismiss();
+                            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                            finish();
+                            startActivity(intent);
                         } else {
                             Log.w(TAG,"createUserFailure");
                             Toast.makeText(getApplicationContext(),"Authentication Failed.",
                                     Toast.LENGTH_SHORT).show();
-                            progressDialog.dismiss();
                         }
                     }
                 });

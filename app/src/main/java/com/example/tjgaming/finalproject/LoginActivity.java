@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 
 /**
- * Created by TJ Gaming on 10/1/2018.
+ * Created by TJ on 10/1/2018.
  */
 
 public class LoginActivity extends AppCompatActivity {
@@ -63,8 +63,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
     }
 
     private void initializeViews() {
@@ -97,16 +96,17 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
+                        progressDialog.dismiss();
+
                         if (task.isSuccessful()){
                             Log.d(TAG,"signInSuccess");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
                             onLoginSuccess();
-                            progressDialog.dismiss();
                         } else {
                             Log.w(TAG,"signInFailure");
                             Toast.makeText(getApplicationContext(),"Authentication Failed.",
                                     Toast.LENGTH_SHORT).show();
-                            progressDialog.dismiss();
                         }
                     }
                 });
@@ -124,7 +124,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginFailed() {
         Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_LONG).show();
-
         mLoginButton.setEnabled(true);
     }
 
@@ -142,7 +141,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            mPasswordText.setError("between 4 and 10 alphanumeric characters");
+            mPasswordText.setError("between 4 and 10 characters");
             valid = false;
         } else {
             mPasswordText.setError(null);
