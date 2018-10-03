@@ -28,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int REQUEST_SIGNUP = 0;
     private FirebaseAuth mFirebaseAuth;
     private ProgressDialog progressDialog;
+    private boolean firstTimeUser = false;
 
     EditText mEmailText;
     EditText mPasswordText;
@@ -72,6 +73,16 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordText = findViewById(R.id.input_password);
         mLoginButton = findViewById(R.id.btn_login);
         mSignUpLink = findViewById(R.id.link_signup);
+
+        firstTimeUser = getIntent().getBooleanExtra("firstTimeUser", false);
+
+        if (firstTimeUser) {
+            String email = getIntent().getStringExtra("email");
+            mEmailText.setText(email);
+            mEmailText.clearFocus();
+            mPasswordText.requestFocus();
+        }
+
     }
 
     public void login() {
@@ -99,7 +110,16 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()){
                             Log.d(TAG,"signInSuccess");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
-                            onLoginSuccess();
+
+                            if (firstTimeUser){
+                                //TODO: launch profile building activities
+                                Toast.makeText(getApplicationContext(),"First time logging in.",Toast.LENGTH_SHORT).show();
+                            } else {
+                                //TODO: launch main page
+                                Toast.makeText(getApplicationContext(),"Been logged in before.",Toast.LENGTH_SHORT).show();
+                            }
+                            //onLoginSuccess();
+
                         } else {
                             Log.w(TAG,"signInFailure");
                             Toast.makeText(getApplicationContext(),"Authentication Failed.",

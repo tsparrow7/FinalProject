@@ -29,10 +29,7 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
     private ProgressDialog progressDialog;
 
-    EditText mNameText;
-    EditText mAddressText;
     EditText mEmailText;
-    EditText mMobileText;
     EditText mPasswordText;
     EditText mReEnterPasswordText;
     Button mSignUpButton;
@@ -69,10 +66,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        mNameText = findViewById(R.id.input_name);
-        mAddressText = findViewById(R.id.input_address);
         mEmailText = findViewById(R.id.input_email);
-        mMobileText = findViewById(R.id.input_mobile);
         mPasswordText = findViewById(R.id.input_password);
         mReEnterPasswordText = findViewById(R.id.input_reEnterPassword);
         mSignUpButton = findViewById(R.id.btn_signup);
@@ -89,25 +83,23 @@ public class SignUpActivity extends AppCompatActivity {
 
         mSignUpButton.setEnabled(false);
         startProgress();
-//        String name = mNameText.getText().toString();
-//        String address = mAddressText.getText().toString();
-        String email = mEmailText.getText().toString();
-//        String mobile = mMobileText.getText().toString();
-        String password = mPasswordText.getText().toString();
-//        String reEnterPassword = mReEnterPasswordText.getText().toString();
 
+        String email = mEmailText.getText().toString();
+        String password = mPasswordText.getText().toString();
 
         mFirebaseAuth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
+                        boolean firstTimeUser = true;
                         stopProgress();
 
                         if (task.isSuccessful()){
                             Log.d(TAG,"createUserSuccess");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
                             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                            intent.putExtra("email",mEmailText.getText().toString());
+                            intent.putExtra("firstTimeUser",true);
                             finish();
                             startActivity(intent);
                         } else {
@@ -146,26 +138,9 @@ public class SignUpActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String name = mNameText.getText().toString();
-        String address = mAddressText.getText().toString();
         String email = mEmailText.getText().toString();
-        String mobile = mMobileText.getText().toString();
         String password = mPasswordText.getText().toString();
         String reEnterPassword = mReEnterPasswordText.getText().toString();
-
-        if (name.isEmpty() || name.length() < 2) {
-            mNameText.setError("at least 2 characters");
-            valid = false;
-        } else {
-            mNameText.setError(null);
-        }
-
-        if (address.isEmpty()) {
-            mAddressText.setError("Enter Valid Address");
-            valid = false;
-        } else {
-            mAddressText.setError(null);
-        }
 
 
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -173,13 +148,6 @@ public class SignUpActivity extends AppCompatActivity {
             valid = false;
         } else {
             mEmailText.setError(null);
-        }
-
-        if (mobile.isEmpty() || mobile.length()!=10) {
-            mMobileText.setError("Enter Valid Mobile Number");
-            valid = false;
-        } else {
-            mMobileText.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 6 || password.length() > 10) {
