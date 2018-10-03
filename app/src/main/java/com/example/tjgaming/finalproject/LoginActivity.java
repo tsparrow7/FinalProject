@@ -20,13 +20,14 @@ import com.google.firebase.auth.FirebaseUser;
 
 
 /**
- * Created by TJ Gaming on 10/1/2018.
+ * Created by TJ on 10/1/2018.
  */
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
     private FirebaseAuth mFirebaseAuth;
+    private ProgressDialog progressDialog;
 
     EditText mEmailText;
     EditText mPasswordText;
@@ -63,8 +64,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
     }
 
     private void initializeViews() {
@@ -84,11 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
+        startProgress();
 
         String email = mEmailText.getText().toString();
         String password = mPasswordText.getText().toString();
@@ -97,20 +93,34 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
+                        stopProgress();
+
                         if (task.isSuccessful()){
                             Log.d(TAG,"signInSuccess");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
                             onLoginSuccess();
-                            progressDialog.dismiss();
                         } else {
                             Log.w(TAG,"signInFailure");
                             Toast.makeText(getApplicationContext(),"Authentication Failed.",
                                     Toast.LENGTH_SHORT).show();
-                            progressDialog.dismiss();
                         }
                     }
                 });
     }
+
+    private void startProgress() {
+        progressDialog = new ProgressDialog(LoginActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Authenticating...");
+        progressDialog.show();
+    }
+
+    private void stopProgress() {
+        progressDialog.dismiss();
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -124,7 +134,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginFailed() {
         Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_LONG).show();
-
         mLoginButton.setEnabled(true);
     }
 
@@ -141,8 +150,8 @@ public class LoginActivity extends AppCompatActivity {
             mEmailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            mPasswordText.setError("between 4 and 10 alphanumeric characters");
+        if (password.isEmpty() || password.length() < 6 || password.length() > 10) {
+            mPasswordText.setError("between 6 and 10 characters long");
             valid = false;
         } else {
             mPasswordText.setError(null);
