@@ -27,6 +27,7 @@ public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
 
     private FirebaseAuth mFirebaseAuth;
+    private ProgressDialog progressDialog;
 
     EditText mNameText;
     EditText mAddressText;
@@ -87,13 +88,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         mSignUpButton.setEnabled(false);
-
-        final ProgressDialog progressDialog = new ProgressDialog(SignUpActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creating Account...");
-        progressDialog.show();
-
+        startProgress();
 //        String name = mNameText.getText().toString();
 //        String address = mAddressText.getText().toString();
         String email = mEmailText.getText().toString();
@@ -101,12 +96,13 @@ public class SignUpActivity extends AppCompatActivity {
         String password = mPasswordText.getText().toString();
 //        String reEnterPassword = mReEnterPasswordText.getText().toString();
 
+
         mFirebaseAuth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        progressDialog.dismiss();
+                        stopProgress();
 
                         if (task.isSuccessful()){
                             Log.d(TAG,"createUserSuccess");
@@ -123,6 +119,17 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
+    private void startProgress() {
+        progressDialog = new ProgressDialog(SignUpActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Authenticating...");
+        progressDialog.show();
+    }
+
+    private void stopProgress() {
+        progressDialog.dismiss();
+    }
 
     public void onSignupSuccess() {
         mSignUpButton.setEnabled(true);
@@ -162,7 +169,7 @@ public class SignUpActivity extends AppCompatActivity {
 
 
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mEmailText.setError("enter a valid email address");
+            mEmailText.setError("Enter Valid Email Address");
             valid = false;
         } else {
             mEmailText.setError(null);
@@ -175,7 +182,7 @@ public class SignUpActivity extends AppCompatActivity {
             mMobileText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
+        if (password.isEmpty() || password.length() < 6 || password.length() > 10) {
             mPasswordText.setError("between 4 and 10 alphanumeric characters");
             valid = false;
         } else {

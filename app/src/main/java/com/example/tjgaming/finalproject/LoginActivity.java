@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
     private FirebaseAuth mFirebaseAuth;
+    private ProgressDialog progressDialog;
 
     EditText mEmailText;
     EditText mPasswordText;
@@ -83,11 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
+        startProgress();
 
         String email = mEmailText.getText().toString();
         String password = mPasswordText.getText().toString();
@@ -97,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        progressDialog.dismiss();
+                        stopProgress();
 
                         if (task.isSuccessful()){
                             Log.d(TAG,"signInSuccess");
@@ -111,6 +108,19 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void startProgress() {
+        progressDialog = new ProgressDialog(LoginActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Authenticating...");
+        progressDialog.show();
+    }
+
+    private void stopProgress() {
+        progressDialog.dismiss();
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -140,8 +150,8 @@ public class LoginActivity extends AppCompatActivity {
             mEmailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            mPasswordText.setError("between 4 and 10 characters");
+        if (password.isEmpty() || password.length() < 6 || password.length() > 10) {
+            mPasswordText.setError("between 6 and 10 characters long");
             valid = false;
         } else {
             mPasswordText.setError(null);
