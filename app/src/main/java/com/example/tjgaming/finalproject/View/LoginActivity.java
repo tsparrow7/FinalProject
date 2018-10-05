@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject;
+package com.example.tjgaming.finalproject.View;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,11 +12,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tjgaming.finalproject.Model.User;
+import com.example.tjgaming.finalproject.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 /**
@@ -97,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
 
         startProgress();
 
-        String email = mEmailText.getText().toString();
+        final String email = mEmailText.getText().toString();
         String password = mPasswordText.getText().toString();
 
         mFirebaseAuth.signInWithEmailAndPassword(email,password)
@@ -112,13 +115,28 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
 
                             if (firstTimeUser){
-                                //TODO: launch profile building activities
+
+                                //TODO: launch profile building activities and add this code below once done creating profile.
+                                User newUser = new User("userName", email);
+
+                                FirebaseDatabase.getInstance().getReference("Users")
+                                        .child(user.getUid())
+                                        .setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(LoginActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                                 Toast.makeText(getApplicationContext(),"First time logging in.",Toast.LENGTH_SHORT).show();
                             } else {
-                                //TODO: launch main page
+                                Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+                                intent.putExtra("email",email);
+                                intent.putExtra("user_id",user.getUid());
+                                finish();
+                                startActivity(intent);
                                 Toast.makeText(getApplicationContext(),"Been logged in before.",Toast.LENGTH_SHORT).show();
                             }
-                            //onLoginSuccess();
+                            onLoginSuccess();
 
                         } else {
                             Log.w(TAG,"signInFailure");
@@ -149,7 +167,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         mLoginButton.setEnabled(true);
-        finish();
+        //finish();
     }
 
     public void onLoginFailed() {

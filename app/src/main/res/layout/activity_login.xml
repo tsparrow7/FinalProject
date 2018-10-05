@@ -31,6 +31,7 @@
                 android:inputType="textEmailAddress"
                 android:hint="Email"
                 android:textColorHint="@color/accent"
+                android:textColor="@color/accent"
                 android:backgroundTint="@color/accent"/>
         </android.support.design.widget.TextInputLayout>
 
@@ -46,6 +47,7 @@
                 android:inputType="textPassword"
                 android:hint="Password"
                 android:textColorHint="@color/accent"
+                android:textColor="@color/accent"
                 android:backgroundTint="@color/accent"/>
         </android.support.design.widget.TextInputLayout>
 
