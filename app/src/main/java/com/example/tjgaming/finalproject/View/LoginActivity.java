@@ -12,14 +12,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 
 
 /**
@@ -117,16 +115,22 @@ public class LoginActivity extends AppCompatActivity {
                             if (firstTimeUser){
 
                                 //TODO: launch profile building activities and add this code below once done creating profile.
-                                User newUser = new User("userName", email);
 
-                                FirebaseDatabase.getInstance().getReference("Users")
-                                        .child(user.getUid())
-                                        .setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(LoginActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                Intent profBuildIntent = new Intent(LoginActivity.this,ProfileBuildActivity.class);
+                                profBuildIntent.putExtra("uid",user.getUid());
+                                profBuildIntent.putExtra("email",email);
+                                startActivity(profBuildIntent);
+                                finish();
+//                                User newUser = new User("userName", email);
+//
+//                                FirebaseDatabase.getInstance().getReference("Users")
+//                                        .child(user.getUid())
+//                                        .setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull Task<Void> task) {
+//                                        Toast.makeText(LoginActivity.this, "Success", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                });
                                 Toast.makeText(getApplicationContext(),"First time logging in.",Toast.LENGTH_SHORT).show();
                             } else {
                                 Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
