@@ -24,7 +24,8 @@
             android:name=".View.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".View.ProfileBuildActivity"></activity>
+        <activity android:name=".View.ProfileBuildActivity" />
+        <activity android:name=".View.MediaSelectionActivity"></activity>
     </application>
 
 </manifest>

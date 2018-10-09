@@ -5,22 +5,11 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.example.tjgaming.finalproject.R;
 
-public class ProfileBuildActivity extends AppCompatActivity {
-
-    private String mUid;
-    private String mEmail;
-    
-
+public class MediaSelectionActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_build);
-
-        mUid = getIntent().getStringExtra("uid");
-        mEmail = getIntent().getStringExtra("email");
-
-
-
+        setContentView(R.layout.activity_media_selection);
     }
 }
