@@ -9,14 +9,14 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="56dp"
+        android:paddingTop="10dp"
         android:paddingLeft="24dp"
         android:paddingRight="24dp">
 
         <ImageView android:src="@drawable/logo"
             android:layout_width="wrap_content"
-            android:layout_height="72dp"
-            android:layout_marginBottom="24dp"
+            android:layout_height="130dp"
+            android:layout_marginBottom="15dp"
             android:layout_gravity="center_horizontal" />
 
         <!--  Email Label -->
@@ -29,7 +29,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
-                android:hint="Email" />
+                android:hint="Email"
+                android:textColorHint="@color/accent"
+                android:textColor="@color/accent"
+                android:backgroundTint="@color/accent"/>
         </android.support.design.widget.TextInputLayout>
 
         <!--  Password Label -->
@@ -42,7 +45,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:hint="Password"/>
+                android:hint="Password"
+                android:textColorHint="@color/accent"
+                android:textColor="@color/accent"
+                android:backgroundTint="@color/accent"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.v7.widget.AppCompatButton
@@ -59,7 +65,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="No account yet? Create one"
+            android:text="Don't have an account? Sign Up"
+            android:textColor="@color/accent"
             android:gravity="center"
             android:textSize="16sp"/>
 

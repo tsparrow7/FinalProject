@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject;
+package com.example.tjgaming.finalproject.View;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tjgaming.finalproject.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -27,6 +28,8 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
     private FirebaseAuth mFirebaseAuth;
+    private ProgressDialog progressDialog;
+    private boolean firstTimeUser = false;
 
     EditText mEmailText;
     EditText mPasswordText;
@@ -71,6 +74,16 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordText = findViewById(R.id.input_password);
         mLoginButton = findViewById(R.id.btn_login);
         mSignUpLink = findViewById(R.id.link_signup);
+
+        firstTimeUser = getIntent().getBooleanExtra("firstTimeUser", false);
+
+        if (firstTimeUser) {
+            String email = getIntent().getStringExtra("email");
+            mEmailText.setText(email);
+            mEmailText.clearFocus();
+            mPasswordText.requestFocus();
+        }
+
     }
 
     public void login() {
@@ -83,13 +96,9 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
+        startProgress();
 
-        String email = mEmailText.getText().toString();
+        final String email = mEmailText.getText().toString();
         String password = mPasswordText.getText().toString();
 
         mFirebaseAuth.signInWithEmailAndPassword(email,password)
@@ -97,12 +106,42 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        progressDialog.dismiss();
+                        stopProgress();
 
                         if (task.isSuccessful()){
                             Log.d(TAG,"signInSuccess");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
+
+                            if (firstTimeUser){
+
+                                //TODO: launch profile building activities and add this code below once done creating profile.
+
+                                Intent profBuildIntent = new Intent(LoginActivity.this,ProfileBuildActivity.class);
+                                profBuildIntent.putExtra("uid",user.getUid());
+                                profBuildIntent.putExtra("email",email);
+                                startActivity(profBuildIntent);
+                                finish();
+//                                User newUser = new User("userName", email);
+//
+//                                FirebaseDatabase.getInstance().getReference("Users")
+//                                        .child(user.getUid())
+//                                        .setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull Task<Void> task) {
+//                                        Toast.makeText(LoginActivity.this, "Success", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                });
+                                Toast.makeText(getApplicationContext(),"First time logging in.",Toast.LENGTH_SHORT).show();
+                            } else {
+                                Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+                                intent.putExtra("email",email);
+                                intent.putExtra("user_id",user.getUid());
+                                finish();
+                                startActivity(intent);
+                                Toast.makeText(getApplicationContext(),"Been logged in before.",Toast.LENGTH_SHORT).show();
+                            }
                             onLoginSuccess();
+
                         } else {
                             Log.w(TAG,"signInFailure");
                             Toast.makeText(getApplicationContext(),"Authentication Failed.",
@@ -112,6 +151,19 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    private void startProgress() {
+        progressDialog = new ProgressDialog(LoginActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Authenticating...");
+        progressDialog.show();
+    }
+
+    private void stopProgress() {
+        progressDialog.dismiss();
+    }
+
+
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
@@ -119,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         mLoginButton.setEnabled(true);
-        finish();
+        //finish();
     }
 
     public void onLoginFailed() {
@@ -140,8 +192,8 @@ public class LoginActivity extends AppCompatActivity {
             mEmailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            mPasswordText.setError("between 4 and 10 characters");
+        if (password.isEmpty() || password.length() < 6 || password.length() > 10) {
+            mPasswordText.setError("between 6 and 10 characters long");
             valid = false;
         } else {
             mPasswordText.setError(null);

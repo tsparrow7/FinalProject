@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject;
+package com.example.tjgaming.finalproject.View;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tjgaming.finalproject.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -27,11 +28,9 @@ public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
 
     private FirebaseAuth mFirebaseAuth;
+    private ProgressDialog progressDialog;
 
-    EditText mNameText;
-    EditText mAddressText;
     EditText mEmailText;
-    EditText mMobileText;
     EditText mPasswordText;
     EditText mReEnterPasswordText;
     Button mSignUpButton;
@@ -68,10 +67,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        mNameText = findViewById(R.id.input_name);
-        mAddressText = findViewById(R.id.input_address);
         mEmailText = findViewById(R.id.input_email);
-        mMobileText = findViewById(R.id.input_mobile);
         mPasswordText = findViewById(R.id.input_password);
         mReEnterPasswordText = findViewById(R.id.input_reEnterPassword);
         mSignUpButton = findViewById(R.id.btn_signup);
@@ -87,31 +83,24 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         mSignUpButton.setEnabled(false);
+        startProgress();
 
-        final ProgressDialog progressDialog = new ProgressDialog(SignUpActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creating Account...");
-        progressDialog.show();
-
-//        String name = mNameText.getText().toString();
-//        String address = mAddressText.getText().toString();
         String email = mEmailText.getText().toString();
-//        String mobile = mMobileText.getText().toString();
         String password = mPasswordText.getText().toString();
-//        String reEnterPassword = mReEnterPasswordText.getText().toString();
 
         mFirebaseAuth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        progressDialog.dismiss();
+                        boolean firstTimeUser = true;
+                        stopProgress();
 
                         if (task.isSuccessful()){
                             Log.d(TAG,"createUserSuccess");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
                             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                            intent.putExtra("email",mEmailText.getText().toString());
+                            intent.putExtra("firstTimeUser",true);
                             finish();
                             startActivity(intent);
                         } else {
@@ -123,6 +112,17 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
+    private void startProgress() {
+        progressDialog = new ProgressDialog(SignUpActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Authenticating...");
+        progressDialog.show();
+    }
+
+    private void stopProgress() {
+        progressDialog.dismiss();
+    }
 
     public void onSignupSuccess() {
         mSignUpButton.setEnabled(true);
@@ -139,43 +139,19 @@ public class SignUpActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String name = mNameText.getText().toString();
-        String address = mAddressText.getText().toString();
         String email = mEmailText.getText().toString();
-        String mobile = mMobileText.getText().toString();
         String password = mPasswordText.getText().toString();
         String reEnterPassword = mReEnterPasswordText.getText().toString();
 
-        if (name.isEmpty() || name.length() < 2) {
-            mNameText.setError("at least 2 characters");
-            valid = false;
-        } else {
-            mNameText.setError(null);
-        }
-
-        if (address.isEmpty()) {
-            mAddressText.setError("Enter Valid Address");
-            valid = false;
-        } else {
-            mAddressText.setError(null);
-        }
-
 
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mEmailText.setError("enter a valid email address");
+            mEmailText.setError("Enter Valid Email Address");
             valid = false;
         } else {
             mEmailText.setError(null);
         }
 
-        if (mobile.isEmpty() || mobile.length()!=10) {
-            mMobileText.setError("Enter Valid Mobile Number");
-            valid = false;
-        } else {
-            mMobileText.setError(null);
-        }
-
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
+        if (password.isEmpty() || password.length() < 6 || password.length() > 10) {
             mPasswordText.setError("between 4 and 10 alphanumeric characters");
             valid = false;
         } else {
