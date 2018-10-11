@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.tjgaming.finalproject.View.LoginActivity;
+import com.example.tjgaming.finalproject.View.ProfileBuildActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent loginIntent = new Intent(this, LoginActivity.class);
+        Intent loginIntent = new Intent(this, ProfileBuildActivity.class);
         loginIntent.putExtra("firstTimeUser",false);
         finish();
         startActivity(loginIntent);
