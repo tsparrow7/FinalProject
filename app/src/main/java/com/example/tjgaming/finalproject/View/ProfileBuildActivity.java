@@ -10,7 +10,10 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.tjgaming.finalproject.R;
@@ -114,6 +117,22 @@ public class ProfileBuildActivity extends AppCompatActivity {
                     mGender = "N/A";
             }
         });
+
+        Spinner mMonthSpinner = findViewById(R.id.profile_spinner_month);
+        ArrayAdapter<CharSequence> mthAdapter = ArrayAdapter.createFromResource(this, R.array.Month, android.R.layout.simple_spinner_item);
+        mthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mMonthSpinner.setAdapter(mthAdapter);
+
+        Spinner mDaySpinner = findViewById(R.id.profile_spinner_day);
+        ArrayAdapter<CharSequence> dayAdapter = ArrayAdapter.createFromResource(this, R.array.Day, android.R.layout.simple_spinner_item);
+        dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mDaySpinner.setAdapter(dayAdapter);
+
+        Spinner mYearSpinner = findViewById(R.id.profile_spinner_year);
+        ArrayAdapter<CharSequence> yearAdapter = ArrayAdapter.createFromResource(this, R.array.Year, android.R.layout.simple_spinner_item);
+        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mYearSpinner.setAdapter(yearAdapter);
+
 
         mContinueButton.setOnClickListener(new View.OnClickListener() {
             @Override
