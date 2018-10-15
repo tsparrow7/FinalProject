@@ -3,7 +3,6 @@ package com.example.tjgaming.finalproject.View;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.tjgaming.finalproject.R;
@@ -27,12 +25,15 @@ public class ProfileBuildActivity extends AppCompatActivity {
     private AppCompatSpinner mDaySpinner;
     private AppCompatSpinner mMonthSpinner;
     private AppCompatSpinner mYearSpinner;
-    private EditText mUserName;
+    private EditText mUserNameInput;
 
     private String mUid;
     private String mEmail;
     private String mGender;
-    private String mBirthDate;
+    private String mMonth;
+    private String mDay;
+    private String mYear;
+    private String mUserName;
     private boolean mNotifications;
     private int mMaleBgColor;
     private int mFemaleBgColor;
@@ -52,6 +53,7 @@ public class ProfileBuildActivity extends AppCompatActivity {
 
         initializeViews();
         setListeners();
+        setSpinners();
     }
 
     private void initializeViews() {
@@ -59,13 +61,14 @@ public class ProfileBuildActivity extends AppCompatActivity {
         mMaleButton = findViewById(R.id.profile_male_btn);
         mContinueButton = findViewById(R.id.btn_profile_continue);
         mNotificationCheckBox = findViewById(R.id.profile_notify_checkbox);
-        mUserName = findViewById(R.id.profile_username);
+        mUserNameInput = findViewById(R.id.profile_username);
         mDaySpinner = findViewById(R.id.profile_spinner_day);
         mMonthSpinner = findViewById(R.id.profile_spinner_month);
         mYearSpinner = findViewById(R.id.profile_spinner_year);
     }
 
     private void setListeners() {
+
         mFemaleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,21 +121,47 @@ public class ProfileBuildActivity extends AppCompatActivity {
             }
         });
 
-        Spinner mMonthSpinner = findViewById(R.id.profile_spinner_month);
-        ArrayAdapter<CharSequence> mthAdapter = ArrayAdapter.createFromResource(this, R.array.Month, android.R.layout.simple_spinner_item);
-        mthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mMonthSpinner.setAdapter(mthAdapter);
+        mMonthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mMonth = mMonthSpinner.getSelectedItem().toString();
 
-        Spinner mDaySpinner = findViewById(R.id.profile_spinner_day);
-        ArrayAdapter<CharSequence> dayAdapter = ArrayAdapter.createFromResource(this, R.array.Day, android.R.layout.simple_spinner_item);
-        dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mDaySpinner.setAdapter(dayAdapter);
+                Toast.makeText(ProfileBuildActivity.this, mMonth + " is the month.", Toast.LENGTH_SHORT).show();
+            }
 
-        Spinner mYearSpinner = findViewById(R.id.profile_spinner_year);
-        ArrayAdapter<CharSequence> yearAdapter = ArrayAdapter.createFromResource(this, R.array.Year, android.R.layout.simple_spinner_item);
-        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mYearSpinner.setAdapter(yearAdapter);
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+
+        mDaySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mDay = mDaySpinner.getSelectedItem().toString();
+
+                Toast.makeText(ProfileBuildActivity.this, mDay + " is the day.", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        mYearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mYear = mYearSpinner.getSelectedItem().toString();
+
+                Toast.makeText(ProfileBuildActivity.this, mYear + " is the year.", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         mContinueButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,6 +169,7 @@ public class ProfileBuildActivity extends AppCompatActivity {
 
                 startProgress();
                 mContinueButton.setEnabled(false);
+                mUserName = mUserNameInput.getText().toString();
 
                 if (validateFields()) {
 
@@ -149,7 +179,8 @@ public class ProfileBuildActivity extends AppCompatActivity {
                     mediaSelectIntent.putExtra("uid", mUid);
                     mediaSelectIntent.putExtra("email", mEmail);
                     mediaSelectIntent.putExtra("gender", mGender);
-                    mediaSelectIntent.putExtra("birthDate", mBirthDate);
+                    mediaSelectIntent.putExtra("dateOfBirth",mMonth + mDay + mYear);
+                    mediaSelectIntent.putExtra("username", mUserName);
                     mediaSelectIntent.putExtra("notifications", mNotifications);
                     startActivity(mediaSelectIntent);
                     finish();
@@ -162,13 +193,31 @@ public class ProfileBuildActivity extends AppCompatActivity {
         });
     }
 
+    private void setSpinners() {
+
+        mMonthSpinner = findViewById(R.id.profile_spinner_month);
+        ArrayAdapter<CharSequence> mthAdapter = ArrayAdapter.createFromResource(this, R.array.Month, android.R.layout.simple_spinner_item);
+        mthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mMonthSpinner.setAdapter(mthAdapter);
+
+        mDaySpinner = findViewById(R.id.profile_spinner_day);
+        ArrayAdapter<CharSequence> dayAdapter = ArrayAdapter.createFromResource(this, R.array.Day, android.R.layout.simple_spinner_item);
+        dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mDaySpinner.setAdapter(dayAdapter);
+
+        mYearSpinner = findViewById(R.id.profile_spinner_year);
+        ArrayAdapter<CharSequence> yearAdapter = ArrayAdapter.createFromResource(this, R.array.Year, android.R.layout.simple_spinner_item);
+        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mYearSpinner.setAdapter(yearAdapter);
+    }
+
     private boolean validateFields() {
 
-        if (mGender == null || mBirthDate == null || mUserName == null) {
+        if (mGender == null || mMonth.equals("Month") || mDay.equals("Day") || mYear.equals("Year") || mUserName.equals("")) {
             return false;
+        } else {
+            return true;
         }
-        
-        return true;
     }
 
     private void startProgress() {

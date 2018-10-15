@@ -40,6 +40,7 @@
                 android:layout_centerInParent="true"/>
 
             <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/media_select_movie_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -68,6 +69,7 @@
                 android:layout_centerInParent="true"/>
 
             <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/media_select_tv_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -96,6 +98,7 @@
                 android:layout_centerInParent="true"/>
 
             <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/media_select_music_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -124,6 +127,7 @@
                 android:layout_centerInParent="true"/>
 
             <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/media_select_games_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -134,7 +138,7 @@
         </RelativeLayout>
 
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_profile_continue"
+            android:id="@+id/btn_media_select_finish"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"

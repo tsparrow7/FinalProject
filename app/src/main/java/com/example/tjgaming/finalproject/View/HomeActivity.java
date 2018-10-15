@@ -42,12 +42,15 @@ public class HomeActivity extends AppCompatActivity
         mUserEmail.setText(getIntent().getStringExtra("email"));
         mUserName.setText(getIntent().getStringExtra("user_id"));
 
+        //TODO: Get a Firebase Database Reference and get the data of the user logging in
+
+
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new MediaFeedFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_media_feed);
         }
-
     }
 
     @Override
