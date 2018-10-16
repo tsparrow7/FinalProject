@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View;
+package com.example.tjgaming.finalproject.View.Registration;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View;
+package com.example.tjgaming.finalproject.View.Authentication;
 
 import android.app.ProgressDialog;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View;
+package com.example.tjgaming.finalproject.View.Home;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -15,6 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tjgaming.finalproject.R;
+import com.example.tjgaming.finalproject.View.Home.FavoritesFragment;
+import com.example.tjgaming.finalproject.View.Home.ForumFragment;
+import com.example.tjgaming.finalproject.View.Home.MediaFeedFragment;
+import com.example.tjgaming.finalproject.View.Home.ProfileFragment;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
