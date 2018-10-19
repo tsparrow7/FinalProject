@@ -16,6 +16,16 @@ public class TVMazeShow {
     private String type;
     @SerializedName("language")
     private String language;
+    @SerializedName("image")
+    private TVMazeShowImage image;
+
+    public TVMazeShowImage getImage() {
+        return image;
+    }
+
+    public void setImage(TVMazeShowImage image) {
+        this.image = image;
+    }
 
     public String getId() {
         return id;

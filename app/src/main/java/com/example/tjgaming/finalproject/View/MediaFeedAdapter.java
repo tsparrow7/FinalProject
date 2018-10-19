@@ -5,8 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.tjgaming.finalproject.Model.TVMazeResult;
 import com.example.tjgaming.finalproject.R;
 
@@ -35,7 +37,12 @@ public class MediaFeedAdapter extends RecyclerView.Adapter<MediaFeedAdapter.Medi
 
     @Override
     public void onBindViewHolder(MediaFeedViewHolder holder, int position) {
-        holder.testTextView.setText(mList.get(position).getShow().getName());
+
+        holder.showNameTextView.setText(mList.get(position).getShow().getName());
+
+        Glide.with(mContext)
+                .load(mList.get(position).getShow().getImage().getOriginal())
+                .into(holder.showImageView);
     }
 
     @Override
@@ -45,17 +52,20 @@ public class MediaFeedAdapter extends RecyclerView.Adapter<MediaFeedAdapter.Medi
 
     class MediaFeedViewHolder extends RecyclerView.ViewHolder {
 
-        TextView testTextView;
+        TextView showNameTextView;
+        ImageView showImageView;
 
         MediaFeedViewHolder(View itemView) {
             super(itemView);
 
-            testTextView = itemView.findViewById(R.id.media_feed_item_text_view);
+            showNameTextView = itemView.findViewById(R.id.media_feed_item_text_view);
+            showImageView = itemView.findViewById(R.id.media_feed_item_image_view);
         }
     }
 
     public void setData(List<TVMazeResult> list) {
         mList = list;
+
         notifyDataSetChanged();
     }
 }

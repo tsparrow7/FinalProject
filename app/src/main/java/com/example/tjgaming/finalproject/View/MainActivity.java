@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject;
+package com.example.tjgaming.finalproject.View;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.View.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {

@@ -1,12 +1,14 @@
 package com.example.tjgaming.finalproject.View;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,10 +16,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private DocumentReference mDocRef;
+    private FirebaseAuth mFirebaseAuth;
+    private User mUser;
+    private TextView mUserName;
+    private TextView mUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +50,28 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
-        TextView mUserName = (TextView)headerView.findViewById(R.id.nav_header_user_name);
-        TextView mUserEmail = (TextView)headerView.findViewById(R.id.nav_header_user_email);
+        mUserName = (TextView)headerView.findViewById(R.id.nav_header_user_name);
+        mUserEmail = (TextView)headerView.findViewById(R.id.nav_header_user_email);
         ImageView mProfileImage = (ImageView)headerView.findViewById(R.id.nav_header_profile_image);
 
-        mUserEmail.setText(getIntent().getStringExtra("email"));
-        mUserName.setText(getIntent().getStringExtra("user_id"));
+        String uid = getIntent().getStringExtra("user_id");
 
         //TODO: Get a Firebase Database Reference and get the data of the user logging in
+        mDocRef = FirebaseFirestore.getInstance().collection("users").document(uid);
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseAuth.getCurrentUser();
 
+        mDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    mUser = task.getResult().toObject(User.class);
+                    mUserEmail.setText(mUser.getEmail());
+                    mUserName.setText(mUser.getUsername());
+                    Log.d("HomeActivity", mUser.toString());
+                }
+            }
+        });
 
 
         if (savedInstanceState == null) {

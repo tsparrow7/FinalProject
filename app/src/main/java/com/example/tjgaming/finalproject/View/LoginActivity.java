@@ -134,7 +134,6 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),"First time logging in.",Toast.LENGTH_SHORT).show();
                             } else {
                                 Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
-                                intent.putExtra("email",email);
                                 intent.putExtra("user_id",user.getUid());
                                 finish();
                                 startActivity(intent);
