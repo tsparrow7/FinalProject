@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View;
+package com.example.tjgaming.finalproject.View.Home;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,6 +23,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.tjgaming.finalproject.View.Home.FavoritesFragment;
+import com.example.tjgaming.finalproject.View.Home.ForumFragment;
+import com.example.tjgaming.finalproject.View.Home.MediaFeedFragment;
+import com.example.tjgaming.finalproject.View.Home.ProfileFragment;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

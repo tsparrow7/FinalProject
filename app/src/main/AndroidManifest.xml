@@ -19,14 +19,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".View.LoginActivity" />
-        <activity android:name=".View.SignUpActivity" />
+        <activity android:name=".View.Authentication.LoginActivity" />
+        <activity android:name=".View.Authentication.SignUpActivity" />
         <activity
-            android:name=".View.HomeActivity"
+            android:name=".View.Home.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".View.ProfileBuildActivity" />
-        <activity android:name=".View.MediaSelectionActivity"></activity>
+        <activity android:name=".View.Registration.ProfileBuildActivity" />
+        <activity android:name=".View.Registration.MediaSelectionActivity"></activity>
     </application>
 
 </manifest>

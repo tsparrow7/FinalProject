@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View;
+package com.example.tjgaming.finalproject.View.Home;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

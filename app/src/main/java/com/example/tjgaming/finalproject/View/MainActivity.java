@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.View.LoginActivity;
 
+import com.example.tjgaming.finalproject.View.Authentication.LoginActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override

@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View;
+package com.example.tjgaming.finalproject.View.Registration;
 
 import android.content.Intent;
 import android.os.Bundle;
