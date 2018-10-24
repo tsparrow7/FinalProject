@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.Model;
+package com.example.tjgaming.finalproject.Model.TVMaze;
 
 import com.google.gson.annotations.SerializedName;
 

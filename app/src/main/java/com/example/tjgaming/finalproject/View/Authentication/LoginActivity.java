@@ -77,6 +77,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginButton = findViewById(R.id.btn_login);
         mSignUpLink = findViewById(R.id.link_signup);
 
+
         firstTimeUser = getIntent().getBooleanExtra("firstTimeUser", false);
 
         if (firstTimeUser) {
@@ -147,6 +148,7 @@ public class LoginActivity extends AppCompatActivity {
                             Log.w(TAG,"signInFailure");
                             Toast.makeText(getApplicationContext(),"Authentication Failed.",
                                     Toast.LENGTH_SHORT).show();
+                            onLoginFailed();
                         }
                     }
                 });
@@ -172,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         mLoginButton.setEnabled(true);
-        //finish();
+        finish();
     }
 
     public void onLoginFailed() {

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.Home.MediaFeedDetailsFragment"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:id="@+id/media_feed_details_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:layout_margin="8dp"
+        android:layout_toStartOf="@+id/details_favorite_action_button"
+        android:layout_toLeftOf="@+id/details_favorite_action_button">
+
+        <TextView
+            android:id="@+id/media_feed_details_show_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="show name"
+            android:textSize="32sp"
+            android:textColor="@color/primary"/>
+
+        <TextView
+            android:id="@+id/media_feed_details_episode_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="episode name"
+            android:textSize="24sp"
+            android:textColor="@color/primary"/>
+
+        <TextView
+            android:id="@+id/media_feed_details_season"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Season:1"
+            android:textSize="24sp"
+            android:textColor="@color/primary"/>
+
+        <TextView
+            android:id="@+id/media_feed_details_episode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ep:1"
+            android:textSize="24sp"
+            android:textColor="@color/primary"
+            android:layout_marginBottom="25dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="When to watch"
+            android:textSize="32sp"
+            android:textColor="@color/primary"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="25dp">
+
+            <TextView
+                android:id="@+id/media_feed_details_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MondayTuesdayThursday"
+                android:textSize="16sp"
+                android:textColor="@color/primary" />
+
+            <TextView
+                android:id="@+id/media_feed_details_times"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1:00pm"
+                android:textSize="24sp"
+                android:textColor="@color/primary"
+                android:layout_marginBottom="25dp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Where to watch"
+            android:textSize="32sp"
+            android:textColor="@color/primary"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="25dp">
+
+            <TextView
+                android:id="@+id/media_feed_details_network"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ABC"
+                android:textSize="24sp"
+                android:textColor="@color/primary"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"/>
+
+            <TextView
+                android:id="@+id/media_feed_details_netflix"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Netflix"
+                android:textSize="24sp"
+                android:textColor="@color/primary"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"/>
+            <TextView
+                android:id="@+id/media_feed_details_amazon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Amazon Prime"
+                android:textSize="24sp"
+                android:textColor="@color/primary" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Show Rating"
+            android:textSize="32sp"
+            android:textColor="@color/primary"/>
+
+        <TextView
+            android:id="@+id/media_feed_details_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10"
+            android:textSize="24sp"
+            android:textColor="@color/primary" />
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/details_favorite_action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/ic_menu_favorites"/>
+
+</RelativeLayout>

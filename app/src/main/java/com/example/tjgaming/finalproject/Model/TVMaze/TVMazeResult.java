@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.Model;
+package com.example.tjgaming.finalproject.Model.TVMaze;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -13,7 +13,9 @@ public class TVMazeResult {
     @SerializedName("name")
     private String name;
     @SerializedName("season")
-    private String season;
+    private int season;
+    @SerializedName("number")
+    private int number;
     @SerializedName("show")
     private TVMazeShow show;
 
@@ -50,11 +52,19 @@ public class TVMazeResult {
         this.name = name;
     }
 
-    public String getSeason() {
+    public int getSeason() {
         return season;
     }
 
-    public void setSeason(String season) {
+    public void setSeason(int season) {
         this.season = season;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 }

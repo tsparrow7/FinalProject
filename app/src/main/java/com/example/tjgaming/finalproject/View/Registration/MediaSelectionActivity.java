@@ -122,6 +122,7 @@ public class MediaSelectionActivity extends AppCompatActivity implements View.On
                     //TODO: Start home activity intent
 
                     startActivity(new Intent(getApplicationContext(),HomeActivity.class).putExtra("user_id",mUid));
+                    finish();
 
                 }
 
@@ -136,33 +137,21 @@ public class MediaSelectionActivity extends AppCompatActivity implements View.On
 
             case R.id.media_select_movie_checkbox:
 
-                if(mMovies)
-                    mMovies = false;
-                else
-                    mMovies = true;
+                mMovies = !mMovies;
                 break;
 
             case R.id.media_select_tv_checkbox:
 
-                if(mTv)
-                    mTv = false;
-                else
-                    mTv = true;
+                mTv = !mTv;
                 break;
 
             case R.id.media_select_music_checkbox:
 
-                if(mMusic)
-                    mMusic = false;
-                else
-                    mMusic = true;
+                mMusic = !mMusic;
                 break;
             case R.id.media_select_games_checkbox:
 
-                if(mGames)
-                    mGames = false;
-                else
-                    mGames = true;
+                mGames = !mGames;
                 break;
         }
 

@@ -213,11 +213,7 @@ public class ProfileBuildActivity extends AppCompatActivity {
 
     private boolean validateFields() {
 
-        if (mGender == null || mMonth.equals("Month") || mDay.equals("Day") || mYear.equals("Year") || mUserName.equals("")) {
-            return false;
-        } else {
-            return true;
-        }
+        return mGender != null && !mMonth.equals("Month") && !mDay.equals("Day") && !mYear.equals("Year") && !mUserName.equals("");
     }
 
     private void startProgress() {

@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.Model;
+package com.example.tjgaming.finalproject.Model.TVMaze;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -18,6 +18,12 @@ public class TVMazeShow {
     private String language;
     @SerializedName("image")
     private TVMazeShowImage image;
+    @SerializedName("network")
+    private TVMazeShowNetwork network;
+    @SerializedName("schedule")
+    private TVMazeShowSchedule schedule;
+    @SerializedName("rating")
+    private TVMazeShowRating rating;
 
     public TVMazeShowImage getImage() {
         return image;
@@ -65,5 +71,29 @@ public class TVMazeShow {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public TVMazeShowNetwork getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(TVMazeShowNetwork network) {
+        this.network = network;
+    }
+
+    public TVMazeShowSchedule getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(TVMazeShowSchedule schedule) {
+        this.schedule = schedule;
+    }
+
+    public TVMazeShowRating getRating() {
+        return rating;
+    }
+
+    public void setRating(TVMazeShowRating rating) {
+        this.rating = rating;
     }
 }

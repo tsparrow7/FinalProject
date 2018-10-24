@@ -1,6 +1,6 @@
 package com.example.tjgaming.finalproject.Api;
 
-import com.example.tjgaming.finalproject.Model.TVMazeResult;
+import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 
 import java.util.List;
 
@@ -13,9 +13,6 @@ import retrofit2.http.Headers;
  */
 public interface ApiInterface {
     @Headers("X-Mashape-Key: RbXPrJzxBdmshZaGCvdsD0APshi3p1spBKJjsns8OGdx2NP64O")
-    @GET("schedule?country=US")
+    @GET("schedule?country=US&filter=primetime")
     Call<List<TVMazeResult>> getTvMazeResults();
-
-
-
 }

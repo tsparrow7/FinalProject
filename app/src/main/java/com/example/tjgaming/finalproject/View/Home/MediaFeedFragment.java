@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,7 @@ import android.widget.Toast;
 
 import com.example.tjgaming.finalproject.Api.ApiClient;
 import com.example.tjgaming.finalproject.Api.ApiInterface;
-import com.example.tjgaming.finalproject.Model.TVMazeResult;
+import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.R;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class MediaFeedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_media_feed, container, false);
 
-        mRecyclerView = (RecyclerView) root.findViewById(R.id.media_feed_recycler);
+        mRecyclerView = root.findViewById(R.id.media_feed_recycler);
 
         initAdapter();
         tvMazeRequest();
@@ -68,7 +69,8 @@ public class MediaFeedFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<TVMazeResult>> call, Throwable t) {
-                Toast.makeText(getActivity(), "Failed Api call, u suck..", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Failed Api call..." , Toast.LENGTH_SHORT).show();
+                Log.e("MediaFeedFragment", t.getLocalizedMessage());
             }
         });
 

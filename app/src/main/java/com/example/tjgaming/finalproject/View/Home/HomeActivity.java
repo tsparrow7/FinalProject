@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,10 +24,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.example.tjgaming.finalproject.View.Home.FavoritesFragment;
-import com.example.tjgaming.finalproject.View.Home.ForumFragment;
-import com.example.tjgaming.finalproject.View.Home.MediaFeedFragment;
-import com.example.tjgaming.finalproject.View.Home.ProfileFragment;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -41,21 +38,21 @@ public class HomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
-        mUserName = (TextView)headerView.findViewById(R.id.nav_header_user_name);
-        mUserEmail = (TextView)headerView.findViewById(R.id.nav_header_user_email);
-        ImageView mProfileImage = (ImageView)headerView.findViewById(R.id.nav_header_profile_image);
+        mUserName = headerView.findViewById(R.id.nav_header_user_name);
+        mUserEmail = headerView.findViewById(R.id.nav_header_user_email);
+        ImageView mProfileImage = headerView.findViewById(R.id.nav_header_profile_image);
 
         String uid = getIntent().getStringExtra("user_id");
 
@@ -86,9 +83,11 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if(getFragmentManager().getBackStackEntryCount() > 1) {
+            getFragmentManager().popBackStack();
         } else {
             super.onBackPressed();
         }
@@ -144,7 +143,7 @@ public class HomeActivity extends AppCompatActivity
             Toast.makeText(this, "Send", Toast.LENGTH_SHORT).show();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
