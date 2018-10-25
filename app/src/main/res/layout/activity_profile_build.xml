@@ -69,6 +69,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="Age"
                 android:textSize="15sp"
                 android:textColor="@color/accent"/>
@@ -145,15 +146,17 @@
                 android:id="@+id/profile_notify_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.3"/>
+                android:layout_weight="0.3"
+                android:buttonTint="@color/accent"/>
         </LinearLayout>
         <!--End of Notification-->
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_profile_continue"
-            android:layout_width="fill_parent"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
             android:text="Continue"

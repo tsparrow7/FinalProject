@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Digital Playground</string>
+    <string name="app_name">MediaHub</string>
     <string name="action_settings">Settings</string>
+    <string name="action_logout">Log Out</string>
     <string name="title_activity_home"></string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

@@ -30,7 +30,7 @@
             android:layout_marginEnd="100dp">
 
             <android.support.v7.widget.AppCompatButton
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:foreground="@drawable/ic_movie"
@@ -46,7 +46,8 @@
                 android:layout_gravity="center_vertical"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true"
+                android:buttonTint="@color/accent"/>
 
         </RelativeLayout>
 
@@ -59,7 +60,7 @@
             android:layout_marginEnd="100dp">
 
             <android.support.v7.widget.AppCompatButton
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:foreground="@drawable/ic_live_tv"
@@ -75,7 +76,8 @@
                 android:layout_gravity="center_vertical"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true"
+                android:buttonTint="@color/accent"/>
 
         </RelativeLayout>
 
@@ -88,7 +90,7 @@
             android:layout_marginEnd="100dp">
 
             <android.support.v7.widget.AppCompatButton
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:foreground="@drawable/ic_music"
@@ -104,7 +106,8 @@
                 android:layout_gravity="center_vertical"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true"
+                android:buttonTint="@color/accent"/>
 
         </RelativeLayout>
 
@@ -117,7 +120,7 @@
             android:layout_marginEnd="100dp">
 
             <android.support.v7.widget.AppCompatButton
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:foreground="@drawable/ic_games"
@@ -133,19 +136,21 @@
                 android:layout_gravity="center_vertical"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true"
+                android:buttonTint="@color/accent"/>
 
         </RelativeLayout>
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_media_select_finish"
-            android:layout_width="fill_parent"
+            android:layout_gravity="center"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
             android:text="Finish"
-            android:background="@color/primary_darker"/>
+            android:background="@color/primary_darker" />
 
     </LinearLayout>
 </ScrollView>

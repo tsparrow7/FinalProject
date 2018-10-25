@@ -1,5 +1,6 @@
 package com.example.tjgaming.finalproject.View.Home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.R;
+import com.example.tjgaming.finalproject.View.Authentication.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -110,6 +112,9 @@ public class HomeActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id==R.id.action_logout) {
+            startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
