@@ -31,7 +31,7 @@ public class MediaFeedFragment extends Fragment {
 
     RecyclerView mRecyclerView;
     MediaFeedAdapter mAdapter;
-    ArrayList<TVMazeResult> mList = new ArrayList<>();
+    List<TVMazeResult> mList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -64,15 +64,14 @@ public class MediaFeedFragment extends Fragment {
         call.enqueue(new Callback<List<TVMazeResult>>() {
             @Override
             public void onResponse(Call<List<TVMazeResult>> call, Response<List<TVMazeResult>> response) {
+                mList = response.body();
                 mAdapter.setData(response.body());
             }
-
             @Override
             public void onFailure(Call<List<TVMazeResult>> call, Throwable t) {
                 Toast.makeText(getActivity(), "Failed Api call..." , Toast.LENGTH_SHORT).show();
                 Log.e("MediaFeedFragment", t.getLocalizedMessage());
             }
         });
-
     }
 }
