@@ -1,6 +1,7 @@
 package com.example.tjgaming.finalproject.View.Home;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,10 @@ import com.example.tjgaming.finalproject.Api.ApiClient;
 import com.example.tjgaming.finalproject.Api.ApiInterface;
 import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +37,8 @@ public class MediaFeedFragment extends Fragment {
     RecyclerView mRecyclerView;
     MediaFeedAdapter mAdapter;
     List<TVMazeResult> mList = new ArrayList<>();
+
+    DocumentReference documentReference;
 
     @Nullable
     @Override
@@ -65,6 +72,27 @@ public class MediaFeedFragment extends Fragment {
             @Override
             public void onResponse(Call<List<TVMazeResult>> call, Response<List<TVMazeResult>> response) {
                 mList = response.body();
+
+                for (int i = 0; i < mList.size(); i++) {
+                    documentReference = FirebaseFirestore.getInstance()
+                            .collection("TV Shows")
+                            .document(mList.get(i).getShow().getName());
+
+                    documentReference.set(mList.get(i)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("Saving media to db","TV Show saved");
+                            } else {
+                                Log.d("Saving media to db","TV Show not saved");
+                            }
+                        }
+                    });
+                }
+
+                //TODO: Retrieve data from database and set to the data in the adapter.
+                //TODO: Implement sorting for data based on genre/name/rating/type
+
                 mAdapter.setData(response.body());
             }
             @Override

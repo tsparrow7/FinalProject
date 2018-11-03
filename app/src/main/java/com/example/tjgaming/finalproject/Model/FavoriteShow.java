@@ -1,16 +1,18 @@
 package com.example.tjgaming.finalproject.Model;
 
+import java.util.List;
+
 /**
  * Created by TJ on 10/24/2018.
  */
 public class FavoriteShow {
     private String mShowName;
-    private String[] mDays;
+    private List<String> mDays;
     private String mTime;
     private String mNetwork;
     private double mRating;
 
-    public FavoriteShow(String mShowName, String[] mDays, String mTime, String mNetwork, double mRating) {
+    public FavoriteShow(String mShowName, List<String> mDays, String mTime, String mNetwork, double mRating) {
         this.mShowName = mShowName;
         this.mDays = mDays;
         this.mTime = mTime;
@@ -26,11 +28,11 @@ public class FavoriteShow {
         this.mShowName = mShowName;
     }
 
-    public String[] getmDays() {
+    public List<String> getmDays() {
         return mDays;
     }
 
-    public void setmDays(String[] mDays) {
+    public void setmDays(List<String> mDays) {
         this.mDays = mDays;
     }
 

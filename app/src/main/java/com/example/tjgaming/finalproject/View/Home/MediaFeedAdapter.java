@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -67,7 +68,7 @@ public class MediaFeedAdapter extends RecyclerView.Adapter<MediaFeedAdapter.Medi
         args.putInt("season",mList.get(itemPosition).getSeason());
         args.putInt("number",mList.get(itemPosition).getNumber());
         args.putString("time",mList.get(itemPosition).getShow().getSchedule().getTime());
-        args.putStringArray("days",mList.get(itemPosition).getShow().getSchedule().getDays());
+        args.putStringArrayList("days",(ArrayList<String>)mList.get(itemPosition).getShow().getSchedule().getDays());
         args.putString("network",mList.get(itemPosition).getShow().getNetwork().getName());
         args.putDouble("rating",mList.get(itemPosition).getShow().getRating().getAverage());
 

@@ -13,6 +13,6 @@ import retrofit2.http.Headers;
  */
 public interface ApiInterface {
     @Headers("X-Mashape-Key: RbXPrJzxBdmshZaGCvdsD0APshi3p1spBKJjsns8OGdx2NP64O")
-    @GET("schedule?country=US&filter=primetime")
+    @GET("schedule?country=US")
     Call<List<TVMazeResult>> getTvMazeResults();
 }

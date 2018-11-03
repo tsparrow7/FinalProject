@@ -14,6 +14,7 @@ import com.example.tjgaming.finalproject.Model.FavoriteShow;
 import com.example.tjgaming.finalproject.R;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class MediaFeedDetailsFragment extends Fragment implements View.OnClickListener {
 
@@ -22,7 +23,7 @@ public class MediaFeedDetailsFragment extends Fragment implements View.OnClickLi
     private int mSeason;
     private int mEpisode;
     private String mTime;
-    private String[] mDays;
+    private List<String> mDays;
     private String mNetwork;
     private double mRating;
 
@@ -51,7 +52,7 @@ public class MediaFeedDetailsFragment extends Fragment implements View.OnClickLi
         (mSeasonTextView = root.findViewById(R.id.media_feed_details_season)).setText(String.valueOf("Season: " +mSeason));
         (mEpisodeTextView = root.findViewById(R.id.media_feed_details_episode)).setText(String.valueOf("Episode: " +mEpisode));
         (mTimeTextView = root.findViewById(R.id.media_feed_details_times)).setText(" @ " + mTime);
-        (mDaysTextView = root.findViewById(R.id.media_feed_details_days)).setText(Arrays.toString(mDays));
+        (mDaysTextView = root.findViewById(R.id.media_feed_details_days)).setText(mDays.toString());
         (mNetworkTextView = root.findViewById(R.id.media_feed_details_network)).setText(mNetwork);
         (mRatingTextView = root.findViewById(R.id.media_feed_details_rating)).setText(String.valueOf(mRating));
 
@@ -69,7 +70,7 @@ public class MediaFeedDetailsFragment extends Fragment implements View.OnClickLi
         mSeason = args.getInt("season");
         mEpisode = args.getInt("number");
         mTime = args.getString("time");
-        mDays = args.getStringArray("days");
+        mDays = args.getStringArrayList("days");
         mNetwork = args.getString("network");
         mRating = args.getDouble("rating");
     }
