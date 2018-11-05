@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,9 +46,24 @@ public class MediaFeedAdapter extends RecyclerView.Adapter<MediaFeedAdapter.Medi
 
         holder.showNameTextView.setText(mList.get(position).getShow().getName());
 
-        Glide.with(mContext)
-                .load(mList.get(position).getShow().getImage().getOriginal())
-                .into(holder.showImageView);
+        try {
+            Glide.with(mContext)
+                    .load(mList.get(position).getShow().getImage().getOriginal())
+                    .into(holder.showImageView);
+        } catch (NullPointerException e) {
+            Log.e("MediaFeedAdapter","Caught null: " + e.getMessage());
+
+            try {
+                Glide.with(mContext)
+                        .load(mList.get(position).getShow().getImage().getMedium())
+                        .into(holder.showImageView);
+            } catch (NullPointerException e1) {
+                Log.e("MediaFeedAdapter","Caught null: " + e.getMessage());
+                Glide.with(mContext)
+                        .load(mContext.getDrawable(R.drawable.common_google_signin_btn_icon_dark_focused))
+                        .into(holder.showImageView);
+            }
+        }
     }
 
     @Override

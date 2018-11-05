@@ -2,6 +2,8 @@ package com.example.tjgaming.finalproject.Model.TVMaze;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * Created by TJ on 10/15/2018.
  */
@@ -16,6 +18,8 @@ public class TVMazeShow {
     private String type;
     @SerializedName("language")
     private String language;
+    @SerializedName("genres")
+    private List<String> genres;
     @SerializedName("image")
     private TVMazeShowImage image;
     @SerializedName("network")
@@ -71,6 +75,14 @@ public class TVMazeShow {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public List<String> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
     }
 
     public TVMazeShowNetwork getNetwork() {

@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tjgaming.finalproject.CustomStrings;
 import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.View.Authentication.LoginActivity;
@@ -111,7 +112,18 @@ public class HomeActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            //TODO:Open up custom dialog to sort, filter, and order data in media feed fragment
+            //TODO:Get the results of selections and add them to bundle and send them to fragment
+            MediaFeedFragment mediaFeedFragment = new MediaFeedFragment();
+            Bundle bundle = new Bundle();
+
+            bundle.putString("Field",CustomStrings.SHOW_TYPE);
+            bundle.putString("Value",CustomStrings.NEWS);
+            mediaFeedFragment.setArguments(bundle);
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    mediaFeedFragment).commit();
+
         } else if (id==R.id.action_logout) {
             startActivity(new Intent(HomeActivity.this, LoginActivity.class));
             finish();
