@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">MediaHub</string>
     <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
     <string name="action_logout">Log Out</string>
     <string name="title_activity_home"></string>
 
@@ -164,6 +165,15 @@
         <item>1920</item>
         <item></item>
     </string-array>
+
+    <!--Filter Dialog array-->
+    <string-array name="sort">
+        <item>Relevant</item>
+        <item>Ratings: High to Low</item>
+        <item>A-Z</item>
+        <item>Z-A</item>
+    </string-array>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

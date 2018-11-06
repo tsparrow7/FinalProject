@@ -1,5 +1,6 @@
 package com.example.tjgaming.finalproject.View.Home;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,6 +8,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -28,6 +30,13 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+
+import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
+import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
+import ir.mirrajabi.searchdialog.core.SearchResultListener;
+import ir.mirrajabi.searchdialog.core.Searchable;
+
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -36,6 +45,12 @@ public class HomeActivity extends AppCompatActivity
     private User mUser;
     private TextView mUserName;
     private TextView mUserEmail;
+
+    private String mFilterSelection;
+    private String mSortSelection;
+    private String mFilterField = CustomStrings.SHOW_TYPE;
+    private String mSortDirection = "Descending";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,16 +129,17 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             //TODO:Open up custom dialog to sort, filter, and order data in media feed fragment
             //TODO:Get the results of selections and add them to bundle and send them to fragment
-            MediaFeedFragment mediaFeedFragment = new MediaFeedFragment();
-            Bundle bundle = new Bundle();
+            sortDialog();
 
-            bundle.putString("Field",CustomStrings.SHOW_TYPE);
-            bundle.putString("Value",CustomStrings.NEWS);
-            mediaFeedFragment.setArguments(bundle);
-
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    mediaFeedFragment).commit();
-
+//        } else if (id==R.id.action_search) {
+//            new SimpleSearchDialogCompat<>(HomeActivity.this, "Search...", "What are you looking for...?",
+//                    null, initData(), new SearchResultListener<Searchable>() {
+//                @Override
+//                public void onSelected(BaseSearchDialogCompat baseSearchDialogCompat, Searchable searchable, int i) {
+//                    Toast.makeText(HomeActivity.this, "", Toast.LENGTH_SHORT).show();
+//                    baseSearchDialogCompat.dismiss();
+//                }
+//            }).show();
         } else if (id==R.id.action_logout) {
             startActivity(new Intent(HomeActivity.this, LoginActivity.class));
             finish();
@@ -131,6 +147,81 @@ public class HomeActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void sortDialog() {
+        final String[] sorting = {CustomStrings.SHOW_NAME,CustomStrings.SHOW_RATING_AVERAGE,CustomStrings.SHOW_SCHEDULE_TIME};
+        AlertDialog.Builder sortBuilder = new AlertDialog.Builder(this);
+        sortBuilder.setTitle("Sort");
+        sortBuilder.setSingleChoiceItems(sorting, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mSortSelection = sorting[which];
+                    }
+                });
+
+        sortBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                filterDialog();
+            }
+        });
+
+        sortBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog sortDialog = sortBuilder.create();
+        sortDialog.show();
+
+    }
+
+    public void filterDialog() {
+        final String[] filterArr = {CustomStrings.REALITY, CustomStrings.ANIMATION, CustomStrings.NEWS,
+                                 CustomStrings.DOCUMENTARY, CustomStrings.TALK_SHOW, CustomStrings.SCRIPTED, CustomStrings.GAME_SHOW};
+
+        AlertDialog.Builder filterBuilder = new AlertDialog.Builder(this);
+        filterBuilder.setTitle("Filter");
+        filterBuilder.setSingleChoiceItems(filterArr, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mFilterSelection = filterArr[which];
+            }
+        });
+
+        filterBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                MediaFeedFragment mediaFeedFragment = new MediaFeedFragment();
+                Bundle bundle = new Bundle();
+
+                bundle.putString("Field",mFilterField);
+                bundle.putString("Value",mFilterSelection);
+                bundle.putString("Order",mSortSelection);
+                bundle.putString("Direction",mSortDirection);
+                mediaFeedFragment.setArguments(bundle);
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        mediaFeedFragment).commit();
+
+            }
+        });
+
+        filterBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog filterDialog = filterBuilder.create();
+        filterDialog.show();
+
+    }
+
+
+
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

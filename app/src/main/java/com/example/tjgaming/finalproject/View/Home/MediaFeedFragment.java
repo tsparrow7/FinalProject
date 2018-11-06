@@ -1,6 +1,8 @@
 package com.example.tjgaming.finalproject.View.Home;
 
 import android.app.ProgressDialog;
+import android.graphics.Path;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -46,9 +49,10 @@ public class MediaFeedFragment extends Fragment {
     List<TVMazeResult> mList = new ArrayList<>();
     ProgressDialog progressDialog;
 
-    private String FIELD = CustomStrings.SHOW_TYPE;
-    private String VALUE = CustomStrings.ANIMATION;
-    private String DIRECTION;
+    private String FIELD;
+    private String VALUE;
+    private String ORDERING;
+    private Query.Direction DIRECTION;
 
     DocumentReference documentReference;
     CollectionReference mCollectionRef;
@@ -64,6 +68,14 @@ public class MediaFeedFragment extends Fragment {
         if (bundle != null) {
             FIELD = bundle.getString("Field");
             VALUE = bundle.getString("Value");
+            ORDERING = bundle.getString("Order");
+            String STR_DIRECTION = bundle.getString("Direction");
+
+            if (STR_DIRECTION.equals("Ascending")){
+                DIRECTION = Query.Direction.ASCENDING;
+            } else {
+                DIRECTION = Query.Direction.DESCENDING;
+            }
         }
         mRecyclerView = root.findViewById(R.id.media_feed_recycler);
 
@@ -86,49 +98,68 @@ public class MediaFeedFragment extends Fragment {
 
         startProgress();
 
-        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
-
-        Call<List<TVMazeResult>> call = apiInterface.getTvMazeResults();
-
-        call.enqueue(new Callback<List<TVMazeResult>>() {
-            @Override
-            public void onResponse(Call<List<TVMazeResult>> call, Response<List<TVMazeResult>> response) {
-                mList = response.body();
-
-                for (int i = 0; i < mList.size(); i++) {
-                    documentReference = FirebaseFirestore.getInstance()
-                            .collection("TV Shows")
-                            .document(mList.get(i).getShow().getName());
-
-                    documentReference.set(mList.get(i)).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d("Saving media to db","TV Show saved");
-                            } else {
-                                Log.d("Saving media to db","TV Show not saved");
-                            }
-                        }
-                    });
-                }
+//        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+//
+//        Call<List<TVMazeResult>> call = apiInterface.getTvMazeResults();
+//
+//        call.enqueue(new Callback<List<TVMazeResult>>() {
+//            @Override
+//            public void onResponse(Call<List<TVMazeResult>> call, Response<List<TVMazeResult>> response) {
+//                mList = response.body();
+//
+//                for (int i = 0; i < mList.size(); i++) {
+//                    documentReference = FirebaseFirestore.getInstance()
+//                            .collection("TV Shows")
+//                            .document(mList.get(i).getShow().getName());
+//
+//                    documentReference.set(mList.get(i)).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<Void> task) {
+//                            if (task.isSuccessful()) {
+//                                Log.d("Saving media to db","TV Show saved");
+//                            } else {
+//                                Log.d("Saving media to db","TV Show not saved");
+//                            }
+//                        }
+//                    });
+//                }
 
                 //Retrieve data from database and set to the data in the adapter.
 
-                mList.clear();
-                mFirestore = FirebaseFirestore.getInstance();
-                mCollectionRef = mFirestore.collection("TV Shows");
-                mCollectionRef.whereEqualTo(FIELD,VALUE).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots){
-                            TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
+                if (FIELD == null || VALUE == null || ORDERING == null || DIRECTION == null) {
+                    mList.clear();
+                    mFirestore = FirebaseFirestore.getInstance();
+                    mCollectionRef = mFirestore.collection("TV Shows");
+                    mCollectionRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots){
+                                TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
 
-                            mList.add(tvMazeResult);
+                                mList.add(tvMazeResult);
+                            }
+                            stopProgress();
+                            mAdapter.setData(mList);
                         }
-                        stopProgress();
-                        mAdapter.setData(mList);
-                    }
-                });
+                    });
+                } else {
+
+                    mList.clear();
+                    mFirestore = FirebaseFirestore.getInstance();
+                    mCollectionRef = mFirestore.collection("TV Shows");
+                    mCollectionRef.whereEqualTo(FIELD, VALUE).orderBy(ORDERING, DIRECTION).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
+
+                                mList.add(tvMazeResult);
+                            }
+                            stopProgress();
+                            mAdapter.setData(mList);
+                        }
+                    });
+                }
 
                 //TODO: Implement sorting for data based on genre/name/rating/type
                 //TODO: pass values for ordering the data and the direction (ascending/descending)
@@ -146,13 +177,13 @@ public class MediaFeedFragment extends Fragment {
                  *  mCollectionRef.whereEqualTo      ("show.type",          "Animation")    .get();
                  */
 
-            }
-            @Override
-            public void onFailure(Call<List<TVMazeResult>> call, Throwable t) {
-                Toast.makeText(getActivity(), "Failed Api call..." , Toast.LENGTH_SHORT).show();
-                Log.e("MediaFeedFragment", t.getLocalizedMessage());
-            }
-        });
+//           // }
+//            @Override
+//            public void onFailure(Call<List<TVMazeResult>> call, Throwable t) {
+//                Toast.makeText(getActivity(), "Failed Api call..." , Toast.LENGTH_SHORT).show();
+//                Log.e("MediaFeedFragment", t.getLocalizedMessage());
+//            }
+//        });
     }
 
     private void startProgress() {
