@@ -25,6 +25,7 @@ public class Database {
     private Context mContext;
     private FirebaseAuth mFirebaseAuth;
     private DocumentReference mDocumentReference;
+    private DBWatcher watcher = null;
 
 
     public Database(Context context) {
@@ -39,11 +40,11 @@ public class Database {
                 .document(favoriteShow.getShow_name());
 
         Map<String, Object> favorite = new HashMap<>();
-        favorite.put("show_name",favoriteShow.getShow_name());
-        favorite.put("network",favoriteShow.getNetwork());
-        favorite.put("days",favoriteShow.getDays());
-        favorite.put("times",favoriteShow.getTimes());
-        favorite.put("rating",favoriteShow.getRating());
+        favorite.put("show_name", favoriteShow.getShow_name());
+        favorite.put("network", favoriteShow.getNetwork());
+        favorite.put("days", favoriteShow.getDays());
+        favorite.put("times", favoriteShow.getTimes());
+        favorite.put("rating", favoriteShow.getRating());
 
         mDocumentReference.set(favorite).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -51,20 +52,10 @@ public class Database {
                 if (task.isSuccessful()) {
                     Log.d(TAG, "Document saved!");
                 } else {
-                    Log.d(TAG,"Document not saved", task.getException());
+                    Log.d(TAG, "Document not saved", task.getException());
                 }
             }
         });
-
-    }
-
-
-    public void login(String email, String password) {
-
-    }
-
-    public void logout() {
-
     }
 
     public FirebaseUser getUserLoggedIn() {
@@ -72,8 +63,57 @@ public class Database {
         return mFirebaseAuth.getCurrentUser();
     }
 
-    public void addListToDB() {
+    public void addUserRating(String showName, float userRating) {
+        mDocumentReference = FirebaseFirestore.getInstance()
+                .collection("Ratings")
+                .document(showName)
+                .collection(showName + "-ratings")
+                .document(getUserLoggedIn().getUid());
 
+        Map<String, Object> rating = new HashMap<>();
+        rating.put("show_name", showName);
+        rating.put("user_id", getUserLoggedIn().getUid());
+        rating.put("user_rating", userRating);
+
+        mDocumentReference.set(rating).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "Rating saved!");
+                } else {
+                    Log.d(TAG, "Rating not saved", task.getException());
+                }
+            }
+        });
     }
 
+    public void deleteFavorite(String showName) {
+        mDocumentReference = FirebaseFirestore.getInstance()
+                .collection("favorites")
+                .document(getUserLoggedIn().getUid())
+                .collection(getUserLoggedIn().getUid() + "-favorites")
+                .document(showName);
+        mDocumentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "Favorite deleted!");
+                    notifyChangeWatcher();
+                } else {
+                    Log.d(TAG, "Favorite not deleted", task.getException());
+                }
+            }
+        });
+    }
+
+    public void setWatcher(DBWatcher watcher) {
+        this.watcher = watcher;
+    }
+
+    private void notifyChangeWatcher() {
+        if (watcher != null) {
+            watcher.onChange();
+        }
+    }
 }
+

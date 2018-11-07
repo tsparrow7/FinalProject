@@ -61,7 +61,6 @@ public class FavoritesFragment extends Fragment {
     private void getData() {
         startProgress();
 
-
         mDatabase = new Database(getActivity());
         String userId = mDatabase.getUserLoggedIn().getUid();
         mFirestore = FirebaseFirestore.getInstance();

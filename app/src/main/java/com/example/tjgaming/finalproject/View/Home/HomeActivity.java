@@ -30,13 +30,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
-
-import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
-import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
-import ir.mirrajabi.searchdialog.core.SearchResultListener;
-import ir.mirrajabi.searchdialog.core.Searchable;
-
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -141,8 +134,7 @@ public class HomeActivity extends AppCompatActivity
 //                }
 //            }).show();
         } else if (id==R.id.action_logout) {
-            startActivity(new Intent(HomeActivity.this, LoginActivity.class));
-            finish();
+            logoutDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -220,8 +212,28 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+    private void logoutDialog() {
 
-
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+        alertBuilder.setMessage("Are you sure you want to logout?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                });
+        AlertDialog alert = alertBuilder.create();
+        alert.setTitle("Logout");
+        alert.show();
+    }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
