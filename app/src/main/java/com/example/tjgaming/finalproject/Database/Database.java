@@ -36,14 +36,14 @@ public class Database {
                 .collection("favorites")
                 .document(getUserLoggedIn().getUid())
                 .collection(getUserLoggedIn().getUid() + "-favorites")
-                .document(favoriteShow.getmShowName());
+                .document(favoriteShow.getShow_name());
 
         Map<String, Object> favorite = new HashMap<>();
-        favorite.put("show_name",favoriteShow.getmShowName());
-        favorite.put("network",favoriteShow.getmNetwork());
-        favorite.put("days",favoriteShow.getmDays());
-        favorite.put("times",favoriteShow.getmTime());
-        favorite.put("rating",favoriteShow.getmRating());
+        favorite.put("show_name",favoriteShow.getShow_name());
+        favorite.put("network",favoriteShow.getNetwork());
+        favorite.put("days",favoriteShow.getDays());
+        favorite.put("times",favoriteShow.getTimes());
+        favorite.put("rating",favoriteShow.getRating());
 
         mDocumentReference.set(favorite).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
