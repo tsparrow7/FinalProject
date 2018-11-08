@@ -39,8 +39,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
     }
 
     @Override
-    public void onChange() {
-        this.notifyDataSetChanged();
+    public void onChange(List<FavoriteShow> list) {
+        setData(list);
         Toast.makeText(mContext, "Favorite Deleted!", Toast.LENGTH_SHORT).show();
     }
 
@@ -63,8 +63,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         holder.ratingView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "Rating clicked.", Toast.LENGTH_SHORT).show();
-                //TODO:Make a rating dialog with a seekbar for rating 0 to 10
+                //calls a rating dialog with a seekbar for rating 0.0 to 10.0
                 displayRatingDialog(v);
             }
         });
@@ -72,7 +71,6 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         holder.deleteView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "Delete Clicked", Toast.LENGTH_SHORT).show();
                 displayDeleteDialog(v);
             }
         });
@@ -81,6 +79,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
     private void displayDeleteDialog(final View v) {
         final View view = v;
         final String showName = ((TextView) ((RelativeLayout) v.getParent().getParent()).getChildAt(0)).getText().toString();
+        final List<FavoriteShow> list = mList;
 
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(mContext);
         alertBuilder.setMessage("Are you sure you want to delete this favorite?")
@@ -88,7 +87,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        database.deleteFavorite(showName);
+                        database.deleteFavorite(showName,list);
                         dialogInterface.dismiss();
                     }
                 })
@@ -144,8 +143,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         rating.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(mContext, showName + ": " + (((float) seekBar.getProgress()) / 10), Toast.LENGTH_SHORT).show();
-                //TODO:Figure out how to get the item that was clicked and save rating in database.
+                //get the item that was clicked and save rating in database.
                 float value = (seekBar.getProgress() / 10f);
                 Database database = new Database(mContext);
                 database.addUserRating(showName,value);

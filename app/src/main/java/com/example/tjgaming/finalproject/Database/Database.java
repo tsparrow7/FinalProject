@@ -13,6 +13,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +27,7 @@ public class Database {
     private FirebaseAuth mFirebaseAuth;
     private DocumentReference mDocumentReference;
     private DBWatcher watcher = null;
+    private List<FavoriteShow> mFavoritesList;
 
 
     public Database(Context context) {
@@ -87,7 +89,15 @@ public class Database {
         });
     }
 
-    public void deleteFavorite(String showName) {
+    public void deleteFavorite(String showName, List<FavoriteShow> list) {
+        mFavoritesList = list;
+
+        for (int i = 0; i < mFavoritesList.size(); i++) {
+            if (mFavoritesList.get(i).getShow_name().equals(showName)) {
+                mFavoritesList.remove(i);
+            }
+        }
+
         mDocumentReference = FirebaseFirestore.getInstance()
                 .collection("favorites")
                 .document(getUserLoggedIn().getUid())
@@ -98,7 +108,7 @@ public class Database {
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     Log.d(TAG, "Favorite deleted!");
-                    notifyChangeWatcher();
+                    notifyChangeWatcher(mFavoritesList);
                 } else {
                     Log.d(TAG, "Favorite not deleted", task.getException());
                 }
@@ -110,9 +120,9 @@ public class Database {
         this.watcher = watcher;
     }
 
-    private void notifyChangeWatcher() {
+    private void notifyChangeWatcher(List<FavoriteShow> list) {
         if (watcher != null) {
-            watcher.onChange();
+            watcher.onChange(list);
         }
     }
 }
