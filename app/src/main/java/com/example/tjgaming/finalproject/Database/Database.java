@@ -5,13 +5,16 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.tjgaming.finalproject.Model.FavoriteShow;
+import com.example.tjgaming.finalproject.Model.UserRating;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +69,11 @@ public class Database {
     }
 
     public void addUserRating(String showName, float userRating) {
+        //Round the user_rating to one decimal place
+        BigDecimal bd = new BigDecimal(userRating);
+        bd = bd.setScale(2,BigDecimal.ROUND_UP);
+        userRating = bd.floatValue();
+
         mDocumentReference = FirebaseFirestore.getInstance()
                 .collection("Ratings")
                 .document(showName)
@@ -84,6 +92,32 @@ public class Database {
                     Log.d(TAG, "Rating saved!");
                 } else {
                     Log.d(TAG, "Rating not saved", task.getException());
+                }
+            }
+        });
+    }
+
+    public void getUserRating(String showName) {
+        mDocumentReference = FirebaseFirestore.getInstance()
+                .collection("Ratings")
+                .document(showName)
+                .collection(showName + "-ratings")
+                .document(getUserLoggedIn().getUid());
+
+        mDocumentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    UserRating rating = task.getResult().toObject(UserRating.class);
+                    Double user_rating;
+                    try {
+                        user_rating = rating.getUser_rating() * 10;
+                    } catch (NullPointerException e) {
+                        user_rating = 0.0;
+                    }
+                    notifyRatingChange(user_rating.intValue());
+//                    EventBus.getDefault().post(new RatingEvent(user_rating.intValue()));
+//                    Log.i("onRating" + TAG,user_rating.intValue() + "");
                 }
             }
         });
@@ -108,21 +142,26 @@ public class Database {
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     Log.d(TAG, "Favorite deleted!");
-                    notifyChangeWatcher(mFavoritesList);
+                    notifyFavoriteChange(mFavoritesList);
                 } else {
                     Log.d(TAG, "Favorite not deleted", task.getException());
                 }
             }
         });
     }
-
     public void setWatcher(DBWatcher watcher) {
         this.watcher = watcher;
     }
 
-    private void notifyChangeWatcher(List<FavoriteShow> list) {
+    public void notifyRatingChange(int rating) {
+        if (watcher != null){
+            watcher.onRating(rating);
+        }
+    }
+
+    private void notifyFavoriteChange(List<FavoriteShow> list) {
         if (watcher != null) {
-            watcher.onChange(list);
+            watcher.onFavorite(list);
         }
     }
 }

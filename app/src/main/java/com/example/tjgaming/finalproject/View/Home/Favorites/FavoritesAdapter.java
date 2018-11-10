@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View.Home;
+package com.example.tjgaming.finalproject.View.Home.Favorites;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -31,6 +31,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
     private List<FavoriteShow> mList;
     private RecyclerView mRecyclerView;
     private Database database;
+    private int seekBarStart;
+    private View view;
 
     public FavoritesAdapter(Context context) {
         mContext = context;
@@ -38,25 +40,57 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         database.setWatcher(this);
     }
 
-    @Override
-    public void onChange(List<FavoriteShow> list) {
-        setData(list);
-        Toast.makeText(mContext, "Favorite Deleted!", Toast.LENGTH_SHORT).show();
+    public void setView(View view) {
+        this.view = view;
     }
+
+    public View getView() {
+        return view;
+    }
+
+    @Override
+    public void onFavorite(List<FavoriteShow> list) {
+        setData(list);
+        favoriteDeletedToast();
+    }
+
+    @Override
+    public void onRating(int rating) {
+        seekBarStart = rating;
+        displayRatingDialog(getView());
+    }
+
+//    @Subscribe(threadMode = ThreadMode.POSTING)
+//    public void onRatingEvent(RatingEvent event) {
+//        seekBarStart = event.rating;
+//        displayRatingDialog(getView());
+//        Log.i("onRatingEvent",getView().toString());
+//    }
 
     @Override
     public FavoritesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.favorites_item, parent, false);
 
+//        if (!EventBus.getDefault().isRegistered(this)) {
+//            EventBus.getDefault().register(this);
+//        }
+
         final FavoritesViewHolder favoritesViewHolder = new FavoritesViewHolder(view);
         return favoritesViewHolder;
     }
 
     @Override
+    public void onViewDetachedFromWindow(FavoritesViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+
+//        if (EventBus.getDefault().isRegistered(this)) {
+//            EventBus.getDefault().unregister(this);
+//        }
+    }
+
+    @Override
     public void onBindViewHolder(FavoritesViewHolder holder, int position) {
-
-
 
         holder.showNameTextView.setText(mList.get(position).getShow_name());
 
@@ -64,7 +98,9 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
             @Override
             public void onClick(View v) {
                 //calls a rating dialog with a seekbar for rating 0.0 to 10.0
-                displayRatingDialog(v);
+                database.getUserRating(((TextView) ((RelativeLayout) v.getParent().getParent()).getChildAt(0)).getText().toString());
+                setView(v);
+                //displayRatingDialog(view);
             }
         });
 
@@ -117,6 +153,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         linearLayout.setPadding(100,32,100,32);
         textView.setTextSize(32);
         textView.setPadding(8,8,8,8);
+        seekBar.setProgress(seekBarStart);
+        textView.setText(String.format(Locale.ENGLISH,"%.1f", (seekBarStart / 10.0)));
 
         linearLayout.addView(textView);
         linearLayout.addView(seekBar);
@@ -148,6 +186,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
                 Database database = new Database(mContext);
                 database.addUserRating(showName,value);
                 dialog.dismiss();
+                ratingSavedToast();
             }
         });
         rating.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -169,6 +208,14 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         super.onAttachedToRecyclerView(recyclerView);
 
         mRecyclerView = recyclerView;
+    }
+
+    public void ratingSavedToast() {
+        Toast.makeText(mContext, "Rating Saved!", Toast.LENGTH_SHORT).show();
+    }
+
+    public void favoriteDeletedToast() {
+        Toast.makeText(mContext, "Favorite Deleted!", Toast.LENGTH_SHORT).show();
     }
 
     class FavoritesViewHolder extends RecyclerView.ViewHolder {

@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View.Home;
+package com.example.tjgaming.finalproject.View.Home.Forum;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

@@ -19,10 +19,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.tjgaming.finalproject.CustomStrings;
+import com.example.tjgaming.finalproject.Model.CustomStrings;
 import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.View.Authentication.LoginActivity;
+import com.example.tjgaming.finalproject.View.Home.Favorites.FavoritesFragment;
+import com.example.tjgaming.finalproject.View.Home.Forum.ForumFragment;
+import com.example.tjgaming.finalproject.View.Home.MediaFeed.MediaFeedFragment;
+import com.example.tjgaming.finalproject.View.Home.Profile.ProfileFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;

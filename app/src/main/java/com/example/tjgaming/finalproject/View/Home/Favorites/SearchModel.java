@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View.Home;
+package com.example.tjgaming.finalproject.View.Home.Favorites;
 
 
 import ir.mirrajabi.searchdialog.core.Searchable;

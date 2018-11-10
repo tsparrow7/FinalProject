@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View.Home;
+package com.example.tjgaming.finalproject.View.Home.MediaFeed;
 
 import android.content.Context;
 import android.os.Bundle;
