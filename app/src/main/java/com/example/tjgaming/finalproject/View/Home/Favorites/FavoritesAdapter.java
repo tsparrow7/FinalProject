@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.example.tjgaming.finalproject.Database.DBWatcher;
 import com.example.tjgaming.finalproject.Database.Database;
 import com.example.tjgaming.finalproject.Model.FavoriteShow;
+import com.example.tjgaming.finalproject.Model.UserReview;
 import com.example.tjgaming.finalproject.R;
 
 import java.util.List;
@@ -29,9 +31,11 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
 
     private Context mContext;
     private List<FavoriteShow> mList;
+    private List<UserReview> mReviewList;
     private RecyclerView mRecyclerView;
     private Database database;
     private int seekBarStart;
+    private String userReview;
     private View view;
 
     public FavoritesAdapter(Context context) {
@@ -49,7 +53,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
     }
 
     @Override
-    public void onFavorite(List<FavoriteShow> list) {
+    public void onFavoriteDeleted(List<FavoriteShow> list) {
         setData(list);
         favoriteDeletedToast();
     }
@@ -57,24 +61,27 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
     @Override
     public void onRating(int rating) {
         seekBarStart = rating;
-        displayRatingDialog(getView());
+        displayRatingDialog(view);
     }
 
-//    @Subscribe(threadMode = ThreadMode.POSTING)
-//    public void onRatingEvent(RatingEvent event) {
-//        seekBarStart = event.rating;
-//        displayRatingDialog(getView());
-//        Log.i("onRatingEvent",getView().toString());
-//    }
+    @Override
+    public void onReviewSaved(String review) {
+//        TextView reviewTV = ((TextView) ((LinearLayout) getView().getParent().getParent().getParent()).getChildAt(1));
+//        reviewTV.setText(review);
+        reviewSavedToast();
+    }
+
+    @Override
+    public void onReviewReceived(String review) {
+        //Toast.makeText(mContext, review, Toast.LENGTH_SHORT).show();
+        userReview = review;
+        displayReviewDialog(view);
+    }
 
     @Override
     public FavoritesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.favorites_item, parent, false);
-
-//        if (!EventBus.getDefault().isRegistered(this)) {
-//            EventBus.getDefault().register(this);
-//        }
 
         final FavoritesViewHolder favoritesViewHolder = new FavoritesViewHolder(view);
         return favoritesViewHolder;
@@ -83,10 +90,6 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
     @Override
     public void onViewDetachedFromWindow(FavoritesViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
-
-//        if (EventBus.getDefault().isRegistered(this)) {
-//            EventBus.getDefault().unregister(this);
-//        }
     }
 
     @Override
@@ -94,13 +97,39 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
 
         holder.showNameTextView.setText(mList.get(position).getShow_name());
 
+        holder.showReviewsTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: Will bring user to reviews page to view and rate user reviews.
+            }
+        });
+
+        holder.reviewView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //get the text from the dialog. Save the review in DB.
+                setView(v);
+                database.getReview(((TextView) ((RelativeLayout) v
+                        .getParent()
+                        .getParent())
+                        .getChildAt(0))
+                        .getText()
+                        .toString());
+                //displayReviewDialog(v);
+            }
+        });
+
         holder.ratingView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //calls a rating dialog with a seekbar for rating 0.0 to 10.0
-                database.getUserRating(((TextView) ((RelativeLayout) v.getParent().getParent()).getChildAt(0)).getText().toString());
                 setView(v);
-                //displayRatingDialog(view);
+                database.getUserRating(((TextView) ((RelativeLayout) v
+                        .getParent()
+                        .getParent())
+                        .getChildAt(0))
+                        .getText()
+                        .toString());
             }
         });
 
@@ -110,6 +139,46 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
                 displayDeleteDialog(v);
             }
         });
+    }
+
+    private void displayReviewDialog(View v){
+        final AlertDialog.Builder review = new AlertDialog.Builder(mContext);
+        final EditText editText = new EditText(mContext);
+        final View view = v;
+        final String showName = ((TextView) ((RelativeLayout) v
+                .getParent()
+                .getParent())
+                .getChildAt(0))
+                .getText()
+                .toString();
+
+        LinearLayout linearLayout = new LinearLayout(mContext);
+        review.setTitle("Review");
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setPadding(16,16,16,16);
+        editText.setWidth(linearLayout.getWidth());
+        editText.setTextSize(16);
+        editText.setHint("Add a review!");
+        if (userReview != null && !userReview.equals("Your review here....")){
+            editText.append(userReview);//Allows cursor to be placed at the end of review
+        }
+        linearLayout.addView(editText);
+        review.setView(linearLayout);
+        review.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //get the item that was clicked and save review in database.
+                String review = editText.getText().toString();
+                database.addReview(showName, review);
+            }
+        });
+        review.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        review.show();
     }
 
     private void displayDeleteDialog(final View v) {
@@ -210,19 +279,25 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         mRecyclerView = recyclerView;
     }
 
-    public void ratingSavedToast() {
+    private void ratingSavedToast() {
         Toast.makeText(mContext, "Rating Saved!", Toast.LENGTH_SHORT).show();
     }
 
-    public void favoriteDeletedToast() {
+    private void favoriteDeletedToast() {
         Toast.makeText(mContext, "Favorite Deleted!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void reviewSavedToast() {
+        Toast.makeText(mContext, "Review Saved!", Toast.LENGTH_SHORT).show();
     }
 
     class FavoritesViewHolder extends RecyclerView.ViewHolder {
 
         TextView showNameTextView;
+        TextView showReviewsTextView;
         ImageView ratingView;
         ImageView deleteView;
+        ImageView reviewView;
 
         FavoritesViewHolder(View view){
             super(view);
@@ -230,6 +305,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
             showNameTextView = view.findViewById(R.id.favorites_item_text_view);
             ratingView = view.findViewById(R.id.favorites_item_rating);
             deleteView = view.findViewById(R.id.favorites_item_delete);
+            reviewView = view.findViewById(R.id.favorites_item_review);
+            showReviewsTextView = view.findViewById(R.id.favorites_item_user_review);
         }
     }
 

@@ -5,7 +5,9 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.tjgaming.finalproject.Model.FavoriteShow;
+import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.Model.UserRating;
+import com.example.tjgaming.finalproject.Model.UserReview;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -116,8 +118,6 @@ public class Database {
                         user_rating = 0.0;
                     }
                     notifyRatingChange(user_rating.intValue());
-//                    EventBus.getDefault().post(new RatingEvent(user_rating.intValue()));
-//                    Log.i("onRating" + TAG,user_rating.intValue() + "");
                 }
             }
         });
@@ -149,11 +149,74 @@ public class Database {
             }
         });
     }
+
+    public void getReview(final String showName) {
+        mDocumentReference = FirebaseFirestore.getInstance()
+                .collection("Reviews")
+                .document(showName)
+                .collection(showName + "-reviews")
+                .document(getUserLoggedIn().getUid());
+
+        mDocumentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    try {
+                        notifyReviewRetrieval(task.getResult().toObject(UserReview.class).getUser_review());
+                    }catch (NullPointerException e) {
+                        e.printStackTrace();
+                        //no review written send default value back to adapter
+                        notifyReviewRetrieval("Your review here....");
+                    }
+                }
+            }
+        });
+    }
+
+    public void addReview(final String showName, final String review) {
+        //First get userName to set as author of review:
+        mDocumentReference = FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(getUserLoggedIn().getUid());
+
+        mDocumentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    final String userName = (task.getResult().toObject(User.class)).getUsername();
+
+                    //Then save the review in the database.
+                    mDocumentReference = FirebaseFirestore.getInstance()
+                            .collection("Reviews")
+                            .document(showName)
+                            .collection(showName + "-reviews")
+                            .document(getUserLoggedIn().getUid());
+
+                    Map<String, Object> userReview = new HashMap<>();
+                    userReview.put("author", userName);
+                    userReview.put("show_name", showName);
+                    userReview.put("user_review", review);
+
+                    mDocumentReference.set(userReview).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                //Notify the watcher that the review has been successfully added
+                                Log.i(TAG,"review saved");
+                                notifyReviewChange(review);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     public void setWatcher(DBWatcher watcher) {
         this.watcher = watcher;
     }
 
-    public void notifyRatingChange(int rating) {
+    private void notifyRatingChange(int rating) {
         if (watcher != null){
             watcher.onRating(rating);
         }
@@ -161,7 +224,19 @@ public class Database {
 
     private void notifyFavoriteChange(List<FavoriteShow> list) {
         if (watcher != null) {
-            watcher.onFavorite(list);
+            watcher.onFavoriteDeleted(list);
+        }
+    }
+
+    private void notifyReviewChange(String review) {
+        if (watcher != null){
+            watcher.onReviewSaved(review);
+        }
+    }
+
+    private void notifyReviewRetrieval(String review) {
+        if (watcher != null){
+            watcher.onReviewReceived(review);
         }
     }
 }

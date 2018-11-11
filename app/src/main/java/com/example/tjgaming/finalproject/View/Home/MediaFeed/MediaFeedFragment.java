@@ -84,6 +84,7 @@ public class MediaFeedFragment extends Fragment {
 
         startProgress();
 
+        //API call to fill the database with show data.
 //        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
 //
 //        Call<List<TVMazeResult>> call = apiInterface.getTvMazeResults();
@@ -146,31 +147,15 @@ public class MediaFeedFragment extends Fragment {
                         }
                     });
                 }
-
-                //TODO: Implement sorting for data based on genre/name/rating/type
-                //TODO: pass values for ordering the data and the direction (ascending/descending)
-                //TODO: pass values for filtering data by type, genre, rating, days, etc.
-                /**
-                 * For Example:
-                 *
-                 *                                    field                     direction
-                 *  mCollectionRef.orderBy           ("show.rating.average",    Query.Direction.DESCENDING).get();
-                 *
-                 *
-                 *                                    field                 value
-                 *  mCollectionRef.whereArrayContains("show.genres",        "Crime")        .get();
-                 *  mCollectionRef.whereArrayContains("show.network.name",  "TNT")          .get();
-                 *  mCollectionRef.whereEqualTo      ("show.type",          "Animation")    .get();
-                 */
-
-//           // }
+            }
+            //Api call on failure
 //            @Override
 //            public void onFailure(Call<List<TVMazeResult>> call, Throwable t) {
 //                Toast.makeText(getActivity(), "Failed Api call..." , Toast.LENGTH_SHORT).show();
 //                Log.e("MediaFeedFragment", t.getLocalizedMessage());
 //            }
 //        });
-    }
+//  }
 
     private void startProgress() {
         progressDialog = new ProgressDialog(getActivity(),
