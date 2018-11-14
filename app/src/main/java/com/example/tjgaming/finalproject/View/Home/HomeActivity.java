@@ -27,6 +27,7 @@ import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.View.Authentication.LoginActivity;
 import com.example.tjgaming.finalproject.View.Home.Favorites.FavoritesFragment;
+import com.example.tjgaming.finalproject.View.Home.Favorites.SearchModel;
 import com.example.tjgaming.finalproject.View.Home.Forum.ForumFragment;
 import com.example.tjgaming.finalproject.View.Home.MediaFeed.MediaFeedFragment;
 import com.example.tjgaming.finalproject.View.Home.Profile.ProfileFragment;
@@ -36,6 +37,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+
+import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
+import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
+import ir.mirrajabi.searchdialog.core.SearchResultListener;
+import ir.mirrajabi.searchdialog.core.Searchable;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -54,6 +62,8 @@ public class HomeActivity extends AppCompatActivity
     RadioButton typeBtn;
     RadioButton genreBtn;
     RadioButton sortBtn;
+
+    ArrayList<SearchModel> searchItem;
 
 
     @Override
@@ -133,21 +143,34 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             refineSearchDialog();
 
-//        } else if (id==R.id.action_search) {
-//            new SimpleSearchDialogCompat<>(HomeActivity.this, "Search...", "What are you looking for...?",
-//                    null, initData(), new SearchResultListener<Searchable>() {
-//                @Override
-//                public void onSelected(BaseSearchDialogCompat baseSearchDialogCompat, Searchable searchable, int i) {
-//                    Toast.makeText(HomeActivity.this, "", Toast.LENGTH_SHORT).show();
-//                    baseSearchDialogCompat.dismiss();
-//                }
-//            }).show();
+        } else if (id==R.id.action_search) {
+            new SimpleSearchDialogCompat(HomeActivity.this, "Search...", "What are you looking for...?",
+                    null, initData(), new SearchResultListener<Searchable>() {
+                @Override
+                public void onSelected(BaseSearchDialogCompat baseSearchDialogCompat, Searchable searchable, int i) {
+                    Toast.makeText(HomeActivity.this, "", Toast.LENGTH_SHORT).show();
+                    baseSearchDialogCompat.dismiss();
+                }
+            }).show();
         } else if (id==R.id.action_logout) {
             logoutDialog();
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    public ArrayList<SearchModel> initData() {
+        searchItem = new ArrayList<>();
+        searchItem.add(new SearchModel("Capn Amerrika"));
+        searchItem.add(new SearchModel("Capn Amerrika"));
+        searchItem.add(new SearchModel("Capn Amerrika"));
+        searchItem.add(new SearchModel("Capn Amerrika"));
+        searchItem.add(new SearchModel("Capn Amerrika"));
+        searchItem.add(new SearchModel("Jesse negro"));
+        searchItem.add(new SearchModel("Capn Amerrika"));
+        searchItem.add(new SearchModel("Capn Amerrika"));
+        return searchItem;
+        }
 
     public void refineSearchDialog() {
 
