@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -27,7 +26,6 @@ import com.example.tjgaming.finalproject.Model.CustomStrings;
 import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.View.Authentication.LoginActivity;
-import com.example.tjgaming.finalproject.View.MainActivity;
 import com.example.tjgaming.finalproject.View.Home.Favorites.FavoritesFragment;
 import com.example.tjgaming.finalproject.View.Home.Forum.ForumFragment;
 import com.example.tjgaming.finalproject.View.Home.MediaFeed.MediaFeedFragment;
@@ -133,8 +131,6 @@ public class HomeActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            //TODO:Open up custom dialog to sort, filter, and order data in media feed fragment
-            //TODO:Get the results of selections and add them to bundle and send them to fragment
             refineSearchDialog();
 
 //        } else if (id==R.id.action_search) {
@@ -154,9 +150,6 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void refineSearchDialog() {
-//        typeBtn= (RadioButton) findViewById(R.id.filter_type_button);
-//        genreBtn= (RadioButton) findViewById(R.id.filter_genre_button);
-//        sortBtn= (RadioButton) findViewById(R.id.sort_button);
 
         final String[] filterTypeArr = {CustomStrings.SHOW_TYPE_DEFAULT, CustomStrings.REALITY, CustomStrings.ANIMATION, CustomStrings.NEWS,
                 CustomStrings.DOCUMENTARY, CustomStrings.TALK_SHOW, CustomStrings.SCRIPTED, CustomStrings.GAME_SHOW};
@@ -169,8 +162,11 @@ public class HomeActivity extends AppCompatActivity
 
         AlertDialog.Builder refineBuilder = new AlertDialog.Builder(this);
         View refineDialogView = getLayoutInflater().inflate(R.layout.filter_dialog_spinner, null);
-        refineBuilder.setTitle("Refine Search");
+        refineBuilder.setTitle(getResources().getString(R.string.action_refine));
 
+        typeBtn = refineDialogView.findViewById(R.id.filter_type_button);
+        genreBtn = refineDialogView.findViewById(R.id.filter_genre_button);
+        sortBtn = refineDialogView.findViewById(R.id.sort_button);
 
         final Spinner filterTypeSpinner = (Spinner) refineDialogView.findViewById(R.id.filter_type_spinner);
         filterTypeSpinner.setEnabled(false);
@@ -195,6 +191,38 @@ public class HomeActivity extends AppCompatActivity
         sortingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sortingSpinner.setAdapter(sortingAdapter);
         refineBuilder.setView(refineDialogView);
+
+        typeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                genreBtn.setChecked(false);
+                filterGenreSpinner.setEnabled(false);
+
+                if (!filterTypeSpinner.isEnabled())
+                    filterTypeSpinner.setEnabled(true);
+            }
+        });
+
+        genreBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                typeBtn.setChecked(false);
+                filterTypeSpinner.setEnabled(false);
+
+                if (!filterGenreSpinner.isEnabled())
+                    filterGenreSpinner.setEnabled(true);
+            }
+        });
+
+        sortBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!sortingSpinner.isEnabled())
+                    sortingSpinner.setEnabled(true);
+            }
+        });
 
         refineBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
