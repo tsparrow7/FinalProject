@@ -6,57 +6,72 @@ import java.util.List;
  * Created by TJ on 10/24/2018.
  */
 public class FavoriteShow {
-    private String mShowName;
-    private List<String> mDays;
-    private String mTime;
-    private String mNetwork;
-    private double mRating;
+    private String show_name;
+    private List<String> days;
+    private String times;
+    private String network;
+    private double rating;
 
-    public FavoriteShow(String mShowName, List<String> mDays, String mTime, String mNetwork, double mRating) {
-        this.mShowName = mShowName;
-        this.mDays = mDays;
-        this.mTime = mTime;
-        this.mNetwork = mNetwork;
-        this.mRating = mRating;
+    public FavoriteShow() {
+
     }
 
-    public String getmShowName() {
-        return mShowName;
+    public FavoriteShow(String show_name, List<String> days, String times, String network, double rating) {
+        this.show_name = show_name;
+        this.days = days;
+        this.times = times;
+        this.network = network;
+        this.rating = rating;
     }
 
-    public void setmShowName(String mShowName) {
-        this.mShowName = mShowName;
+    public String getShow_name() {
+        return show_name;
     }
 
-    public List<String> getmDays() {
-        return mDays;
+    public void setShow_name(String show_name) {
+        this.show_name = show_name;
     }
 
-    public void setmDays(List<String> mDays) {
-        this.mDays = mDays;
+    public List<String> getDays() {
+        return days;
     }
 
-    public String getmTime() {
-        return mTime;
+    public void setDays(List<String> days) {
+        this.days = days;
     }
 
-    public void setmTime(String mTime) {
-        this.mTime = mTime;
+    public String getTimes() {
+        return times;
     }
 
-    public String getmNetwork() {
-        return mNetwork;
+    public void setTimes(String times) {
+        this.times = times;
     }
 
-    public void setmNetwork(String mNetwork) {
-        this.mNetwork = mNetwork;
+    public String getNetwork() {
+        return network;
     }
 
-    public double getmRating() {
-        return mRating;
+    public void setNetwork(String network) {
+        this.network = network;
     }
 
-    public void setmRating(double mRating) {
-        this.mRating = mRating;
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    @Override
+    public String toString() {
+        return "FavoriteShow{" +
+                "show_name='" + show_name + '\'' +
+                ", days=" + days +
+                ", times='" + times + '\'' +
+                ", network='" + network + '\'' +
+                ", rating=" + rating +
+                '}';
     }
 }

@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject;
+package com.example.tjgaming.finalproject.Model;
 
 /**
  * Created by TJ on 11/5/2018.

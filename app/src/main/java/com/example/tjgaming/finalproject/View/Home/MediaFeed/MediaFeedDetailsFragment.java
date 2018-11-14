@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View.Home;
+package com.example.tjgaming.finalproject.View.Home.MediaFeed;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +13,6 @@ import com.example.tjgaming.finalproject.Database.Database;
 import com.example.tjgaming.finalproject.Model.FavoriteShow;
 import com.example.tjgaming.finalproject.R;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class MediaFeedDetailsFragment extends Fragment implements View.OnClickListener {

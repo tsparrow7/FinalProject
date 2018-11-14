@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View.Home;
+package com.example.tjgaming.finalproject.View.Home.Forum;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,11 +13,11 @@ import com.example.tjgaming.finalproject.R;
  * Created by TJ on 10/5/2018.
  */
 
-public class FavoritesFragment extends Fragment {
+public class ForumFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_favorites, container, false);
+        return inflater.inflate(R.layout.fragment_forum, container, false);
     }
 }

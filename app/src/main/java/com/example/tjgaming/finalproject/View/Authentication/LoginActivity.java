@@ -124,23 +124,11 @@ public class LoginActivity extends AppCompatActivity {
                                 profBuildIntent.putExtra("email",email);
                                 startActivity(profBuildIntent);
                                 finish();
-//                                User newUser = new User("userName", email);
-//
-//                                FirebaseDatabase.getInstance().getReference("Users")
-//                                        .child(user.getUid())
-//                                        .setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                    @Override
-//                                    public void onComplete(@NonNull Task<Void> task) {
-//                                        Toast.makeText(LoginActivity.this, "Success", Toast.LENGTH_SHORT).show();
-//                                    }
-//                                });
-                                Toast.makeText(getApplicationContext(),"First time logging in.",Toast.LENGTH_SHORT).show();
                             } else {
                                 Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
                                 intent.putExtra("user_id",user.getUid());
                                 finish();
                                 startActivity(intent);
-                                Toast.makeText(getApplicationContext(),"Been logged in before.",Toast.LENGTH_SHORT).show();
                             }
                             onLoginSuccess();
 

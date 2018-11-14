@@ -23,24 +23,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.tjgaming.finalproject.CustomStrings;
+import com.example.tjgaming.finalproject.Model.CustomStrings;
 import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.View.Authentication.LoginActivity;
 import com.example.tjgaming.finalproject.View.MainActivity;
+import com.example.tjgaming.finalproject.View.Home.Favorites.FavoritesFragment;
+import com.example.tjgaming.finalproject.View.Home.Forum.ForumFragment;
+import com.example.tjgaming.finalproject.View.Home.MediaFeed.MediaFeedFragment;
+import com.example.tjgaming.finalproject.View.Home.Profile.ProfileFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.ArrayList;
-
-import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
-import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
-import ir.mirrajabi.searchdialog.core.SearchResultListener;
-import ir.mirrajabi.searchdialog.core.Searchable;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -150,8 +147,7 @@ public class HomeActivity extends AppCompatActivity
 //                }
 //            }).show();
         } else if (id==R.id.action_logout) {
-            startActivity(new Intent(HomeActivity.this, LoginActivity.class));
-            finish();
+            logoutDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -227,6 +223,28 @@ public class HomeActivity extends AppCompatActivity
         refineDialog.show();
     }
 
+    private void logoutDialog() {
+
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+        alertBuilder.setMessage("Are you sure you want to logout?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                });
+        AlertDialog alert = alertBuilder.create();
+        alert.setTitle("Logout");
+        alert.show();
+    }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

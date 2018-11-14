@@ -1,28 +1,18 @@
-package com.example.tjgaming.finalproject.View.Home;
+package com.example.tjgaming.finalproject.View.Home.MediaFeed;
 
 import android.app.ProgressDialog;
-import android.graphics.Path;
-import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.example.tjgaming.finalproject.Api.ApiClient;
-import com.example.tjgaming.finalproject.Api.ApiInterface;
-import com.example.tjgaming.finalproject.CustomStrings;
 import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.R;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -33,10 +23,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by TJ on 10/5/2018.
@@ -98,6 +84,7 @@ public class MediaFeedFragment extends Fragment {
 
         startProgress();
 
+        //API call to fill the database with show data.
 //        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
 //
 //        Call<List<TVMazeResult>> call = apiInterface.getTvMazeResults();
@@ -160,31 +147,15 @@ public class MediaFeedFragment extends Fragment {
                         }
                     });
                 }
-
-                //TODO: Implement sorting for data based on genre/name/rating/type
-                //TODO: pass values for ordering the data and the direction (ascending/descending)
-                //TODO: pass values for filtering data by type, genre, rating, days, etc.
-                /**
-                 * For Example:
-                 *
-                 *                                    field                     direction
-                 *  mCollectionRef.orderBy           ("show.rating.average",    Query.Direction.DESCENDING).get();
-                 *
-                 *
-                 *                                    field                 value
-                 *  mCollectionRef.whereArrayContains("show.genres",        "Crime")        .get();
-                 *  mCollectionRef.whereArrayContains("show.network.name",  "TNT")          .get();
-                 *  mCollectionRef.whereEqualTo      ("show.type",          "Animation")    .get();
-                 */
-
-//           // }
+            }
+            //Api call on failure
 //            @Override
 //            public void onFailure(Call<List<TVMazeResult>> call, Throwable t) {
 //                Toast.makeText(getActivity(), "Failed Api call..." , Toast.LENGTH_SHORT).show();
 //                Log.e("MediaFeedFragment", t.getLocalizedMessage());
 //            }
 //        });
-    }
+//  }
 
     private void startProgress() {
         progressDialog = new ProgressDialog(getActivity(),
