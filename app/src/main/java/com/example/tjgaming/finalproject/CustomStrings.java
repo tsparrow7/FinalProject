@@ -14,6 +14,7 @@ public class CustomStrings {
     public static final String SHOW_TYPE = "show.type";
 
     //Types of show genres
+    public static final String SHOW_GENRE_DEFAULT = "Select Genre";
     public static final String COMEDY = "Comedy";
     public static final String DRAMA = "Drama";
     public static final String ROMANCE = "Romance";
@@ -30,6 +31,7 @@ public class CustomStrings {
     public static final String THRILLER = "Thriller";
 
     //Types of show types
+    public static final String SHOW_TYPE_DEFAULT = "Select Type";
     public static final String REALITY = "Reality";
     public static final String ANIMATION = "Animation";
     public static final String NEWS = "News";

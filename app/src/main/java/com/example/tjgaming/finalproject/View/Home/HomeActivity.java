@@ -15,7 +15,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +27,7 @@ import com.example.tjgaming.finalproject.CustomStrings;
 import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.View.Authentication.LoginActivity;
+import com.example.tjgaming.finalproject.View.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,6 +55,10 @@ public class HomeActivity extends AppCompatActivity
     private String mSortSelection;
     private String mFilterField = CustomStrings.SHOW_TYPE;
     private String mSortDirection = "Descending";
+
+    RadioButton typeBtn;
+    RadioButton genreBtn;
+    RadioButton sortBtn;
 
 
     @Override
@@ -129,7 +138,7 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             //TODO:Open up custom dialog to sort, filter, and order data in media feed fragment
             //TODO:Get the results of selections and add them to bundle and send them to fragment
-            sortDialog();
+            refineSearchDialog();
 
 //        } else if (id==R.id.action_search) {
 //            new SimpleSearchDialogCompat<>(HomeActivity.this, "Search...", "What are you looking for...?",
@@ -148,52 +157,52 @@ public class HomeActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void sortDialog() {
-        final String[] sorting = {CustomStrings.SHOW_NAME,CustomStrings.SHOW_RATING_AVERAGE,CustomStrings.SHOW_SCHEDULE_TIME};
-        AlertDialog.Builder sortBuilder = new AlertDialog.Builder(this);
-        sortBuilder.setTitle("Sort");
-        sortBuilder.setSingleChoiceItems(sorting, -1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mSortSelection = sorting[which];
-                    }
-                });
+    public void refineSearchDialog() {
+//        typeBtn= (RadioButton) findViewById(R.id.filter_type_button);
+//        genreBtn= (RadioButton) findViewById(R.id.filter_genre_button);
+//        sortBtn= (RadioButton) findViewById(R.id.sort_button);
 
-        sortBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        final String[] filterTypeArr = {CustomStrings.SHOW_TYPE_DEFAULT, CustomStrings.REALITY, CustomStrings.ANIMATION, CustomStrings.NEWS,
+                CustomStrings.DOCUMENTARY, CustomStrings.TALK_SHOW, CustomStrings.SCRIPTED, CustomStrings.GAME_SHOW};
+
+        final String[] filterGenreArr = {CustomStrings.SHOW_GENRE_DEFAULT, CustomStrings.COMEDY, CustomStrings.DRAMA, CustomStrings.ROMANCE,
+                CustomStrings.ADVENTURE, CustomStrings.NATURE, CustomStrings.FAMILY, CustomStrings.CRIME, CustomStrings.MYSTERY, CustomStrings.SUPERNATURAL,
+                CustomStrings.HORROR, CustomStrings.HISTORY, CustomStrings.SCIENCE_FICTION, CustomStrings.FANTASY, CustomStrings.THRILLER};
+
+        final String[] sortingArr = {CustomStrings.SHOW_NAME,CustomStrings.SHOW_RATING_AVERAGE,CustomStrings.SHOW_SCHEDULE_TIME};
+
+        AlertDialog.Builder refineBuilder = new AlertDialog.Builder(this);
+        View refineDialogView = getLayoutInflater().inflate(R.layout.filter_dialog_spinner, null);
+        refineBuilder.setTitle("Refine Search");
+
+
+        final Spinner filterTypeSpinner = (Spinner) refineDialogView.findViewById(R.id.filter_type_spinner);
+        filterTypeSpinner.setEnabled(false);
+        ArrayAdapter<String> filterTypeAdapter = new ArrayAdapter<String>(HomeActivity.this,
+                android.R.layout.simple_spinner_item, filterTypeArr);
+        filterTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterTypeSpinner.setAdapter(filterTypeAdapter);
+        refineBuilder.setView(refineDialogView);
+
+        final Spinner filterGenreSpinner = (Spinner) refineDialogView.findViewById(R.id.filter_genre_spinner);
+        filterGenreSpinner.setEnabled(false);
+        final ArrayAdapter<String> filterGenreAdapter = new ArrayAdapter<String>(HomeActivity.this,
+                android.R.layout.simple_spinner_item, filterGenreArr);
+        filterGenreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterGenreSpinner.setAdapter(filterGenreAdapter);
+        refineBuilder.setView(refineDialogView);
+
+        final Spinner sortingSpinner = (Spinner) refineDialogView.findViewById(R.id.sort_spinner);
+        sortingSpinner.setEnabled(false);
+        ArrayAdapter<String> sortingAdapter = new ArrayAdapter<String>(HomeActivity.this,
+                android.R.layout.simple_spinner_item, sortingArr);
+        sortingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortingSpinner.setAdapter(sortingAdapter);
+        refineBuilder.setView(refineDialogView);
+
+        refineBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                filterDialog();
-            }
-        });
-
-        sortBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        AlertDialog sortDialog = sortBuilder.create();
-        sortDialog.show();
-
-    }
-
-    public void filterDialog() {
-        final String[] filterArr = {CustomStrings.REALITY, CustomStrings.ANIMATION, CustomStrings.NEWS,
-                                 CustomStrings.DOCUMENTARY, CustomStrings.TALK_SHOW, CustomStrings.SCRIPTED, CustomStrings.GAME_SHOW};
-
-        AlertDialog.Builder filterBuilder = new AlertDialog.Builder(this);
-        filterBuilder.setTitle("Filter");
-        filterBuilder.setSingleChoiceItems(filterArr, -1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mFilterSelection = filterArr[which];
-            }
-        });
-
-        filterBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
                 MediaFeedFragment mediaFeedFragment = new MediaFeedFragment();
                 Bundle bundle = new Bundle();
 
@@ -205,22 +214,18 @@ public class HomeActivity extends AppCompatActivity
 
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         mediaFeedFragment).commit();
-
             }
         });
 
-        filterBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        refineBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
-        AlertDialog filterDialog = filterBuilder.create();
-        filterDialog.show();
-
+        AlertDialog refineDialog = refineBuilder.create();
+        refineDialog.show();
     }
-
-
 
 
     @Override
