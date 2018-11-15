@@ -2,6 +2,7 @@ package com.example.tjgaming.finalproject.Database;
 
 import com.example.tjgaming.finalproject.Model.FavoriteShow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface DBWatcher {
@@ -12,4 +13,6 @@ public interface DBWatcher {
     void onReviewSaved(String review);
 
     void onReviewReceived(String review);
+
+    void onListReceived(ArrayList<String> list);
 }

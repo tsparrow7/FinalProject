@@ -85,7 +85,11 @@ public class MediaFeedAdapter extends RecyclerView.Adapter<MediaFeedAdapter.Medi
         args.putInt("number",mList.get(itemPosition).getNumber());
         args.putString("time",mList.get(itemPosition).getShow().getSchedule().getTime());
         args.putStringArrayList("days",(ArrayList<String>)mList.get(itemPosition).getShow().getSchedule().getDays());
-        args.putString("network",mList.get(itemPosition).getShow().getNetwork().getName());
+        try {
+            args.putString("network", mList.get(itemPosition).getShow().getNetwork().getName());
+        } catch (NullPointerException e){
+            args.putString("network", "N/A");
+        }
         args.putDouble("rating",mList.get(itemPosition).getShow().getRating().getAverage());
 
         fragment.setArguments(args);

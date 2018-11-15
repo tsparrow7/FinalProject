@@ -5,6 +5,8 @@ package com.example.tjgaming.finalproject.Model;
  */
 public class CustomStrings {
 
+    //Ways to sort/order data
+    public final static String SHOW_SORT_DEFAULT = "Select Sort";
     public static final String SHOW_GENRES = "show.genres";
     public static final String SHOW_NAME = "show.name";
     public static final String SHOW_NETWORK_NAME = "show.network.name";

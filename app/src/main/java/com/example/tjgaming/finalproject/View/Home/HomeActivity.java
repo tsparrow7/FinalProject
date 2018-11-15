@@ -22,7 +22,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tjgaming.finalproject.Database.DBWatcher;
+import com.example.tjgaming.finalproject.Database.Database;
 import com.example.tjgaming.finalproject.Model.CustomStrings;
+import com.example.tjgaming.finalproject.Model.FavoriteShow;
+import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.View.Authentication.LoginActivity;
@@ -39,6 +43,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
 import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
@@ -46,24 +51,25 @@ import ir.mirrajabi.searchdialog.core.SearchResultListener;
 import ir.mirrajabi.searchdialog.core.Searchable;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, MediaFeedFragment.OnListCreatedListener, DBWatcher {
 
     private DocumentReference mDocRef;
     private FirebaseAuth mFirebaseAuth;
+    private Database mDatabase;
     private User mUser;
     private TextView mUserName;
     private TextView mUserEmail;
 
     private String mFilterSelection;
     private String mSortSelection;
-    private String mFilterField = CustomStrings.SHOW_TYPE;
-    private String mSortDirection = "Descending";
+    private String mFilterField;
+    private String mSortDirection;
 
     RadioButton typeBtn;
     RadioButton genreBtn;
     RadioButton sortBtn;
 
-    ArrayList<SearchModel> searchItem;
+    ArrayList<SearchModel> searchItem = new ArrayList<>();
 
 
     @Override
@@ -88,7 +94,9 @@ public class HomeActivity extends AppCompatActivity
 
         String uid = getIntent().getStringExtra("user_id");
 
-        //TODO: Get a Firebase Database Reference and get the data of the user logging in
+        mDatabase = new Database(HomeActivity.this);
+        mDatabase.setWatcher(this);
+        //Get a Firebase Database Reference and get the data of the user logging in
         mDocRef = FirebaseFirestore.getInstance().collection("users").document(uid);
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseAuth.getCurrentUser();
@@ -144,14 +152,7 @@ public class HomeActivity extends AppCompatActivity
             refineSearchDialog();
 
         } else if (id==R.id.action_search) {
-            new SimpleSearchDialogCompat(HomeActivity.this, "Search...", "What are you looking for...?",
-                    null, initData(), new SearchResultListener<Searchable>() {
-                @Override
-                public void onSelected(BaseSearchDialogCompat baseSearchDialogCompat, Searchable searchable, int i) {
-                    Toast.makeText(HomeActivity.this, "", Toast.LENGTH_SHORT).show();
-                    baseSearchDialogCompat.dismiss();
-                }
-            }).show();
+            mDatabase.getAllShowsForSearch();
         } else if (id==R.id.action_logout) {
             logoutDialog();
         }
@@ -159,29 +160,22 @@ public class HomeActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public ArrayList<SearchModel> initData() {
-        searchItem = new ArrayList<>();
-        searchItem.add(new SearchModel("Capn Amerrika"));
-        searchItem.add(new SearchModel("Capn Amerrika"));
-        searchItem.add(new SearchModel("Capn Amerrika"));
-        searchItem.add(new SearchModel("Capn Amerrika"));
-        searchItem.add(new SearchModel("Capn Amerrika"));
-        searchItem.add(new SearchModel("Jesse negro"));
-        searchItem.add(new SearchModel("Capn Amerrika"));
-        searchItem.add(new SearchModel("Capn Amerrika"));
-        return searchItem;
-        }
-
     public void refineSearchDialog() {
 
-        final String[] filterTypeArr = {CustomStrings.SHOW_TYPE_DEFAULT, CustomStrings.REALITY, CustomStrings.ANIMATION, CustomStrings.NEWS,
-                CustomStrings.DOCUMENTARY, CustomStrings.TALK_SHOW, CustomStrings.SCRIPTED, CustomStrings.GAME_SHOW};
+        final String[] filterTypeArr = {CustomStrings.SHOW_TYPE_DEFAULT,
+                CustomStrings.REALITY, CustomStrings.ANIMATION, CustomStrings.NEWS,
+                CustomStrings.DOCUMENTARY, CustomStrings.TALK_SHOW, CustomStrings.SCRIPTED,
+                CustomStrings.GAME_SHOW};
 
-        final String[] filterGenreArr = {CustomStrings.SHOW_GENRE_DEFAULT, CustomStrings.COMEDY, CustomStrings.DRAMA, CustomStrings.ROMANCE,
-                CustomStrings.ADVENTURE, CustomStrings.NATURE, CustomStrings.FAMILY, CustomStrings.CRIME, CustomStrings.MYSTERY, CustomStrings.SUPERNATURAL,
-                CustomStrings.HORROR, CustomStrings.HISTORY, CustomStrings.SCIENCE_FICTION, CustomStrings.FANTASY, CustomStrings.THRILLER};
+        final String[] filterGenreArr = {CustomStrings.SHOW_GENRE_DEFAULT,
+                CustomStrings.COMEDY, CustomStrings.DRAMA, CustomStrings.ROMANCE,
+                CustomStrings.ADVENTURE, CustomStrings.NATURE, CustomStrings.FAMILY,
+                CustomStrings.CRIME, CustomStrings.MYSTERY, CustomStrings.SUPERNATURAL,
+                CustomStrings.HORROR, CustomStrings.HISTORY, CustomStrings.SCIENCE_FICTION,
+                CustomStrings.FANTASY, CustomStrings.THRILLER};
 
-        final String[] sortingArr = {CustomStrings.SHOW_NAME,CustomStrings.SHOW_RATING_AVERAGE,CustomStrings.SHOW_SCHEDULE_TIME};
+        final String[] sortingArr = {CustomStrings.SHOW_SORT_DEFAULT,
+                CustomStrings.SHOW_NAME,CustomStrings.SHOW_RATING_AVERAGE};
 
         AlertDialog.Builder refineBuilder = new AlertDialog.Builder(this);
         View refineDialogView = getLayoutInflater().inflate(R.layout.filter_dialog_spinner, null);
@@ -253,12 +247,28 @@ public class HomeActivity extends AppCompatActivity
                 MediaFeedFragment mediaFeedFragment = new MediaFeedFragment();
                 Bundle bundle = new Bundle();
 
+                if (typeBtn.isChecked()) {
+                    mFilterField = CustomStrings.SHOW_TYPE;
+                    mFilterSelection = filterTypeSpinner.getSelectedItem().toString();
+                } else if (genreBtn.isChecked()) {
+                    mFilterField = CustomStrings.SHOW_GENRES;
+                    mFilterSelection = filterGenreSpinner.getSelectedItem().toString();
+                }
+                if (sortBtn.isChecked()) {
+                    mSortSelection = sortingSpinner.getSelectedItem().toString();
+                    if (mSortSelection.equals(CustomStrings.SHOW_NAME)){
+                        mSortDirection = "Ascending"; // If we are sorting by name then we want direction to be Ascending
+                    } else if (mSortSelection.equals(CustomStrings.SHOW_RATING_AVERAGE)){
+                        mSortDirection = "Descending";
+                    }
+                }
+
                 bundle.putString("Field",mFilterField);
                 bundle.putString("Value",mFilterSelection);
                 bundle.putString("Order",mSortSelection);
                 bundle.putString("Direction",mSortDirection);
-                mediaFeedFragment.setArguments(bundle);
 
+                mediaFeedFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         mediaFeedFragment).commit();
             }
@@ -328,5 +338,66 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+//    @Override
+//    public void onListCreated(List<TVMazeResult> list) {
+//
+//        if (list != null){
+//            searchItem = new ArrayList<>();
+//
+//            for (int i = 0; i < list.size(); i++) {
+//                try {
+//                    searchItem.add(new SearchModel(list.get(i).getShow().getName()));
+//                }catch (NullPointerException e){
+//                    //Do not add item to list if showname is null
+//                }
+//            }
+//        }
+//    }
+
+    @Override
+    public void onFavoriteDeleted(List<FavoriteShow> list) {
+        //not used
+    }
+
+    @Override
+    public void onRating(int rating) {
+        //not used
+    }
+
+    @Override
+    public void onReviewSaved(String review) {
+        //not used
+    }
+
+    @Override
+    public void onReviewReceived(String review) {
+        //not used
+    }
+
+    @Override
+    public void onListReceived(ArrayList<String> list) {
+
+        if (list != null){
+            searchItem = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                searchItem.add(new SearchModel(list.get(i)));
+            }
+        }
+
+        new SimpleSearchDialogCompat(HomeActivity.this, "Search...", "What are you looking for...?",
+                null, searchItem, new SearchResultListener<Searchable>() {
+            @Override
+            public void onSelected(BaseSearchDialogCompat baseSearchDialogCompat, Searchable searchable, int i) {
+                Toast.makeText(HomeActivity.this, "item was selected", Toast.LENGTH_SHORT).show();
+                baseSearchDialogCompat.dismiss();
+            }
+        }).show();
+    }
+
+    @Override
+    public void onListCreated(List<TVMazeResult> list) {
+        //not used
     }
 }

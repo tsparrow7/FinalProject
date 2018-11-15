@@ -21,6 +21,7 @@ import com.example.tjgaming.finalproject.Model.FavoriteShow;
 import com.example.tjgaming.finalproject.Model.UserReview;
 import com.example.tjgaming.finalproject.R;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -76,6 +77,11 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         //Toast.makeText(mContext, review, Toast.LENGTH_SHORT).show();
         userReview = review;
         displayReviewDialog(view);
+    }
+
+    @Override
+    public void onListReceived(ArrayList<String> list) {
+        //not used
     }
 
     @Override

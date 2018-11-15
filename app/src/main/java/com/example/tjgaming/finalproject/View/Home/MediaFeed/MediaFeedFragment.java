@@ -1,6 +1,7 @@
 package com.example.tjgaming.finalproject.View.Home.MediaFeed;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.tjgaming.finalproject.Model.CustomStrings;
 import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,6 +37,8 @@ public class MediaFeedFragment extends Fragment {
     List<TVMazeResult> mList = new ArrayList<>();
     ProgressDialog progressDialog;
 
+    OnListCreatedListener mListener;
+
     private String FIELD;
     private String VALUE;
     private String ORDERING;
@@ -57,10 +61,12 @@ public class MediaFeedFragment extends Fragment {
             ORDERING = bundle.getString("Order");
             String STR_DIRECTION = bundle.getString("Direction");
 
-            if (STR_DIRECTION.equals("Ascending")){
-                DIRECTION = Query.Direction.ASCENDING;
-            } else {
-                DIRECTION = Query.Direction.DESCENDING;
+            if (STR_DIRECTION != null) {
+                if (STR_DIRECTION.equals("Ascending")) {
+                    DIRECTION = Query.Direction.ASCENDING;
+                } else {
+                    DIRECTION = Query.Direction.DESCENDING;
+                }
             }
         }
         mRecyclerView = root.findViewById(R.id.media_feed_recycler);
@@ -68,6 +74,10 @@ public class MediaFeedFragment extends Fragment {
         initAdapter();
         tvMazeRequest();
         return root;
+    }
+
+    private void sendDataBack() {
+        mListener.onListCreated(mList);
     }
 
     private void initAdapter() {
@@ -112,41 +122,121 @@ public class MediaFeedFragment extends Fragment {
 //                }
 
                 //Retrieve data from database and set to the data in the adapter.
+                mList.clear();
+                mFirestore = FirebaseFirestore.getInstance();
+                mCollectionRef = mFirestore.collection("TV Shows");
 
-                if (FIELD == null || VALUE == null || ORDERING == null || DIRECTION == null) {
-                    mList.clear();
-                    mFirestore = FirebaseFirestore.getInstance();
-                    mCollectionRef = mFirestore.collection("TV Shows");
-                    mCollectionRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots){
-                                TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
+                if (FIELD != null) {
+                    if (FIELD.equals(CustomStrings.SHOW_GENRES) && VALUE != null) {
 
-                                mList.add(tvMazeResult);
-                            }
-                            stopProgress();
-                            mAdapter.setData(mList);
+                        if (ORDERING != null) {
+                            mCollectionRef
+                                    .whereArrayContains(FIELD, VALUE)
+                                    .orderBy(ORDERING,DIRECTION)
+                                    .get()
+                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                                TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
+
+                                                mList.add(tvMazeResult);
+                                            }
+                                            stopProgress();
+                                            mAdapter.setData(mList);
+                                        }
+                                    });
+                        } else {
+                            mCollectionRef
+                                    .whereArrayContains(FIELD, VALUE)
+                                    .get()
+                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                                TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
+
+                                                mList.add(tvMazeResult);
+                                            }
+                                            stopProgress();
+                                            mAdapter.setData(mList);
+                                        }
+                                    });
                         }
-                    });
-                } else {
+                    } else if (FIELD.equals(CustomStrings.SHOW_TYPE) && VALUE != null) {
 
-                    mList.clear();
-                    mFirestore = FirebaseFirestore.getInstance();
-                    mCollectionRef = mFirestore.collection("TV Shows");
-                    mCollectionRef.whereEqualTo(FIELD, VALUE).orderBy(ORDERING, DIRECTION).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
-                                TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
+                        if (ORDERING != null) {
+                            mCollectionRef
+                                    .whereEqualTo(FIELD, VALUE)
+                                    .orderBy(ORDERING,DIRECTION)
+                                    .get()
+                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                                TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
 
-                                mList.add(tvMazeResult);
-                            }
-                            stopProgress();
-                            mAdapter.setData(mList);
+                                                mList.add(tvMazeResult);
+                                            }
+                                            stopProgress();
+                                            mAdapter.setData(mList);
+                                        }
+                                    });
+                        } else {
+                            mCollectionRef
+                                    .whereEqualTo(FIELD, VALUE)
+                                    .get()
+                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                                TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
+
+                                                mList.add(tvMazeResult);
+                                            }
+                                            stopProgress();
+                                            mAdapter.setData(mList);
+                                        }
+                                    });
                         }
-                    });
+                    }
                 }
+                //only sorting / ordering
+                else if (ORDERING != null){
+                    mCollectionRef
+                            .orderBy(ORDERING,DIRECTION)
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                        TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
+
+                                        mList.add(tvMazeResult);
+                                    }
+                                    stopProgress();
+                                    mAdapter.setData(mList);
+                                }
+                            });
+                }
+                //default call, no filtering or sorting. Called when fragment first attached
+                else {
+                    mCollectionRef
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                        TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
+
+                                        mList.add(tvMazeResult);
+                                    }
+                                    stopProgress();
+                                    mAdapter.setData(mList);
+                                }
+                            });
+                }
+
             }
             //Api call on failure
 //            @Override
@@ -167,5 +257,22 @@ public class MediaFeedFragment extends Fragment {
 
     private void stopProgress() {
         progressDialog.dismiss();
+
+        sendDataBack();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (OnListCreatedListener)context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + "Must implement OnListCreatedListener");
+        }
+    }
+
+    public interface OnListCreatedListener {
+        void onListCreated(List<TVMazeResult> list);
     }
 }

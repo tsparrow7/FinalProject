@@ -5,18 +5,24 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.tjgaming.finalproject.Model.FavoriteShow;
+import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.Model.UserRating;
 import com.example.tjgaming.finalproject.Model.UserReview;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +37,10 @@ public class Database {
     private Context mContext;
     private FirebaseAuth mFirebaseAuth;
     private DocumentReference mDocumentReference;
+    private CollectionReference mCollectionReference;
     private DBWatcher watcher = null;
     private List<FavoriteShow> mFavoritesList;
+    private ArrayList<String> mList;
 
 
     public Database(Context context) {
@@ -68,6 +76,30 @@ public class Database {
     public FirebaseUser getUserLoggedIn() {
         mFirebaseAuth = FirebaseAuth.getInstance();
         return mFirebaseAuth.getCurrentUser();
+    }
+
+    public void getAllShowsForSearch() {
+        mList = new ArrayList<>();
+
+        mCollectionReference = FirebaseFirestore.getInstance()
+                .collection("TV Shows");
+
+        mCollectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots){
+                    TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
+
+                    try {
+                        mList.add(tvMazeResult.getShow().getName());
+                    } catch (NullPointerException e){
+                        //do not add show to list if null exception occurs
+                        Log.e(TAG,e.getMessage());
+                    }
+                }
+                notifySearchResultsRetrieval(mList);
+            }
+        });
     }
 
     public void addUserRating(String showName, float userRating) {
@@ -223,7 +255,7 @@ public class Database {
     }
 
     private void notifyFavoriteChange(List<FavoriteShow> list) {
-        if (watcher != null) {
+        if (watcher != null){
             watcher.onFavoriteDeleted(list);
         }
     }
@@ -237,6 +269,12 @@ public class Database {
     private void notifyReviewRetrieval(String review) {
         if (watcher != null){
             watcher.onReviewReceived(review);
+        }
+    }
+
+    private void notifySearchResultsRetrieval(ArrayList<String> list) {
+        if (watcher != null){
+            watcher.onListReceived(list);
         }
     }
 }
