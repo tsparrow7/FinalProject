@@ -6,6 +6,6 @@
         android:id="@+id/media_feed_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/accent"/>
+        android:background="@color/accent" />
 
 </RelativeLayout>
