@@ -28,6 +28,7 @@ import com.example.tjgaming.finalproject.Model.CustomStrings;
 import com.example.tjgaming.finalproject.Model.FavoriteShow;
 import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.Model.User;
+import com.example.tjgaming.finalproject.Model.UserReview;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.View.Authentication.LoginActivity;
 import com.example.tjgaming.finalproject.View.Home.Favorites.FavoritesFragment;
@@ -400,6 +401,16 @@ public class HomeActivity extends AppCompatActivity
                 baseSearchDialogCompat.dismiss();
             }
         }).show();
+    }
+
+    @Override
+    public void onReviewObjectReceived(UserReview userReview) {
+        //not used
+    }
+
+    @Override
+    public void onReviewListReceived(ArrayList<UserReview> list) {
+        //not used
     }
 
     @Override

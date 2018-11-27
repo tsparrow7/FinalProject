@@ -41,6 +41,7 @@ public class Database {
     private DBWatcher watcher = null;
     private List<FavoriteShow> mFavoritesList;
     private ArrayList<String> mList;
+    private ArrayList<UserReview> mUserReviewList;
 
 
     public Database(Context context) {
@@ -205,6 +206,50 @@ public class Database {
         });
     }
 
+    public void getReviewObject(final String showName) {
+        mDocumentReference = FirebaseFirestore.getInstance()
+                .collection("Reviews")
+                .document(showName)
+                .collection(showName + "-reviews")
+                .document(getUserLoggedIn().getUid());
+
+        mDocumentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    try {
+                        notifyReviewObjectRetrieval(task.getResult().toObject(UserReview.class));
+                    }catch (NullPointerException e) {
+                        e.printStackTrace();
+                        //no review written send default value back
+                        notifyReviewObjectRetrieval(new UserReview("N/A","default","No review written..."));
+                    }
+                }
+            }
+        });
+    }
+
+    public void getListOfReviews(final String showName) {
+        mUserReviewList = new ArrayList<>();
+
+        mCollectionReference = FirebaseFirestore.getInstance()
+                .collection("Reviews")
+                .document(showName)
+                .collection(showName + "-reviews");
+
+        mCollectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots){
+                    UserReview userReview = queryDocumentSnapshot.toObject(UserReview.class);
+
+                    mUserReviewList.add(userReview);
+                }
+                notifyReviewListRetrieval(mUserReviewList);
+            }
+        });
+    }
+
     public void addReview(final String showName, final String review) {
         //First get userName to set as author of review:
         mDocumentReference = FirebaseFirestore.getInstance()
@@ -275,6 +320,18 @@ public class Database {
     private void notifySearchResultsRetrieval(ArrayList<String> list) {
         if (watcher != null){
             watcher.onListReceived(list);
+        }
+    }
+
+    private void notifyReviewObjectRetrieval(UserReview userReview) {
+        if (watcher != null){
+            watcher.onReviewObjectReceived(userReview);
+        }
+    }
+
+    private void notifyReviewListRetrieval(ArrayList<UserReview> userReviewArrayList) {
+        if (watcher != null) {
+            watcher.onReviewListReceived(userReviewArrayList);
         }
     }
 }

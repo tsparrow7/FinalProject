@@ -3,6 +3,7 @@ package com.example.tjgaming.finalproject.View.Home.Favorites;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.example.tjgaming.finalproject.Database.Database;
 import com.example.tjgaming.finalproject.Model.FavoriteShow;
 import com.example.tjgaming.finalproject.Model.UserReview;
 import com.example.tjgaming.finalproject.R;
+import com.example.tjgaming.finalproject.View.Home.Favorites.Reviews.ReviewsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +87,16 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
     }
 
     @Override
+    public void onReviewObjectReceived(UserReview userReview) {
+        //not used
+    }
+
+    @Override
+    public void onReviewListReceived(ArrayList<UserReview> list) {
+        //not used
+    }
+
+    @Override
     public FavoritesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.favorites_item, parent, false);
@@ -107,6 +119,17 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
             @Override
             public void onClick(View v) {
                 //TODO: Will bring user to reviews page to view and rate user reviews.
+                Intent intent = new Intent(mContext, ReviewsActivity.class);
+                final String showName = ((TextView) ((RelativeLayout) ((LinearLayout) v
+                        .getParent())
+                        .getChildAt(0))
+                        .getChildAt(0))
+                        .getText()
+                        .toString();
+
+                intent.putExtra("showName",showName);
+
+                mContext.startActivity(intent);
             }
         });
 
