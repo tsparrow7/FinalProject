@@ -89,7 +89,9 @@ public class MediaFeedFragment extends Fragment {
 
     private void initAdapter() {
         mAdapter = new MediaFeedAdapter(getActivity());
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(mAdapter);
 
 //        for (int i = 0; i < 10; i++) {
