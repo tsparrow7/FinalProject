@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View.Home.Favorites;
+package com.example.tjgaming.finalproject.Model;
 
 
 import ir.mirrajabi.searchdialog.core.Searchable;
@@ -16,6 +16,11 @@ public class SearchModel implements Searchable {
 
     @Override
     public String getTitle() {
+        return mTitle;
+    }
+
+    @Override
+    public String toString() {
         return mTitle;
     }
 }

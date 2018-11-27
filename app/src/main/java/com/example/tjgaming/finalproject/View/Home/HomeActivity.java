@@ -31,7 +31,7 @@ import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.View.Authentication.LoginActivity;
 import com.example.tjgaming.finalproject.View.Home.Favorites.FavoritesFragment;
-import com.example.tjgaming.finalproject.View.Home.Favorites.SearchModel;
+import com.example.tjgaming.finalproject.Model.SearchModel;
 import com.example.tjgaming.finalproject.View.Home.Forum.ForumFragment;
 import com.example.tjgaming.finalproject.View.Home.MediaFeed.MediaFeedFragment;
 import com.example.tjgaming.finalproject.View.Home.Profile.ProfileFragment;
@@ -390,7 +390,13 @@ public class HomeActivity extends AppCompatActivity
                 null, searchItem, new SearchResultListener<Searchable>() {
             @Override
             public void onSelected(BaseSearchDialogCompat baseSearchDialogCompat, Searchable searchable, int i) {
-                Toast.makeText(HomeActivity.this, "item was selected", Toast.LENGTH_SHORT).show();
+                MediaFeedFragment mediaFeedFragment = new MediaFeedFragment();
+                Bundle bundle = new Bundle();
+
+                bundle.putString("searchedItem",searchable.toString());
+                mediaFeedFragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        mediaFeedFragment).commit();
                 baseSearchDialogCompat.dismiss();
             }
         }).show();
