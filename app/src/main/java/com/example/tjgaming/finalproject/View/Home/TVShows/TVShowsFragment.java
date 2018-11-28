@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View.Home.MediaFeed;
+package com.example.tjgaming.finalproject.View.Home.TVShows;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -30,10 +30,10 @@ import java.util.List;
  * Created by TJ on 10/5/2018.
  */
 
-public class MediaFeedFragment extends Fragment {
+public class TVShowsFragment extends Fragment {
 
     RecyclerView mRecyclerView;
-    MediaFeedAdapter mAdapter;
+    TVShowsAdapter mAdapter;
     List<TVMazeResult> mList = new ArrayList<>();
     ProgressDialog progressDialog;
 
@@ -88,7 +88,7 @@ public class MediaFeedFragment extends Fragment {
     }
 
     private void initAdapter() {
-        mAdapter = new MediaFeedAdapter(getActivity());
+        mAdapter = new TVShowsAdapter(getActivity());
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(manager);
@@ -104,7 +104,7 @@ public class MediaFeedFragment extends Fragment {
         startProgress();
 
         //API call to fill the database with show data.
-//        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+//        TVShowsApiInterface apiInterface = TVShowsApiClient.getClient().create(TVShowsApiInterface.class);
 //
 //        Call<List<TVMazeResult>> call = apiInterface.getTvMazeResults();
 //
@@ -269,7 +269,7 @@ public class MediaFeedFragment extends Fragment {
 //            @Override
 //            public void onFailure(Call<List<TVMazeResult>> call, Throwable t) {
 //                Toast.makeText(getActivity(), "Failed Api call..." , Toast.LENGTH_SHORT).show();
-//                Log.e("MediaFeedFragment", t.getLocalizedMessage());
+//                Log.e("TVShowsFragment", t.getLocalizedMessage());
 //            }
 //        });
 //  }

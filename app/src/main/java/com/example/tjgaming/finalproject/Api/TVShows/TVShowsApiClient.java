@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.Api;
+package com.example.tjgaming.finalproject.Api.TVShows;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by TJ on 10/15/2018.
  */
-public class ApiClient {
+public class TVShowsApiClient {
     public static final String BASE_URL = "https://tvjan-tvmaze-v1.p.mashape.com/";
     public static Retrofit sRetrofit = null;
 

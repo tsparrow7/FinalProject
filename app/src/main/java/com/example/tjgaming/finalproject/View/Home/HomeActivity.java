@@ -34,7 +34,8 @@ import com.example.tjgaming.finalproject.View.Authentication.LoginActivity;
 import com.example.tjgaming.finalproject.View.Home.Favorites.FavoritesFragment;
 import com.example.tjgaming.finalproject.Model.SearchModel;
 import com.example.tjgaming.finalproject.View.Home.Forum.ForumFragment;
-import com.example.tjgaming.finalproject.View.Home.MediaFeed.MediaFeedFragment;
+import com.example.tjgaming.finalproject.View.Home.MediaFeed.MediaTabbedFragment;
+import com.example.tjgaming.finalproject.View.Home.TVShows.TVShowsFragment;
 import com.example.tjgaming.finalproject.View.Home.Profile.ProfileFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -52,7 +53,7 @@ import ir.mirrajabi.searchdialog.core.SearchResultListener;
 import ir.mirrajabi.searchdialog.core.Searchable;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MediaFeedFragment.OnListCreatedListener, DBWatcher {
+        implements NavigationView.OnNavigationItemSelectedListener, TVShowsFragment.OnListCreatedListener, DBWatcher {
 
     private DocumentReference mDocRef;
     private FirebaseAuth mFirebaseAuth;
@@ -117,7 +118,7 @@ public class HomeActivity extends AppCompatActivity
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new MediaFeedFragment()).commit();
+                    new MediaTabbedFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_media_feed);
         }
     }
@@ -151,7 +152,6 @@ public class HomeActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             refineSearchDialog();
-
         } else if (id==R.id.action_search) {
             mDatabase.getAllShowsForSearch();
         } else if (id==R.id.action_logout) {
@@ -245,7 +245,7 @@ public class HomeActivity extends AppCompatActivity
         refineBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                MediaFeedFragment mediaFeedFragment = new MediaFeedFragment();
+                TVShowsFragment TVShowsFragment = new TVShowsFragment();
                 Bundle bundle = new Bundle();
 
                 if (typeBtn.isChecked()) {
@@ -269,9 +269,9 @@ public class HomeActivity extends AppCompatActivity
                 bundle.putString("Order",mSortSelection);
                 bundle.putString("Direction",mSortDirection);
 
-                mediaFeedFragment.setArguments(bundle);
+                TVShowsFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        mediaFeedFragment).commit();
+                        TVShowsFragment).commit();
             }
         });
 
@@ -315,7 +315,7 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_media_feed) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new MediaFeedFragment()).commit();
+                    new MediaTabbedFragment()).commit();
 
         } else if (id == R.id.nav_favorites) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
@@ -391,13 +391,13 @@ public class HomeActivity extends AppCompatActivity
                 null, searchItem, new SearchResultListener<Searchable>() {
             @Override
             public void onSelected(BaseSearchDialogCompat baseSearchDialogCompat, Searchable searchable, int i) {
-                MediaFeedFragment mediaFeedFragment = new MediaFeedFragment();
+                TVShowsFragment TVShowsFragment = new TVShowsFragment();
                 Bundle bundle = new Bundle();
 
                 bundle.putString("searchedItem",searchable.toString());
-                mediaFeedFragment.setArguments(bundle);
+                TVShowsFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        mediaFeedFragment).commit();
+                        TVShowsFragment).commit();
                 baseSearchDialogCompat.dismiss();
             }
         }).show();

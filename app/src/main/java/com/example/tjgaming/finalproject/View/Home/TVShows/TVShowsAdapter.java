@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View.Home.MediaFeed;
+package com.example.tjgaming.finalproject.View.Home.TVShows;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -21,13 +21,13 @@ import java.util.List;
 /**
  * Created by TJ on 10/15/2018.
  */
-public class MediaFeedAdapter extends RecyclerView.Adapter<MediaFeedAdapter.MediaFeedViewHolder> implements View.OnClickListener {
+public class TVShowsAdapter extends RecyclerView.Adapter<TVShowsAdapter.MediaFeedViewHolder> implements View.OnClickListener {
 
     private Context mContext;
     private List<TVMazeResult> mList;
     private RecyclerView mRecyclerView;
 
-    public MediaFeedAdapter(Context context) {
+    public TVShowsAdapter(Context context) {
         mContext = context;
     }
 
@@ -51,14 +51,14 @@ public class MediaFeedAdapter extends RecyclerView.Adapter<MediaFeedAdapter.Medi
                     .load(mList.get(position).getShow().getImage().getOriginal())
                     .into(holder.showImageView);
         } catch (NullPointerException e) {
-            Log.e("MediaFeedAdapter","Caught null: " + e.getMessage());
+            Log.e("TVShowsAdapter","Caught null: " + e.getMessage());
 
             try {
                 Glide.with(mContext)
                         .load(mList.get(position).getShow().getImage().getMedium())
                         .into(holder.showImageView);
             } catch (NullPointerException e1) {
-                Log.e("MediaFeedAdapter","Caught null: " + e.getMessage());
+                Log.e("TVShowsAdapter","Caught null: " + e.getMessage());
                 Glide.with(mContext)
                         .load(mContext.getDrawable(R.drawable.common_google_signin_btn_icon_dark_focused))
                         .into(holder.showImageView);
@@ -76,7 +76,7 @@ public class MediaFeedAdapter extends RecyclerView.Adapter<MediaFeedAdapter.Medi
         int itemPosition = mRecyclerView.getChildAdapterPosition(v);
 
         AppCompatActivity activity = (AppCompatActivity) mContext;
-        MediaFeedDetailsFragment fragment = new MediaFeedDetailsFragment();
+        TVShowsDetailFragment fragment = new TVShowsDetailFragment();
 
         Bundle args = new Bundle();
         args.putString("show_name",mList.get(itemPosition).getShow().getName());

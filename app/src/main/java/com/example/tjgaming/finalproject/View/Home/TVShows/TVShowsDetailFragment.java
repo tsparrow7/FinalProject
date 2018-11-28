@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.View.Home.MediaFeed;
+package com.example.tjgaming.finalproject.View.Home.TVShows;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,7 +15,7 @@ import com.example.tjgaming.finalproject.R;
 
 import java.util.List;
 
-public class MediaFeedDetailsFragment extends Fragment implements View.OnClickListener {
+public class TVShowsDetailFragment extends Fragment implements View.OnClickListener {
 
     private String mShowName;
     private String mEpisodeName;
