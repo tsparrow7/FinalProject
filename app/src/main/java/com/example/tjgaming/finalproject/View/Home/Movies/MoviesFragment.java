@@ -1,24 +1,31 @@
 package com.example.tjgaming.finalproject.View.Home.Movies;
 
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.tjgaming.finalproject.Model.TheMovieDB.TMDBMovie;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.Utils.GetMoviesTask;
 import com.example.tjgaming.finalproject.Utils.NetworkChecker;
-import com.squareup.picasso.Picasso;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -43,6 +50,13 @@ public class MoviesFragment extends Fragment {
     private String poster = null;
     private List<Integer> genresList = new ArrayList<>();
 
+    RecyclerView mRecyclerView;
+    MoviesAdapter mMovieAdapter;
+    DocumentReference documentReference;
+    CollectionReference mCollectionRef;
+    FirebaseFirestore mFirestore;
+    ProgressDialog progressDialog;
+
 
     //JSON data for getting movies from the API
     final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/";
@@ -62,15 +76,26 @@ public class MoviesFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_movies, container, false);
-        mGridView = v.findViewById(R.id.grid_view);
         mKey = getString(R.string.api_key);
+        mRecyclerView = v.findViewById(R.id._movie_media_feed_recycler);
 
+        initAdapter();
         getMovieDataFromApi();
         return v;
     }
 
-    public void getMovieDataFromApi(){
+    private void initAdapter() {
+        mMovieAdapter = new MoviesAdapter(getActivity());
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        manager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(manager);
+        mRecyclerView.setAdapter(mMovieAdapter);
 
+    }
+
+
+    public void getMovieDataFromApi(){
+        startProgress();
         String movieData = "";
 
         try {
@@ -121,18 +146,46 @@ public class MoviesFragment extends Fragment {
                     posterUrlList.add(poster_url);
                 }
 
+                for (int i = 0; i < tmdbMoviesList.size(); i++) {
+                    documentReference = FirebaseFirestore.getInstance()
+                            .collection("Movies")
+                            .document(tmdbMoviesList.get(i).getMovieTitle());
+
+                    documentReference.set(tmdbMoviesList.get(i)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("Saving media to db","Movie saved");
+                            } else {
+                                Log.d("Saving media to db","Movie not saved");
+                            }
+                        }
+                    });
+
+                }
+                tmdbMoviesList.clear();
+                mFirestore = FirebaseFirestore.getInstance();
+                mCollectionRef = mFirestore.collection("Movies");
+
+                mCollectionRef
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                    TMDBMovie tmdbResult = queryDocumentSnapshot.toObject(TMDBMovie.class);
+
+                                    tmdbMoviesList.add(tmdbResult);
+                                }
+                                stopProgress();
+                                mMovieAdapter.setData(tmdbMoviesList);
+                            }
+                        });
+
+
                 String[] postersArray = new String[posterUrlList.size()];
                 postersArray = posterUrlList.toArray(postersArray);
 
-                GridViewAdapter adapter = new GridViewAdapter(getContext(), getId(), postersArray);
-                mGridView.setAdapter(adapter);
-                mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                        String movie = movieIdList.get(position);
-                    }
-                });
             }
             else{
                 Toast.makeText(getActivity(), "Network currently not available", Toast.LENGTH_LONG)
@@ -144,37 +197,16 @@ public class MoviesFragment extends Fragment {
         }
     }
 
-    //Custom Array Adapter
-    public class GridViewAdapter extends ArrayAdapter {
+    private void startProgress() {
+        progressDialog = new ProgressDialog(getActivity(),
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+    }
 
-        private Context context;
-        private LayoutInflater inflater;
-        private int id;
-        private String[] imageURls;
+    private void stopProgress() {
+        progressDialog.dismiss();
 
-        GridViewAdapter(Context context, int id, String[] imageUrls){
-
-            super(context, R.layout.fragment_movies, imageUrls);
-
-            this.context = context;
-            this.id = id;
-            this.imageURls = imageUrls;
-
-            inflater = LayoutInflater.from(context);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent){
-
-            if(convertView == null){
-
-                convertView = inflater.inflate(R.layout.fragment_movies_item, parent, false);
-            }
-            Picasso.with(context)
-                    .load(imageURls[position])
-                    .fit()
-                    .into((ImageView) convertView);
-            return convertView;
-        }
     }
 }

@@ -89,9 +89,8 @@ public class TVShowsFragment extends Fragment {
 
     private void initAdapter() {
         mAdapter = new TVShowsAdapter(getActivity());
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        mRecyclerView.setLayoutManager(manager);
+
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
 
 //        for (int i = 0; i < 10; i++) {
