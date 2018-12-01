@@ -1,6 +1,7 @@
 package com.example.tjgaming.finalproject.View.Home.Movies;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,8 +17,10 @@ import android.widget.Toast;
 
 import com.example.tjgaming.finalproject.Model.TheMovieDB.TMDBMovie;
 import com.example.tjgaming.finalproject.R;
+import com.example.tjgaming.finalproject.Utils.CustomStrings;
 import com.example.tjgaming.finalproject.Utils.GetMoviesTask;
 import com.example.tjgaming.finalproject.Utils.NetworkChecker;
+import com.example.tjgaming.finalproject.View.Home.MediaFeed.OnFragmentVisibleListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -37,6 +40,9 @@ public class MoviesFragment extends Fragment {
 
     public MoviesFragment() {
     }
+
+    OnFragmentVisibleListener mListener;
+    boolean isAttached;
 
     //List for Storing movie objects
     private ArrayList<String> movieIdList = new ArrayList<>();
@@ -208,5 +214,27 @@ public class MoviesFragment extends Fragment {
     private void stopProgress() {
         progressDialog.dismiss();
 
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try{
+            mListener = (OnFragmentVisibleListener) getActivity();
+            isAttached = true; //flag for whether this fragment is attached to pager
+        } catch (ClassCastException e){
+            throw new ClassCastException(getActivity().toString()
+                    + " must implement OnFragmentVisibleListener");
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (isAttached && isVisibleToUser) {
+            mListener.fragmentVisible(true, CustomStrings.MOVIE_FRAGMENT);
+        }
     }
 }

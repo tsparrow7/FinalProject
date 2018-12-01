@@ -15,6 +15,7 @@ public class MediaViewPagerAdapter extends FragmentPagerAdapter {
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
 
+
     public MediaViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }

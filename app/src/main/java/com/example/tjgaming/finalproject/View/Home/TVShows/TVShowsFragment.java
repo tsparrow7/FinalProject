@@ -11,9 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.tjgaming.finalproject.Model.CustomStrings;
+import com.example.tjgaming.finalproject.Utils.CustomStrings;
 import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.R;
+import com.example.tjgaming.finalproject.View.Home.MediaFeed.OnFragmentVisibleListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -38,6 +39,8 @@ public class TVShowsFragment extends Fragment {
     ProgressDialog progressDialog;
 
     OnListCreatedListener mListener;
+    OnFragmentVisibleListener mVisibilityListener;
+    boolean isAttached;
 
     private String FIELD;
     private String VALUE;
@@ -296,9 +299,37 @@ public class TVShowsFragment extends Fragment {
             throw new ClassCastException(context.toString()
                     + "Must implement OnListCreatedListener");
         }
+        try {
+            mVisibilityListener = (OnFragmentVisibleListener)context;
+            isAttached = true;
+        } catch (ClassCastException e){
+            throw new ClassCastException(getActivity().toString()
+                    + " must implement OnFragmentVisibleListener");
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (isAttached && isVisibleToUser) {
+            mVisibilityListener.fragmentVisible(true, CustomStrings.TV_SHOWS_FRAGMENT);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //necessary to resolve bug when switching from favorites to media feed, not updating visibility
+        if (isAttached) {
+            mVisibilityListener.fragmentVisible(true, CustomStrings.TV_SHOWS_FRAGMENT);
+        }
     }
 
     public interface OnListCreatedListener {
         void onListCreated(List<TVMazeResult> list);
     }
+
+
 }

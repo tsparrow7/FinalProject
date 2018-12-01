@@ -1,6 +1,7 @@
 package com.example.tjgaming.finalproject.View.Home.Favorites;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,8 @@ import android.view.ViewGroup;
 import com.example.tjgaming.finalproject.Database.Database;
 import com.example.tjgaming.finalproject.Model.FavoriteShow;
 import com.example.tjgaming.finalproject.R;
+import com.example.tjgaming.finalproject.Utils.CustomStrings;
+import com.example.tjgaming.finalproject.View.Home.MediaFeed.OnFragmentVisibleListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -38,6 +41,9 @@ public class FavoritesFragment extends Fragment {
     CollectionReference mColRef;
     FirebaseFirestore mFirestore;
     Database mDatabase;
+
+    OnFragmentVisibleListener mVisibilityListener;
+    boolean isAttached;
 
     @Nullable
     @Override
@@ -88,5 +94,26 @@ public class FavoritesFragment extends Fragment {
 
     private void stopProgress() {
         progressDialog.dismiss();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mVisibilityListener = (OnFragmentVisibleListener)context;
+            isAttached = true;
+        } catch (ClassCastException e){
+            throw new ClassCastException(getActivity().toString()
+                    + " must implement OnFragmentVisibleListener");
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mVisibilityListener.fragmentVisible(true, CustomStrings.FAVORITES_FRAGMENT);
     }
 }

@@ -24,7 +24,7 @@ import android.widget.Toast;
 
 import com.example.tjgaming.finalproject.Database.DBWatcher;
 import com.example.tjgaming.finalproject.Database.Database;
-import com.example.tjgaming.finalproject.Model.CustomStrings;
+import com.example.tjgaming.finalproject.Utils.CustomStrings;
 import com.example.tjgaming.finalproject.Model.FavoriteShow;
 import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.Model.User;
@@ -35,6 +35,7 @@ import com.example.tjgaming.finalproject.View.Home.Favorites.FavoritesFragment;
 import com.example.tjgaming.finalproject.Model.SearchModel;
 import com.example.tjgaming.finalproject.View.Home.Forum.ForumFragment;
 import com.example.tjgaming.finalproject.View.Home.MediaFeed.MediaTabbedFragment;
+import com.example.tjgaming.finalproject.View.Home.MediaFeed.OnFragmentVisibleListener;
 import com.example.tjgaming.finalproject.View.Home.TVShows.TVShowsFragment;
 import com.example.tjgaming.finalproject.View.Home.Profile.ProfileFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -53,7 +54,7 @@ import ir.mirrajabi.searchdialog.core.SearchResultListener;
 import ir.mirrajabi.searchdialog.core.Searchable;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TVShowsFragment.OnListCreatedListener, DBWatcher {
+        implements NavigationView.OnNavigationItemSelectedListener, TVShowsFragment.OnListCreatedListener, DBWatcher, OnFragmentVisibleListener {
 
     private DocumentReference mDocRef;
     private FirebaseAuth mFirebaseAuth;
@@ -66,6 +67,17 @@ public class HomeActivity extends AppCompatActivity
     private String mSortSelection;
     private String mFilterField;
     private String mSortDirection;
+
+    public static final String sTypeOfBundle = "TypeOfBundle";
+    public static final String sLogin = "Login";
+    public static final String sFilter = "Filter";
+    public static final String sSearch = "Search";
+    public static final String sNavDrawer = "Navigation Drawer";
+
+    private String visibleFragment = null;
+
+    private Bundle mBundle;
+    private MediaTabbedFragment mMediaTabbedFragment;
 
     RadioButton typeBtn;
     RadioButton genreBtn;
@@ -117,8 +129,12 @@ public class HomeActivity extends AppCompatActivity
 
 
         if (savedInstanceState == null) {
+            mBundle = new Bundle();
+            mMediaTabbedFragment = new MediaTabbedFragment();
+            mBundle.putString(sTypeOfBundle,sLogin);
+            mMediaTabbedFragment.setArguments(mBundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new MediaTabbedFragment()).commit();
+                    mMediaTabbedFragment).commit();
             navigationView.setCheckedItem(R.id.nav_media_feed);
         }
     }
@@ -162,6 +178,13 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void refineSearchDialog() {
+
+        switch (visibleFragment){
+            case "Movies":
+                break;
+            case "TV Shows":
+                break;
+        }
 
         final String[] filterTypeArr = {CustomStrings.SHOW_TYPE_DEFAULT,
                 CustomStrings.REALITY, CustomStrings.ANIMATION, CustomStrings.NEWS,
@@ -245,8 +268,9 @@ public class HomeActivity extends AppCompatActivity
         refineBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                TVShowsFragment TVShowsFragment = new TVShowsFragment();
-                Bundle bundle = new Bundle();
+
+                mMediaTabbedFragment = new MediaTabbedFragment();
+                mBundle = new Bundle();
 
                 if (typeBtn.isChecked()) {
                     mFilterField = CustomStrings.SHOW_TYPE;
@@ -264,14 +288,15 @@ public class HomeActivity extends AppCompatActivity
                     }
                 }
 
-                bundle.putString("Field",mFilterField);
-                bundle.putString("Value",mFilterSelection);
-                bundle.putString("Order",mSortSelection);
-                bundle.putString("Direction",mSortDirection);
+                mBundle.putString(sTypeOfBundle,sFilter);
+                mBundle.putString("Field",mFilterField);
+                mBundle.putString("Value",mFilterSelection);
+                mBundle.putString("Order",mSortSelection);
+                mBundle.putString("Direction",mSortDirection);
 
-                TVShowsFragment.setArguments(bundle);
+                mMediaTabbedFragment.setArguments(mBundle);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        TVShowsFragment).commit();
+                        mMediaTabbedFragment).commit();
             }
         });
 
@@ -314,8 +339,13 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_media_feed) {
+            mBundle = new Bundle();
+            mMediaTabbedFragment = new MediaTabbedFragment();
+
+            mBundle.putString(sTypeOfBundle,sNavDrawer);
+            mMediaTabbedFragment.setArguments(mBundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new MediaTabbedFragment()).commit();
+                    mMediaTabbedFragment).commit();
 
         } else if (id == R.id.nav_favorites) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
@@ -391,13 +421,20 @@ public class HomeActivity extends AppCompatActivity
                 null, searchItem, new SearchResultListener<Searchable>() {
             @Override
             public void onSelected(BaseSearchDialogCompat baseSearchDialogCompat, Searchable searchable, int i) {
-                TVShowsFragment TVShowsFragment = new TVShowsFragment();
-                Bundle bundle = new Bundle();
+//                TVShowsFragment TVShowsFragment = new TVShowsFragment();
+//                Bundle bundle = new Bundle();
+//
+//                bundle.putString("searchedItem",searchable.toString());
+//                TVShowsFragment.setArguments(bundle);
 
-                bundle.putString("searchedItem",searchable.toString());
-                TVShowsFragment.setArguments(bundle);
+                mMediaTabbedFragment = new MediaTabbedFragment();
+                mBundle = new Bundle();
+
+                mBundle.putString(sTypeOfBundle,sSearch);
+                mBundle.putString("searchedItem",searchable.toString());
+                mMediaTabbedFragment.setArguments(mBundle);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        TVShowsFragment).commit();
+                        mMediaTabbedFragment).commit();
                 baseSearchDialogCompat.dismiss();
             }
         }).show();
@@ -416,5 +453,14 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void onListCreated(List<TVMazeResult> list) {
         //not used
+    }
+
+    @Override
+    public void fragmentVisible(Boolean visible, String tag) {
+
+        if (visible){
+            visibleFragment = tag;
+            Log.i("VisibleFragment", tag + " is visible");
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.tjgaming.finalproject.Model;
+package com.example.tjgaming.finalproject.Utils;
 
 /**
  * Created by TJ on 11/5/2018.
@@ -50,4 +50,18 @@ public class CustomStrings {
     public static final String FRIDAY = "Friday";
     public static final String SATURDAY = "Saturday";
     public static final String SUNDAY = "Sunday";
+
+    //Names of fragments for the viewpager
+    public static final String MOVIE_FRAGMENT = "Movies";
+    public static final String TV_SHOWS_FRAGMENT = "TV Shows";
+    public static final String FAVORITES_FRAGMENT = "Favorites";
+
+
+    //For bundle to pass to viewpager
+    public static final String TYPE_OF_BUNDLE = "TypeOfBundle";
+    public static final String LOGIN = "Login";
+    public static final String FILTER = "Filter";
+    public static final String SEARCH = "Search";
+    public static final String NAV_DRAWER = "Navigation Drawer";
+
 }

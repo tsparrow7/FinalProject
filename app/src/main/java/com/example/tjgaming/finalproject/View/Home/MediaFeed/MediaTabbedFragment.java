@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.tjgaming.finalproject.R;
+import com.example.tjgaming.finalproject.Utils.CustomStrings;
+import com.example.tjgaming.finalproject.View.Home.HomeActivity;
 import com.example.tjgaming.finalproject.View.Home.Movies.MoviesFragment;
 import com.example.tjgaming.finalproject.View.Home.TVShows.TVShowsFragment;
 
@@ -17,6 +19,9 @@ public class MediaTabbedFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private MediaViewPagerAdapter adapter;
+
+    private MoviesFragment moviesFragment = new MoviesFragment();
+    private TVShowsFragment tvShowsFragment = new TVShowsFragment();
 
     public MediaTabbedFragment() {
     }
@@ -29,8 +34,22 @@ public class MediaTabbedFragment extends Fragment {
         viewPager = view.findViewById(R.id.media_view_pager);
         adapter = new MediaViewPagerAdapter(getChildFragmentManager());
 
-        adapter.addFragment(new TVShowsFragment(), "TV Shows");
-        adapter.addFragment(new MoviesFragment(), "Movies");
+        if (getArguments().getString(HomeActivity.sTypeOfBundle).equals(HomeActivity.sNavDrawer) ||
+                getArguments().getString(HomeActivity.sTypeOfBundle).equals(HomeActivity.sLogin)) {
+            //if the nav drawer is what inflates this fragment
+            adapter.addFragment(tvShowsFragment, CustomStrings.TV_SHOWS_FRAGMENT);
+            adapter.addFragment(moviesFragment, CustomStrings.MOVIE_FRAGMENT);
+
+        }  else if (getArguments().getString(HomeActivity.sTypeOfBundle).equals(HomeActivity.sFilter)) {
+            //if the filter dialog is what inflates this fragment
+            tvShowsFragment.setArguments(getArguments());
+            adapter.addFragment(tvShowsFragment, CustomStrings.TV_SHOWS_FRAGMENT);
+
+        } else if (getArguments().getString(HomeActivity.sTypeOfBundle).equals(HomeActivity.sSearch)) {
+            //if the search dialog is what inflates this fragment
+            tvShowsFragment.setArguments(getArguments());
+            adapter.addFragment(tvShowsFragment, CustomStrings.TV_SHOWS_FRAGMENT);
+        }
 
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
