@@ -181,11 +181,17 @@ public class HomeActivity extends AppCompatActivity
 
         switch (visibleFragment){
             case "Movies":
+                movieRefine();
                 break;
             case "TV Shows":
+                tvShowRefine();
                 break;
         }
 
+    }
+
+    public void tvShowRefine() {
+        //      TV SHOW REFINE AND FILTER
         final String[] filterTypeArr = {CustomStrings.SHOW_TYPE_DEFAULT,
                 CustomStrings.REALITY, CustomStrings.ANIMATION, CustomStrings.NEWS,
                 CustomStrings.DOCUMENTARY, CustomStrings.TALK_SHOW, CustomStrings.SCRIPTED,
@@ -203,7 +209,7 @@ public class HomeActivity extends AppCompatActivity
 
         AlertDialog.Builder refineBuilder = new AlertDialog.Builder(this);
         View refineDialogView = getLayoutInflater().inflate(R.layout.filter_dialog_spinner, null);
-        refineBuilder.setTitle(getResources().getString(R.string.action_refine));
+        refineBuilder.setTitle(getResources().getString(R.string.action_refine_tv_shows));
 
         typeBtn = refineDialogView.findViewById(R.id.filter_type_button);
         genreBtn = refineDialogView.findViewById(R.id.filter_genre_button);
@@ -308,6 +314,134 @@ public class HomeActivity extends AppCompatActivity
         });
         AlertDialog refineDialog = refineBuilder.create();
         refineDialog.show();
+//      END TV SHOW REFINE AND FILTER
+    }
+
+    public void movieRefine() {
+        //      START MOVIE REFINE AND FILTER
+        final String[] filterMovieTypeArr = {CustomStrings.SHOW_TYPE_DEFAULT,
+                CustomStrings.REALITY, CustomStrings.ANIMATION, CustomStrings.NEWS,
+                CustomStrings.DOCUMENTARY, CustomStrings.TALK_SHOW, CustomStrings.SCRIPTED,
+                CustomStrings.GAME_SHOW};
+
+        final String[] filterMovieGenreArr = {CustomStrings.SHOW_GENRE_DEFAULT,
+                CustomStrings.COMEDY, CustomStrings.DRAMA, CustomStrings.ROMANCE,
+                CustomStrings.ADVENTURE, CustomStrings.NATURE, CustomStrings.FAMILY,
+                CustomStrings.CRIME, CustomStrings.MYSTERY, CustomStrings.SUPERNATURAL,
+                CustomStrings.HORROR, CustomStrings.HISTORY, CustomStrings.SCIENCE_FICTION,
+                CustomStrings.FANTASY, CustomStrings.THRILLER};
+
+        final String[] sortingMovieArr = {CustomStrings.SHOW_SORT_DEFAULT,
+                CustomStrings.SHOW_NAME,CustomStrings.SHOW_RATING_AVERAGE};
+
+        AlertDialog.Builder refineMovieBuilder = new AlertDialog.Builder(this);
+        View refineMovieDialogView = getLayoutInflater().inflate(R.layout.filter_dialog_spinner, null);
+        refineMovieBuilder.setTitle(getResources().getString(R.string.action_refine_movies));
+
+        typeBtn = refineMovieDialogView.findViewById(R.id.filter_type_button);
+        genreBtn = refineMovieDialogView.findViewById(R.id.filter_genre_button);
+        sortBtn = refineMovieDialogView.findViewById(R.id.sort_button);
+
+        final Spinner filterMovieTypeSpinner = (Spinner) refineMovieDialogView.findViewById(R.id.filter_type_spinner);
+        filterMovieTypeSpinner.setEnabled(false);
+        ArrayAdapter<String> filterMovieTypeAdapter = new ArrayAdapter<String>(HomeActivity.this,
+                android.R.layout.simple_spinner_item, filterMovieTypeArr);
+        filterMovieTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterMovieTypeSpinner.setAdapter(filterMovieTypeAdapter);
+        refineMovieBuilder.setView(refineMovieDialogView);
+
+        final Spinner filterMovieGenreSpinner = (Spinner) refineMovieDialogView.findViewById(R.id.filter_genre_spinner);
+        filterMovieGenreSpinner.setEnabled(false);
+        final ArrayAdapter<String> filterMovieGenreAdapter = new ArrayAdapter<String>(HomeActivity.this,
+                android.R.layout.simple_spinner_item, filterMovieGenreArr);
+        filterMovieGenreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterMovieGenreSpinner.setAdapter(filterMovieGenreAdapter);
+        refineMovieBuilder.setView(refineMovieDialogView);
+
+        final Spinner sortingMovieSpinner = (Spinner) refineMovieDialogView.findViewById(R.id.sort_spinner);
+        sortingMovieSpinner.setEnabled(false);
+        ArrayAdapter<String> sortingMovieAdapter = new ArrayAdapter<String>(HomeActivity.this,
+                android.R.layout.simple_spinner_item, sortingMovieArr);
+        sortingMovieAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortingMovieSpinner.setAdapter(sortingMovieAdapter);
+        refineMovieBuilder.setView(refineMovieDialogView);
+
+        typeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                genreBtn.setChecked(false);
+                filterMovieGenreSpinner.setEnabled(false);
+
+                if (!filterMovieTypeSpinner.isEnabled())
+                    filterMovieTypeSpinner.setEnabled(true);
+            }
+        });
+
+        genreBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                typeBtn.setChecked(false);
+                filterMovieTypeSpinner.setEnabled(false);
+
+                if (!filterMovieGenreSpinner.isEnabled())
+                    filterMovieGenreSpinner.setEnabled(true);
+            }
+        });
+
+        sortBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!sortingMovieSpinner.isEnabled())
+                    sortingMovieSpinner.setEnabled(true);
+            }
+        });
+
+        refineMovieBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                mMediaTabbedFragment = new MediaTabbedFragment();
+                mBundle = new Bundle();
+
+                if (typeBtn.isChecked()) {
+                    mFilterField = CustomStrings.SHOW_TYPE;
+                    mFilterSelection = filterMovieTypeSpinner.getSelectedItem().toString();
+                } else if (genreBtn.isChecked()) {
+                    mFilterField = CustomStrings.SHOW_GENRES;
+                    mFilterSelection = filterMovieGenreSpinner.getSelectedItem().toString();
+                }
+                if (sortBtn.isChecked()) {
+                    mSortSelection = sortingMovieSpinner.getSelectedItem().toString();
+                    if (mSortSelection.equals(CustomStrings.SHOW_NAME)){
+                        mSortDirection = "Ascending"; // If we are sorting by name then we want direction to be Ascending
+                    } else if (mSortSelection.equals(CustomStrings.SHOW_RATING_AVERAGE)){
+                        mSortDirection = "Descending";
+                    }
+                }
+
+                mBundle.putString(sTypeOfBundle,sFilter);
+                mBundle.putString("Field",mFilterField);
+                mBundle.putString("Value",mFilterSelection);
+                mBundle.putString("Order",mSortSelection);
+                mBundle.putString("Direction",mSortDirection);
+
+                mMediaTabbedFragment.setArguments(mBundle);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        mMediaTabbedFragment).commit();
+            }
+        });
+
+        refineMovieBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog refineMovieDialog = refineMovieBuilder.create();
+        refineMovieDialog.show();
+//      END MOVIE REFINE AND FILTER
     }
 
     private void logoutDialog() {
