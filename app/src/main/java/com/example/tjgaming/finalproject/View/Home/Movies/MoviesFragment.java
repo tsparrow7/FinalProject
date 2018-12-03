@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -63,6 +64,13 @@ public class MoviesFragment extends Fragment {
     FirebaseFirestore mFirestore;
     ProgressDialog progressDialog;
 
+    //For sorting data from dB
+    private String FIELD;
+    private String VALUE;
+    private String ORDERING;
+    private Query.Direction DIRECTION;
+    private String searchedItem;
+
 
     //JSON data for getting movies from the API
     final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/";
@@ -83,6 +91,30 @@ public class MoviesFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_movies, container, false);
         mKey = getString(R.string.api_key);
+        Bundle bundle = getArguments();
+        if (bundle != null && !bundle.containsKey("searchedItem")) {
+            FIELD = bundle.getString("Field");
+            VALUE = bundle.getString("Value");
+            ORDERING = bundle.getString("Order");
+            String STR_DIRECTION = bundle.getString("Direction");
+
+            if (STR_DIRECTION != null) {
+                if (STR_DIRECTION.equals("Ascending")) {
+                    DIRECTION = Query.Direction.ASCENDING;
+                } else {
+                    DIRECTION = Query.Direction.DESCENDING;
+                }
+            }
+
+            Log.i("MoviesFragment","Field: " + FIELD + "Value: " + VALUE + "Ordering: " + ORDERING);
+        } else {
+            try {
+                searchedItem = bundle.getString("searchedItem");
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+
         mRecyclerView = v.findViewById(R.id._movie_media_feed_recycler);
 
         initAdapter();
@@ -142,13 +174,13 @@ public class MoviesFragment extends Fragment {
                         genresList.add(jsonArray.getInt(j));
                     }
 
-                    TMDBMovie movie = new TMDBMovie(movieId,poster,movieTitle,movieRating,genresList);
+                    TMDBMovie movie = new TMDBMovie(movieId, poster, movieTitle, movieRating, genresList);
 
                     tmdbMoviesList.add(movie);
 
                     movieIdList.add(jsonObject.getString("id"));
                     String poster_path = (jsonObject.getString("poster_path"));
-                    String poster_url = BASE_POSTER_URL+POSTER_SIZE_PARAM+poster_path;
+                    String poster_url = BASE_POSTER_URL + POSTER_SIZE_PARAM + poster_path;
                     posterUrlList.add(poster_url);
                 }
 
@@ -161,9 +193,9 @@ public class MoviesFragment extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Log.d("Saving media to db","Movie saved");
+                                Log.d("Saving media to db", "Movie saved");
                             } else {
-                                Log.d("Saving media to db","Movie not saved");
+                                Log.d("Saving media to db", "Movie not saved");
                             }
                         }
                     });
@@ -173,25 +205,98 @@ public class MoviesFragment extends Fragment {
                 mFirestore = FirebaseFirestore.getInstance();
                 mCollectionRef = mFirestore.collection("Movies");
 
-                mCollectionRef
-                        .get()
-                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
-                                    TMDBMovie tmdbResult = queryDocumentSnapshot.toObject(TMDBMovie.class);
+                if (searchedItem != null) {
+                    mCollectionRef
+                            .whereEqualTo(CustomStrings.MOVIE_TITLE, searchedItem)
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                        TMDBMovie tmdbMovie = queryDocumentSnapshot.toObject(TMDBMovie.class);
 
-                                    tmdbMoviesList.add(tmdbResult);
+                                        tmdbMoviesList.add(tmdbMovie);
+                                    }
+                                    stopProgress();
+                                    mMovieAdapter.setData(tmdbMoviesList);
                                 }
-                                stopProgress();
-                                mMovieAdapter.setData(tmdbMoviesList);
+                            });
+                } else {
+                    if (FIELD != null) {
+                        if (FIELD.equals(CustomStrings.SHOW_GENRES) && VALUE != null) {
+
+                            if (ORDERING != null) {
+                                mCollectionRef
+                                        .whereArrayContains(FIELD, VALUE)
+                                        .orderBy(ORDERING, DIRECTION)
+                                        .get()
+                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                                    TMDBMovie tmdbMovie = queryDocumentSnapshot.toObject(TMDBMovie.class);
+
+                                                    tmdbMoviesList.add(tmdbMovie);
+                                                }
+                                                stopProgress();
+                                                mMovieAdapter.setData(tmdbMoviesList);
+                                            }
+                                        });
+                            } else {
+                                mCollectionRef
+                                        .whereArrayContains(FIELD, VALUE)
+                                        .get()
+                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                                    TMDBMovie tmdbMovie = queryDocumentSnapshot.toObject(TMDBMovie.class);
+
+                                                    tmdbMoviesList.add(tmdbMovie);
+                                                }
+                                                stopProgress();
+                                                mMovieAdapter.setData(tmdbMoviesList);
+                                            }
+                                        });
                             }
-                        });
+                        }
+                    }
+                    //only sorting / ordering
+                    else if (ORDERING != null) {
+                        mCollectionRef
+                                .orderBy(ORDERING, DIRECTION)
+                                .get()
+                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                            TMDBMovie tmdbMovie = queryDocumentSnapshot.toObject(TMDBMovie.class);
 
+                                            tmdbMoviesList.add(tmdbMovie);
+                                        }
+                                        stopProgress();
+                                        mMovieAdapter.setData(tmdbMoviesList);
+                                    }
+                                });
+                    }
+                    //default call, no filtering or sorting. Called when fragment first attached
+                    else {
+                        mCollectionRef
+                                .get()
+                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                            TMDBMovie tmdbMovie = queryDocumentSnapshot.toObject(TMDBMovie.class);
 
-                String[] postersArray = new String[posterUrlList.size()];
-                postersArray = posterUrlList.toArray(postersArray);
-
+                                            tmdbMoviesList.add(tmdbMovie);
+                                        }
+                                        stopProgress();
+                                        mMovieAdapter.setData(tmdbMoviesList);
+                                    }
+                                });
+                    }
+                }
             }
             else{
                 Toast.makeText(getActivity(), "Network currently not available", Toast.LENGTH_LONG)
@@ -213,7 +318,6 @@ public class MoviesFragment extends Fragment {
 
     private void stopProgress() {
         progressDialog.dismiss();
-
     }
 
     @Override

@@ -39,4 +39,5 @@ public class MediaViewPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return mFragmentList.size();
     }
+
 }

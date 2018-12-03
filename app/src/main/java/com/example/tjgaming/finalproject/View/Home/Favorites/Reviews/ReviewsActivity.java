@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.example.tjgaming.finalproject.Database.DBWatcher;
 import com.example.tjgaming.finalproject.Database.Database;
-import com.example.tjgaming.finalproject.Model.FavoriteShow;
+import com.example.tjgaming.finalproject.Model.Favorite;
 import com.example.tjgaming.finalproject.Model.UserReview;
 import com.example.tjgaming.finalproject.R;
 
@@ -41,7 +41,7 @@ public class ReviewsActivity extends AppCompatActivity implements DBWatcher {
     }
 
     @Override
-    public void onFavoriteDeleted(List<FavoriteShow> list) {
+    public void onFavoriteDeleted(List<Favorite> list) {
 
     }
 

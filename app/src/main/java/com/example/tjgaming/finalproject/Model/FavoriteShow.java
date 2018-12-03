@@ -11,6 +11,7 @@ public class FavoriteShow {
     private String times;
     private String network;
     private double rating;
+    private String typeOfMedia;
 
     public FavoriteShow() {
 
@@ -62,6 +63,14 @@ public class FavoriteShow {
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public String getTypeOfMedia() {
+        return typeOfMedia;
+    }
+
+    public void setTypeOfMedia(String typeOfMedia) {
+        this.typeOfMedia = typeOfMedia;
     }
 
     @Override

@@ -15,6 +15,9 @@ public class CustomStrings {
     public static final String SHOW_SCHEDULE_TIME = "show.schedule.time";
     public static final String SHOW_TYPE = "show.type";
 
+    public static final String MOVIE_TITLE = "movieTitle";
+    public static final String MOVIE_RATING = "movieRating";
+
     //Types of show genres
     public static final String SHOW_GENRE_DEFAULT = "Select Genre";
     public static final String COMEDY = "Comedy";
@@ -64,9 +67,12 @@ public class CustomStrings {
     public static final String SEARCH = "Search";
     public static final String NAV_DRAWER = "Navigation Drawer";
 
-    //Favorite String
-    public static final String NAME = "Name";
-    public static final String RATING = "Rating";
+    //Favorite Sorting
+    public static final String TITLE = "title";
+    public static final String RATING = "rating";
+    public static final String USER_RATING = "user_rating";
+
+    public static final String TYPE_OF_MEDIA = "typeOfMedia";
     public static final String TV_SHOWS = "TV Shows";
     public static final String MOVIES = "Movies";
 

@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.example.tjgaming.finalproject.Database.DBWatcher;
 import com.example.tjgaming.finalproject.Database.Database;
-import com.example.tjgaming.finalproject.Model.FavoriteShow;
+import com.example.tjgaming.finalproject.Model.Favorite;
 import com.example.tjgaming.finalproject.Model.UserReview;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.View.Home.Favorites.Reviews.ReviewsActivity;
@@ -33,7 +33,7 @@ import java.util.Locale;
 public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHolder> implements DBWatcher {
 
     private Context mContext;
-    private List<FavoriteShow> mList;
+    private List<Favorite> mFavoriteList;
     private List<UserReview> mReviewList;
     private RecyclerView mRecyclerView;
     private Database database;
@@ -56,8 +56,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
     }
 
     @Override
-    public void onFavoriteDeleted(List<FavoriteShow> list) {
-        setData(list);
+    public void onFavoriteDeleted(List<Favorite> list) {
+        setFavoriteData(list);
         favoriteDeletedToast();
     }
 
@@ -113,7 +113,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
     @Override
     public void onBindViewHolder(FavoritesViewHolder holder, int position) {
 
-        holder.showNameTextView.setText(mList.get(position).getShow_name());
+        holder.showNameTextView.setText(mFavoriteList.get(position).getTitle());
 
         holder.showReviewsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,8 +212,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
 
     private void displayDeleteDialog(final View v) {
         final View view = v;
-        final String showName = ((TextView) ((RelativeLayout) v.getParent().getParent()).getChildAt(0)).getText().toString();
-        final List<FavoriteShow> list = mList;
+        final String title = ((TextView) ((RelativeLayout) v.getParent().getParent()).getChildAt(0)).getText().toString();
+        final List<Favorite> list = mFavoriteList;
 
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(mContext);
         alertBuilder.setMessage("Are you sure you want to delete this favorite?")
@@ -221,7 +221,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        database.deleteFavorite(showName,list);
+                        database.deleteFavorite(title,list);
                         dialogInterface.dismiss();
                     }
                 })
@@ -298,7 +298,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
 
     @Override
     public int getItemCount() {
-        return mList == null ? 0 : mList.size();
+        return mFavoriteList == null ? 0 : mFavoriteList.size();
     }
 
     @Override
@@ -339,8 +339,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         }
     }
 
-    public void setData(List<FavoriteShow> list){
-        mList = list;
+    public void setFavoriteData(List<Favorite> list) {
+        mFavoriteList = list;
         notifyDataSetChanged();
     }
 }

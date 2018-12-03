@@ -34,6 +34,7 @@ public class MediaTabbedFragment extends Fragment {
         viewPager = view.findViewById(R.id.media_view_pager);
         adapter = new MediaViewPagerAdapter(getChildFragmentManager());
 
+
         if (getArguments().getString(HomeActivity.sTypeOfBundle).equals(HomeActivity.sNavDrawer) ||
                 getArguments().getString(HomeActivity.sTypeOfBundle).equals(HomeActivity.sLogin)) {
             //if the nav drawer is what inflates this fragment
@@ -42,16 +43,39 @@ public class MediaTabbedFragment extends Fragment {
 
         }  else if (getArguments().getString(HomeActivity.sTypeOfBundle).equals(HomeActivity.sFilter)) {
             //if the filter dialog is what inflates this fragment
-            tvShowsFragment.setArguments(getArguments());
+            if (getArguments().getString(HomeActivity.sFragmentBeingFiltered).equals(CustomStrings.TV_SHOWS_FRAGMENT)){
+                tvShowsFragment.setArguments(getArguments());
+            } else if (getArguments().getString(HomeActivity.sFragmentBeingFiltered).equals(CustomStrings.MOVIE_FRAGMENT)){
+                moviesFragment.setArguments(getArguments());
+            }
             adapter.addFragment(tvShowsFragment, CustomStrings.TV_SHOWS_FRAGMENT);
+            adapter.addFragment(moviesFragment, CustomStrings.MOVIE_FRAGMENT);
 
         } else if (getArguments().getString(HomeActivity.sTypeOfBundle).equals(HomeActivity.sSearch)) {
             //if the search dialog is what inflates this fragment
-            tvShowsFragment.setArguments(getArguments());
+
+            if (getArguments().getString(HomeActivity.sFragmentBeingFiltered).equals(CustomStrings.TV_SHOWS_FRAGMENT)){
+                tvShowsFragment.setArguments(getArguments());
+            } else if (getArguments().getString(HomeActivity.sFragmentBeingFiltered).equals(CustomStrings.MOVIE_FRAGMENT)){
+                moviesFragment.setArguments(getArguments());
+            }
+
             adapter.addFragment(tvShowsFragment, CustomStrings.TV_SHOWS_FRAGMENT);
+            adapter.addFragment(moviesFragment, CustomStrings.MOVIE_FRAGMENT);
         }
 
         viewPager.setAdapter(adapter);
+
+        //If we are filtering data we want to go to sorted page
+        if (getArguments().getString(HomeActivity.sTypeOfBundle).equals(HomeActivity.sFilter) ||
+                getArguments().getString(HomeActivity.sTypeOfBundle).equals(HomeActivity.sSearch)) {
+            if (getArguments().getString(HomeActivity.sFragmentBeingFiltered).equals(CustomStrings.MOVIE_FRAGMENT)) {
+                viewPager.setCurrentItem(2,true);
+            } else {
+                viewPager.setCurrentItem(1);
+            }
+        }
+
         tabLayout.setupWithViewPager(viewPager);
 
         return view;

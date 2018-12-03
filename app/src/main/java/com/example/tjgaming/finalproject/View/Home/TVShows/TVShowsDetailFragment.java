@@ -10,8 +10,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tjgaming.finalproject.Database.Database;
+import com.example.tjgaming.finalproject.Model.Favorite;
 import com.example.tjgaming.finalproject.Model.FavoriteShow;
 import com.example.tjgaming.finalproject.R;
+import com.example.tjgaming.finalproject.Utils.CustomStrings;
 
 import java.util.List;
 
@@ -39,6 +41,8 @@ public class TVShowsDetailFragment extends Fragment implements View.OnClickListe
 
     Database mDatabase;
     FavoriteShow mFavoriteShow;
+
+    Favorite favorite;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,9 +82,15 @@ public class TVShowsDetailFragment extends Fragment implements View.OnClickListe
     public void onClick(View v) {
         Toast.makeText(getContext(),mShowName + " added to favorites!",Toast.LENGTH_SHORT).show();
 
-        mFavoriteShow = new FavoriteShow(mShowName,mDays,mTime,mNetwork,mRating);
-
+        favorite = new Favorite(mShowName, mRating);
+        favorite.setTypeOfMedia(CustomStrings.TV_SHOWS);
         mDatabase = new Database(getContext());
-        mDatabase.addToFavorites(mFavoriteShow);
+        mDatabase.addFavorite(favorite);
+
+//        mFavoriteShow = new FavoriteShow(mShowName,mDays,mTime,mNetwork,mRating);
+//        mDatabase = new Database(getContext());
+//        mDatabase.addToFavorites(mFavoriteShow);
+
+
     }
 }

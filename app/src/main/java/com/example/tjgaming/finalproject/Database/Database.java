@@ -4,8 +4,10 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.tjgaming.finalproject.Model.Favorite;
 import com.example.tjgaming.finalproject.Model.FavoriteShow;
 import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
+import com.example.tjgaming.finalproject.Model.TheMovieDB.TMDBMovie;
 import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.Model.UserRating;
 import com.example.tjgaming.finalproject.Model.UserReview;
@@ -39,7 +41,7 @@ public class Database {
     private DocumentReference mDocumentReference;
     private CollectionReference mCollectionReference;
     private DBWatcher watcher = null;
-    private List<FavoriteShow> mFavoritesList;
+    private List<Favorite> mFavoritesList;
     private ArrayList<String> mList;
     private ArrayList<UserReview> mUserReviewList;
 
@@ -74,6 +76,31 @@ public class Database {
         });
     }
 
+    public void addFavorite(Favorite favorite) {
+        mDocumentReference = FirebaseFirestore.getInstance()
+                .collection("Favorites")
+                .document(getUserLoggedIn().getUid())
+                .collection(getUserLoggedIn().getUid() + "-Favorites")
+                .document(favorite.getTitle());
+
+        Map<String, Object> favoriteItem = new HashMap<>();
+        favoriteItem.put("title", favorite.getTitle());
+        favoriteItem.put("rating", favorite.getRating());
+        favoriteItem.put("type", favorite.getTypeOfMedia());
+
+        mDocumentReference.set(favorite).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "Document saved!");
+                } else {
+                    Log.d(TAG, "Document not saved", task.getException());
+                }
+            }
+        });
+    }
+
+
     public FirebaseUser getUserLoggedIn() {
         mFirebaseAuth = FirebaseAuth.getInstance();
         return mFirebaseAuth.getCurrentUser();
@@ -93,6 +120,30 @@ public class Database {
 
                     try {
                         mList.add(tvMazeResult.getShow().getName());
+                    } catch (NullPointerException e){
+                        //do not add show to list if null exception occurs
+                        Log.e(TAG,e.getMessage());
+                    }
+                }
+                notifySearchResultsRetrieval(mList);
+            }
+        });
+    }
+
+    public void getAllMoviesForSearch() {
+        mList = new ArrayList<>();
+
+        mCollectionReference = FirebaseFirestore.getInstance()
+                .collection("Movies");
+
+        mCollectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots){
+                    TMDBMovie tmdbMovie = queryDocumentSnapshot.toObject(TMDBMovie.class);
+
+                    try {
+                        mList.add(tmdbMovie.getMovieTitle());
                     } catch (NullPointerException e){
                         //do not add show to list if null exception occurs
                         Log.e(TAG,e.getMessage());
@@ -156,20 +207,20 @@ public class Database {
         });
     }
 
-    public void deleteFavorite(String showName, List<FavoriteShow> list) {
+    public void deleteFavorite(String title, List<Favorite> list) {
         mFavoritesList = list;
 
         for (int i = 0; i < mFavoritesList.size(); i++) {
-            if (mFavoritesList.get(i).getShow_name().equals(showName)) {
+            if (mFavoritesList.get(i).getTitle().equals(title)) {
                 mFavoritesList.remove(i);
             }
         }
 
         mDocumentReference = FirebaseFirestore.getInstance()
-                .collection("favorites")
+                .collection("Favorites")
                 .document(getUserLoggedIn().getUid())
-                .collection(getUserLoggedIn().getUid() + "-favorites")
-                .document(showName);
+                .collection(getUserLoggedIn().getUid() + "-Favorites")
+                .document(title);
         mDocumentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -299,7 +350,7 @@ public class Database {
         }
     }
 
-    private void notifyFavoriteChange(List<FavoriteShow> list) {
+    private void notifyFavoriteChange(List<Favorite> list) {
         if (watcher != null){
             watcher.onFavoriteDeleted(list);
         }

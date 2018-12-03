@@ -1,13 +1,13 @@
 package com.example.tjgaming.finalproject.Database;
 
-import com.example.tjgaming.finalproject.Model.FavoriteShow;
+import com.example.tjgaming.finalproject.Model.Favorite;
 import com.example.tjgaming.finalproject.Model.UserReview;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public interface DBWatcher {
-    void onFavoriteDeleted(List<FavoriteShow> list);
+    void onFavoriteDeleted(List<Favorite> list);
 
     void onRating(int rating);
 

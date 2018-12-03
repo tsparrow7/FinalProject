@@ -330,6 +330,4 @@ public class TVShowsFragment extends Fragment {
     public interface OnListCreatedListener {
         void onListCreated(List<TVMazeResult> list);
     }
-
-
 }

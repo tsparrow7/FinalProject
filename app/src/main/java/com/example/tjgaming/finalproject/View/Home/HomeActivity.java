@@ -24,20 +24,20 @@ import android.widget.Toast;
 
 import com.example.tjgaming.finalproject.Database.DBWatcher;
 import com.example.tjgaming.finalproject.Database.Database;
-import com.example.tjgaming.finalproject.Utils.CustomStrings;
-import com.example.tjgaming.finalproject.Model.FavoriteShow;
+import com.example.tjgaming.finalproject.Model.Favorite;
+import com.example.tjgaming.finalproject.Model.SearchModel;
 import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.Model.User;
 import com.example.tjgaming.finalproject.Model.UserReview;
 import com.example.tjgaming.finalproject.R;
+import com.example.tjgaming.finalproject.Utils.CustomStrings;
 import com.example.tjgaming.finalproject.View.Authentication.LoginActivity;
 import com.example.tjgaming.finalproject.View.Home.Favorites.FavoritesFragment;
-import com.example.tjgaming.finalproject.Model.SearchModel;
 import com.example.tjgaming.finalproject.View.Home.Forum.ForumFragment;
 import com.example.tjgaming.finalproject.View.Home.MediaFeed.MediaTabbedFragment;
 import com.example.tjgaming.finalproject.View.Home.MediaFeed.OnFragmentVisibleListener;
-import com.example.tjgaming.finalproject.View.Home.TVShows.TVShowsFragment;
 import com.example.tjgaming.finalproject.View.Home.Profile.ProfileFragment;
+import com.example.tjgaming.finalproject.View.Home.TVShows.TVShowsFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -69,6 +69,7 @@ public class HomeActivity extends AppCompatActivity
     private String mSortDirection;
 
     public static final String sTypeOfBundle = "TypeOfBundle";
+    public static final String sFragmentBeingFiltered = "Fragment";
     public static final String sLogin = "Login";
     public static final String sFilter = "Filter";
     public static final String sSearch = "Search";
@@ -78,7 +79,7 @@ public class HomeActivity extends AppCompatActivity
 
     private Bundle mBundle;
     private MediaTabbedFragment mMediaTabbedFragment;
-    private FavoritesFragment favoritesFragment;
+    private FavoritesFragment mFavoritesFragment;
 
     RadioButton typeBtn;
     RadioButton genreBtn;
@@ -138,12 +139,6 @@ public class HomeActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     mMediaTabbedFragment).commit();
             navigationView.setCheckedItem(R.id.nav_media_feed);
-
-//            favoritesFragment = new FavoritesFragment();
-//            mBundle.putString(sTypeOfBundle, sLogin);
-//            favoritesFragment.setArguments(mBundle);
-//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-//                    favoritesFragment).commit();
         }
     }
 
@@ -175,9 +170,9 @@ public class HomeActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            refineSearchDialog();
+            refineSortDialog();
         } else if (id==R.id.action_search) {
-            mDatabase.getAllShowsForSearch();
+            refineSearchList();
         } else if (id==R.id.action_logout) {
             logoutDialog();
         }
@@ -185,7 +180,7 @@ public class HomeActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void refineSearchDialog() {
+    public void refineSortDialog() {
 
         switch (visibleFragment){
             case "Movies":
@@ -198,7 +193,19 @@ public class HomeActivity extends AppCompatActivity
                 favoritesRefine();
                 break;
         }
+    }
 
+    public void refineSearchList() {
+        switch (visibleFragment){
+            case "Movies":
+                mDatabase.getAllMoviesForSearch();
+                break;
+            case "TV Shows":
+                mDatabase.getAllShowsForSearch();
+                break;
+            case "Favorites":
+                break;
+        }
     }
 
     public void tvShowRefine() {
@@ -306,6 +313,7 @@ public class HomeActivity extends AppCompatActivity
                 }
 
                 mBundle.putString(sTypeOfBundle,sFilter);
+                mBundle.putString(sFragmentBeingFiltered,CustomStrings.TV_SHOWS_FRAGMENT);
                 mBundle.putString("Field",mFilterField);
                 mBundle.putString("Value",mFilterSelection);
                 mBundle.putString("Order",mSortSelection);
@@ -330,10 +338,6 @@ public class HomeActivity extends AppCompatActivity
 
     public void movieRefine() {
         //      START MOVIE REFINE AND FILTER
-        final String[] filterMovieTypeArr = {CustomStrings.SHOW_TYPE_DEFAULT,
-                CustomStrings.REALITY, CustomStrings.ANIMATION, CustomStrings.NEWS,
-                CustomStrings.DOCUMENTARY, CustomStrings.TALK_SHOW, CustomStrings.SCRIPTED,
-                CustomStrings.GAME_SHOW};
 
         final String[] filterMovieGenreArr = {CustomStrings.SHOW_GENRE_DEFAULT,
                 CustomStrings.COMEDY, CustomStrings.DRAMA, CustomStrings.ROMANCE,
@@ -343,23 +347,20 @@ public class HomeActivity extends AppCompatActivity
                 CustomStrings.FANTASY, CustomStrings.THRILLER};
 
         final String[] sortingMovieArr = {CustomStrings.SHOW_SORT_DEFAULT,
-                CustomStrings.SHOW_NAME,CustomStrings.SHOW_RATING_AVERAGE};
+                CustomStrings.MOVIE_TITLE,CustomStrings.MOVIE_RATING};
 
         AlertDialog.Builder refineMovieBuilder = new AlertDialog.Builder(this);
         View refineMovieDialogView = getLayoutInflater().inflate(R.layout.filter_dialog_spinner, null);
         refineMovieBuilder.setTitle(getResources().getString(R.string.action_refine_movies));
 
         typeBtn = refineMovieDialogView.findViewById(R.id.filter_type_button);
+        typeBtn.setVisibility(View.GONE);
+
         genreBtn = refineMovieDialogView.findViewById(R.id.filter_genre_button);
         sortBtn = refineMovieDialogView.findViewById(R.id.sort_button);
 
         final Spinner filterMovieTypeSpinner = (Spinner) refineMovieDialogView.findViewById(R.id.filter_type_spinner);
-        filterMovieTypeSpinner.setEnabled(false);
-        ArrayAdapter<String> filterMovieTypeAdapter = new ArrayAdapter<String>(HomeActivity.this,
-                android.R.layout.simple_spinner_item, filterMovieTypeArr);
-        filterMovieTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        filterMovieTypeSpinner.setAdapter(filterMovieTypeAdapter);
-        refineMovieBuilder.setView(refineMovieDialogView);
+        filterMovieTypeSpinner.setVisibility(View.GONE);
 
         final Spinner filterMovieGenreSpinner = (Spinner) refineMovieDialogView.findViewById(R.id.filter_genre_spinner);
         filterMovieGenreSpinner.setEnabled(false);
@@ -377,27 +378,13 @@ public class HomeActivity extends AppCompatActivity
         sortingMovieSpinner.setAdapter(sortingMovieAdapter);
         refineMovieBuilder.setView(refineMovieDialogView);
 
-        typeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                genreBtn.setChecked(false);
-                filterMovieGenreSpinner.setEnabled(false);
-
-                if (!filterMovieTypeSpinner.isEnabled())
-                    filterMovieTypeSpinner.setEnabled(true);
-            }
-        });
-
         genreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                typeBtn.setChecked(false);
-                filterMovieTypeSpinner.setEnabled(false);
-
-                if (!filterMovieGenreSpinner.isEnabled())
-                    filterMovieGenreSpinner.setEnabled(true);
+//
+//                if (!filterMovieGenreSpinner.isEnabled())
+//                    filterMovieGenreSpinner.setEnabled(true);
             }
         });
 
@@ -416,23 +403,21 @@ public class HomeActivity extends AppCompatActivity
                 mMediaTabbedFragment = new MediaTabbedFragment();
                 mBundle = new Bundle();
 
-                if (typeBtn.isChecked()) {
-                    mFilterField = CustomStrings.SHOW_TYPE;
-                    mFilterSelection = filterMovieTypeSpinner.getSelectedItem().toString();
-                } else if (genreBtn.isChecked()) {
-                    mFilterField = CustomStrings.SHOW_GENRES;
-                    mFilterSelection = filterMovieGenreSpinner.getSelectedItem().toString();
-                }
+//                if (genreBtn.isChecked()) {
+//                    mFilterField = CustomStrings.SHOW_GENRES;
+//                    mFilterSelection = filterMovieGenreSpinner.getSelectedItem().toString();
+//                }
                 if (sortBtn.isChecked()) {
                     mSortSelection = sortingMovieSpinner.getSelectedItem().toString();
-                    if (mSortSelection.equals(CustomStrings.SHOW_NAME)){
+                    if (mSortSelection.equals(CustomStrings.MOVIE_TITLE)){
                         mSortDirection = "Ascending"; // If we are sorting by name then we want direction to be Ascending
-                    } else if (mSortSelection.equals(CustomStrings.SHOW_RATING_AVERAGE)){
+                    } else if (mSortSelection.equals(CustomStrings.MOVIE_RATING)){
                         mSortDirection = "Descending";
                     }
                 }
 
                 mBundle.putString(sTypeOfBundle,sFilter);
+                mBundle.putString(sFragmentBeingFiltered,CustomStrings.MOVIE_FRAGMENT);
                 mBundle.putString("Field",mFilterField);
                 mBundle.putString("Value",mFilterSelection);
                 mBundle.putString("Order",mSortSelection);
@@ -457,7 +442,7 @@ public class HomeActivity extends AppCompatActivity
 
     private void favoritesRefine() {
         //      START FAVORITES REFINE AND FILTER
-        final String[] sortFavoriteArr = {CustomStrings.NAME, CustomStrings.RATING};
+        final String[] sortFavoriteArr = {CustomStrings.TITLE, CustomStrings.RATING};
         final String[] filterFavoriteArr = {CustomStrings.TV_SHOWS, CustomStrings.MOVIES};
 
         AlertDialog.Builder refineFavoriteBuilder = new AlertDialog.Builder(this);
@@ -467,7 +452,7 @@ public class HomeActivity extends AppCompatActivity
         typeBtn = refineFavoriteDialogView.findViewById(R.id.filter_type_button);
         sortBtn = refineFavoriteDialogView.findViewById(R.id.sort_button);
         genreBtn = refineFavoriteDialogView.findViewById(R.id.filter_genre_button);
-        genreBtn.setVisibility(View.INVISIBLE);
+        genreBtn.setVisibility(View.GONE);
 
         final Spinner filterFavoriteSpinner = (Spinner) refineFavoriteDialogView.findViewById(R.id.filter_type_spinner);
         filterFavoriteSpinner.setEnabled(false);
@@ -479,7 +464,7 @@ public class HomeActivity extends AppCompatActivity
         refineFavoriteBuilder.setView(refineFavoriteDialogView);
 
         final Spinner filterFavGenreSpinner = (Spinner) refineFavoriteDialogView.findViewById(R.id.filter_genre_spinner);
-        filterFavGenreSpinner.setVisibility(View.INVISIBLE);
+        filterFavGenreSpinner.setVisibility(View.GONE);
 
 
         final Spinner sortingFavoriteSpinner = (Spinner) refineFavoriteDialogView.findViewById(R.id.sort_spinner);
@@ -514,34 +499,33 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                mMediaTabbedFragment = new MediaTabbedFragment();
+                mFavoritesFragment = new FavoritesFragment();
                 mBundle = new Bundle();
 
                 if (typeBtn.isChecked()) {
-                    mFilterField = CustomStrings.SHOW_TYPE;
-                    mFilterSelection = filterFavoriteSpinner.getSelectedItem().toString();
-                } else if (genreBtn.isChecked()) {
-                    mFilterField = CustomStrings.SHOW_GENRES;
+                    mFilterField = CustomStrings.TYPE_OF_MEDIA;
                     mFilterSelection = filterFavoriteSpinner.getSelectedItem().toString();
                 }
+
                 if (sortBtn.isChecked()) {
                     mSortSelection = sortingFavoriteSpinner.getSelectedItem().toString();
-                    if (mSortSelection.equals(CustomStrings.SHOW_NAME)){
+                    if (mSortSelection.equals(CustomStrings.TITLE)){
                         mSortDirection = "Ascending"; // If we are sorting by name then we want direction to be Ascending
-                    } else if (mSortSelection.equals(CustomStrings.SHOW_RATING_AVERAGE)){
+                    } else if (mSortSelection.equals(CustomStrings.RATING)){
                         mSortDirection = "Descending";
                     }
                 }
 
                 mBundle.putString(sTypeOfBundle,sFilter);
+                mBundle.putString(sFragmentBeingFiltered,CustomStrings.FAVORITES_FRAGMENT);
                 mBundle.putString("Field",mFilterField);
                 mBundle.putString("Value",mFilterSelection);
                 mBundle.putString("Order",mSortSelection);
                 mBundle.putString("Direction",mSortDirection);
 
-                mMediaTabbedFragment.setArguments(mBundle);
+                mFavoritesFragment.setArguments(mBundle);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        mMediaTabbedFragment).commit();
+                        mFavoritesFragment).commit();
             }
         });
 
@@ -634,7 +618,7 @@ public class HomeActivity extends AppCompatActivity
 //    }
 
     @Override
-    public void onFavoriteDeleted(List<FavoriteShow> list) {
+    public void onFavoriteDeleted(List<Favorite> list) {
         //not used
     }
 
@@ -667,16 +651,12 @@ public class HomeActivity extends AppCompatActivity
                 null, searchItem, new SearchResultListener<Searchable>() {
             @Override
             public void onSelected(BaseSearchDialogCompat baseSearchDialogCompat, Searchable searchable, int i) {
-//                TVShowsFragment TVShowsFragment = new TVShowsFragment();
-//                Bundle bundle = new Bundle();
-//
-//                bundle.putString("searchedItem",searchable.toString());
-//                TVShowsFragment.setArguments(bundle);
 
                 mMediaTabbedFragment = new MediaTabbedFragment();
                 mBundle = new Bundle();
 
                 mBundle.putString(sTypeOfBundle,sSearch);
+                mBundle.putString(sFragmentBeingFiltered, visibleFragment);
                 mBundle.putString("searchedItem",searchable.toString());
                 mMediaTabbedFragment.setArguments(mBundle);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
