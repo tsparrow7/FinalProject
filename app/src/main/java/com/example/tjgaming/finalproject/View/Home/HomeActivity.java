@@ -78,6 +78,7 @@ public class HomeActivity extends AppCompatActivity
 
     private Bundle mBundle;
     private MediaTabbedFragment mMediaTabbedFragment;
+    private FavoritesFragment favoritesFragment;
 
     RadioButton typeBtn;
     RadioButton genreBtn;
@@ -130,12 +131,19 @@ public class HomeActivity extends AppCompatActivity
 
         if (savedInstanceState == null) {
             mBundle = new Bundle();
+
             mMediaTabbedFragment = new MediaTabbedFragment();
             mBundle.putString(sTypeOfBundle,sLogin);
             mMediaTabbedFragment.setArguments(mBundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     mMediaTabbedFragment).commit();
             navigationView.setCheckedItem(R.id.nav_media_feed);
+
+//            favoritesFragment = new FavoritesFragment();
+//            mBundle.putString(sTypeOfBundle, sLogin);
+//            favoritesFragment.setArguments(mBundle);
+//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+//                    favoritesFragment).commit();
         }
     }
 
@@ -185,6 +193,9 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case "TV Shows":
                 tvShowRefine();
+                break;
+            case "Favorites":
+                favoritesRefine();
                 break;
         }
 
@@ -441,6 +452,107 @@ public class HomeActivity extends AppCompatActivity
         });
         AlertDialog refineMovieDialog = refineMovieBuilder.create();
         refineMovieDialog.show();
+//      END MOVIE REFINE AND FILTER
+    }
+
+    private void favoritesRefine() {
+        //      START FAVORITES REFINE AND FILTER
+        final String[] sortFavoriteArr = {CustomStrings.NAME, CustomStrings.RATING};
+        final String[] filterFavoriteArr = {CustomStrings.TV_SHOWS, CustomStrings.MOVIES};
+
+        AlertDialog.Builder refineFavoriteBuilder = new AlertDialog.Builder(this);
+        View refineFavoriteDialogView = getLayoutInflater().inflate(R.layout.filter_dialog_spinner, null);
+        refineFavoriteBuilder.setTitle(getResources().getString(R.string.action_refine_favorites));
+
+        typeBtn = refineFavoriteDialogView.findViewById(R.id.filter_type_button);
+        sortBtn = refineFavoriteDialogView.findViewById(R.id.sort_button);
+        genreBtn = refineFavoriteDialogView.findViewById(R.id.filter_genre_button);
+        genreBtn.setVisibility(View.INVISIBLE);
+
+        final Spinner filterFavoriteSpinner = (Spinner) refineFavoriteDialogView.findViewById(R.id.filter_type_spinner);
+        filterFavoriteSpinner.setEnabled(false);
+
+        ArrayAdapter<String> filterFavoriteAdapter = new ArrayAdapter<String>(HomeActivity.this,
+                android.R.layout.simple_spinner_item, filterFavoriteArr);
+        filterFavoriteAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterFavoriteSpinner.setAdapter(filterFavoriteAdapter);
+        refineFavoriteBuilder.setView(refineFavoriteDialogView);
+
+        final Spinner filterFavGenreSpinner = (Spinner) refineFavoriteDialogView.findViewById(R.id.filter_genre_spinner);
+        filterFavGenreSpinner.setVisibility(View.INVISIBLE);
+
+
+        final Spinner sortingFavoriteSpinner = (Spinner) refineFavoriteDialogView.findViewById(R.id.sort_spinner);
+        sortingFavoriteSpinner.setEnabled(false);
+
+        ArrayAdapter<String> sortingFavoriteAdapter = new ArrayAdapter<String>(HomeActivity.this,
+                android.R.layout.simple_spinner_item, sortFavoriteArr);
+        sortingFavoriteAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortingFavoriteSpinner.setAdapter(sortingFavoriteAdapter);
+        refineFavoriteBuilder.setView(refineFavoriteDialogView);
+
+        typeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filterFavoriteSpinner.setEnabled(false);
+
+                if (!filterFavoriteSpinner.isEnabled())
+                    filterFavoriteSpinner.setEnabled(true);
+            }
+        });
+
+
+        sortBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!sortingFavoriteSpinner.isEnabled())
+                    sortingFavoriteSpinner.setEnabled(true);
+            }
+        });
+
+        refineFavoriteBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                mMediaTabbedFragment = new MediaTabbedFragment();
+                mBundle = new Bundle();
+
+                if (typeBtn.isChecked()) {
+                    mFilterField = CustomStrings.SHOW_TYPE;
+                    mFilterSelection = filterFavoriteSpinner.getSelectedItem().toString();
+                } else if (genreBtn.isChecked()) {
+                    mFilterField = CustomStrings.SHOW_GENRES;
+                    mFilterSelection = filterFavoriteSpinner.getSelectedItem().toString();
+                }
+                if (sortBtn.isChecked()) {
+                    mSortSelection = sortingFavoriteSpinner.getSelectedItem().toString();
+                    if (mSortSelection.equals(CustomStrings.SHOW_NAME)){
+                        mSortDirection = "Ascending"; // If we are sorting by name then we want direction to be Ascending
+                    } else if (mSortSelection.equals(CustomStrings.SHOW_RATING_AVERAGE)){
+                        mSortDirection = "Descending";
+                    }
+                }
+
+                mBundle.putString(sTypeOfBundle,sFilter);
+                mBundle.putString("Field",mFilterField);
+                mBundle.putString("Value",mFilterSelection);
+                mBundle.putString("Order",mSortSelection);
+                mBundle.putString("Direction",mSortDirection);
+
+                mMediaTabbedFragment.setArguments(mBundle);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        mMediaTabbedFragment).commit();
+            }
+        });
+
+        refineFavoriteBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog refineFavoriteDialog = refineFavoriteBuilder.create();
+        refineFavoriteDialog.show();
 //      END MOVIE REFINE AND FILTER
     }
 

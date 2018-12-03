@@ -3,6 +3,8 @@
     <string name="action_refine">Refine Feed</string>
     <string name="action_refine_tv_shows">Refine TV Shows</string>
     <string name="action_refine_movies">Refine Movies</string>
+    <string name="action_refine_favorites">Refine Favorites</string>
+
     <string name="action_search">Search</string>
     <string name="action_logout">Log Out</string>
     <string name="title_activity_home"></string>

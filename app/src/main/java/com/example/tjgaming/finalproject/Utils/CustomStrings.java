@@ -64,4 +64,10 @@ public class CustomStrings {
     public static final String SEARCH = "Search";
     public static final String NAV_DRAWER = "Navigation Drawer";
 
+    //Favorite String
+    public static final String NAME = "Name";
+    public static final String RATING = "Rating";
+    public static final String TV_SHOWS = "TV Shows";
+    public static final String MOVIES = "Movies";
+
 }
