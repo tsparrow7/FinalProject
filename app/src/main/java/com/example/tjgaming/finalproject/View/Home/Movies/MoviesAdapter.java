@@ -1,6 +1,8 @@
 package com.example.tjgaming.finalproject.View.Home.Movies;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,12 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.tjgaming.finalproject.Model.TheMovieDB.TMDBMovie;
 import com.example.tjgaming.finalproject.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -72,7 +74,23 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MediaFeedV
     @Override
     public void onClick(View v) {
 
-        Toast.makeText(mContext, "Movies", Toast.LENGTH_SHORT).show();
+        int itemPosition = mRecyclerView.getChildAdapterPosition(v);
+
+        AppCompatActivity activity = (AppCompatActivity) mContext;
+        MoviesDetailFragment fragment = new MoviesDetailFragment();
+
+        Bundle args = new Bundle();
+        args.putDouble("movie_rating",mList.get(itemPosition).getMovieRating());
+        args.putString("title",mList.get(itemPosition).getMovieTitle());
+        args.putString("poster_url",mList.get(itemPosition).getMoviePosterUrl());
+        args.putStringArrayList("genres", ((ArrayList<String>) mList.get(itemPosition).getGenreIds()));
+
+        fragment.setArguments(args);
+
+        activity.getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override

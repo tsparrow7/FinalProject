@@ -442,8 +442,8 @@ public class HomeActivity extends AppCompatActivity
 
     private void favoritesRefine() {
         //      START FAVORITES REFINE AND FILTER
-        final String[] sortFavoriteArr = {CustomStrings.TITLE, CustomStrings.RATING};
-        final String[] filterFavoriteArr = {CustomStrings.TV_SHOWS, CustomStrings.MOVIES};
+        final String[] sortFavoriteArr = {CustomStrings.SHOW_SORT_DEFAULT, CustomStrings.TITLE, CustomStrings.RATING};
+        final String[] filterFavoriteArr = {CustomStrings.SHOW_TYPE_DEFAULT, CustomStrings.TV_SHOWS, CustomStrings.MOVIES};
 
         AlertDialog.Builder refineFavoriteBuilder = new AlertDialog.Builder(this);
         View refineFavoriteDialogView = getLayoutInflater().inflate(R.layout.filter_dialog_spinner, null);
@@ -522,6 +522,8 @@ public class HomeActivity extends AppCompatActivity
                 mBundle.putString("Value",mFilterSelection);
                 mBundle.putString("Order",mSortSelection);
                 mBundle.putString("Direction",mSortDirection);
+
+                Log.i("HomeActivity",mBundle.toString());
 
                 mFavoritesFragment.setArguments(mBundle);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,

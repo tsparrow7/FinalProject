@@ -5,7 +5,9 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.tjgaming.finalproject.Model.Favorite;
+import com.example.tjgaming.finalproject.Model.FavoriteAnalytics;
 import com.example.tjgaming.finalproject.Model.FavoriteShow;
+import com.example.tjgaming.finalproject.Model.MediaAnalytics;
 import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.Model.TheMovieDB.TMDBMovie;
 import com.example.tjgaming.finalproject.Model.User;
@@ -25,6 +27,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +79,12 @@ public class Database {
         });
     }
 
-    public void addFavorite(Favorite favorite) {
+    public void addFavorite(final Favorite favorite) {
+        //When we add a favorite we want to add it to the users favorite list and
+        //update the FavAnalytics table for the amount of times favorite'd.
+
+
+        //ADD TO FAVORITES LIST
         mDocumentReference = FirebaseFirestore.getInstance()
                 .collection("Favorites")
                 .document(getUserLoggedIn().getUid())
@@ -88,7 +96,7 @@ public class Database {
         favoriteItem.put("rating", favorite.getRating());
         favoriteItem.put("type", favorite.getTypeOfMedia());
 
-        mDocumentReference.set(favorite).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mDocumentReference.set(favoriteItem).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
@@ -98,6 +106,56 @@ public class Database {
                 }
             }
         });
+
+        //UPDATE FAVANALYTICS TABLE
+        mDocumentReference = FirebaseFirestore.getInstance()
+                .collection("FavAnalytics")
+                .document(favorite.getTitle());
+
+        mDocumentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    FavoriteAnalytics analytics = task.getResult().toObject(FavoriteAnalytics.class);
+                    int timesFavorited;
+                    try {
+                        timesFavorited = analytics.getTimesFavorited();
+                    } catch (NullPointerException e) {
+                        timesFavorited = 0;
+                    }
+
+                    if (timesFavorited == 0) {
+                        Map<String, Object> favoriteAnalytics = new HashMap<>();
+                        favoriteAnalytics.put("title", favorite.getTitle());
+                        favoriteAnalytics.put("timesFavorited",1);
+                        mDocumentReference.set(favoriteAnalytics).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "Favorite Analytics saved!");
+                                } else {
+                                    Log.d(TAG, "Favorite Analytics not saved ", task.getException());
+                                }
+                            }
+                        });
+                    } else {
+                        timesFavorited = timesFavorited + 1;
+                        analytics.setTimesFavorited(timesFavorited);
+                        mDocumentReference.set(analytics).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "Favorite Analytics saved!");
+                                } else {
+                                    Log.d(TAG, "Favorite Analytics not saved ", task.getException());
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
     }
 
 
@@ -154,11 +212,11 @@ public class Database {
         });
     }
 
-    public void addUserRating(String showName, float userRating) {
+    public void addUserRating(final String showName, float userRating) {
         //Round the user_rating to one decimal place
         BigDecimal bd = new BigDecimal(userRating);
         bd = bd.setScale(2,BigDecimal.ROUND_UP);
-        userRating = bd.floatValue();
+        final float userRatingBd = bd.floatValue();
 
         mDocumentReference = FirebaseFirestore.getInstance()
                 .collection("Ratings")
@@ -169,7 +227,7 @@ public class Database {
         Map<String, Object> rating = new HashMap<>();
         rating.put("show_name", showName);
         rating.put("user_id", getUserLoggedIn().getUid());
-        rating.put("user_rating", userRating);
+        rating.put("user_rating", userRatingBd);
 
         mDocumentReference.set(rating).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -178,6 +236,135 @@ public class Database {
                     Log.d(TAG, "Rating saved!");
                 } else {
                     Log.d(TAG, "Rating not saved", task.getException());
+                }
+            }
+        });
+
+        //getUserData
+        mDocumentReference = FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(getUserLoggedIn().getUid());
+
+        mDocumentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    User user = task.getResult().toObject(User.class);
+
+                    //Get the age of the user
+                    String str = user.getBirthdate();
+                    String last4 = str == null || str.length() < 4 ?
+                            str : str.substring(str.length() - 4);
+                    int year = Integer.valueOf(last4);
+                    Calendar calendar = Calendar.getInstance();
+                    int currentYear = calendar.get(Calendar.YEAR);
+                    final int age = currentYear - year;
+                    //Get the gender of the current user
+                    final String gender = user.getGender();
+
+                    //Get the reference to Analytics
+                    mDocumentReference = FirebaseFirestore.getInstance()
+                            .collection("MediaAnalytics")
+                            .document(showName);
+
+                    mDocumentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()){
+                                MediaAnalytics analytics = task.getResult().toObject(MediaAnalytics.class);
+                                int female, male, ratings;
+                                double avgRating, avgAge;
+
+                                try {
+                                    female = analytics.getNumOfFemale();
+                                    Log.i(TAG, "Female: " + analytics.getNumOfFemale());
+                                } catch (NullPointerException e) {
+                                    female = 0;
+                                }
+
+                                try {
+                                    male = analytics.getNumOfMale();
+                                    Log.i(TAG, "Male: " + analytics.getNumOfMale());
+                                } catch (NullPointerException e) {
+                                    male = 0;
+                                }
+
+                                try {
+                                    ratings = analytics.getTimesRated();
+                                    Log.i(TAG, "Times Rated: " + analytics.getTimesRated());
+                                } catch (NullPointerException e) {
+                                    ratings = 0;
+                                }
+
+                                try {
+                                    avgRating = analytics.getAvgRating();
+                                    Log.i(TAG, "avgRating: " + analytics.getAvgRating());
+                                } catch (NullPointerException e) {
+                                    avgRating = 0;
+                                }
+
+                                try {
+                                    avgAge = analytics.getAvgAge();
+                                    Log.i(TAG, "avgAge: " + analytics.getAvgAge());
+                                } catch (NullPointerException e) {
+                                    avgAge = 0;
+                                }
+
+                                //If this is the first time this title has been rated
+                                if (female == 0 && male == 0 && ratings == 0 && avgRating == 0 && avgAge == 0){
+                                    Map<String, Object> mediaAnalytics = new HashMap<>();
+                                    mediaAnalytics.put("title", showName);
+                                    mediaAnalytics.put("avgRating",userRatingBd);
+                                    if (gender.equals("Male")) {
+                                        mediaAnalytics.put("numOfMale", 1);
+                                        mediaAnalytics.put("numOfFemale", 0);
+                                    } else if (gender.equals("Female")) {
+                                        mediaAnalytics.put("numOfFemale", 1);
+                                        mediaAnalytics.put("numOfMale", 0);
+                                    } else {
+                                        mediaAnalytics.put("numOfFemale", 0);
+                                        mediaAnalytics.put("numOfMale", 0);
+                                    }
+                                    mediaAnalytics.put("avgAge", age);
+                                    mediaAnalytics.put("timesRated", 1);
+                                    mDocumentReference.set(mediaAnalytics).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Log.d(TAG, "Media Analytics saved!");
+                                            } else {
+                                                Log.d(TAG, "Media Analytics not saved ", task.getException());
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    Log.i(TAG,analytics.toString() + "In else");
+                                    analytics.setTimesRated(ratings + 1);
+                                    analytics.setAvgAge(((avgAge * (ratings-1)) + age)/ratings);
+                                    analytics.setAvgRating(((avgRating * (ratings-1)) + userRatingBd)/ratings);
+                                    if (gender.equals("Male")) {
+                                        analytics.setNumOfMale(male + 1);
+                                    } else if (gender.equals("Female")){
+                                        analytics.setNumOfFemale(female + 1);
+                                    }
+                                    mDocumentReference.set(analytics).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Log.d(TAG, "Media Analytics updated!");
+                                            } else {
+                                                Log.d(TAG, "Media Analytics not updated ", task.getException());
+                                            }
+                                        }
+                                    });
+                                }
+                            } else {
+                                Log.d(TAG, "Analytics not retrieved", task.getException());
+                            }
+                        }
+                    });
+                } else {
+                    Log.d(TAG, "User data not retrieved", task.getException());
                 }
             }
         });

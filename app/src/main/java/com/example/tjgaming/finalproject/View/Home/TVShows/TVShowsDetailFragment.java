@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.example.tjgaming.finalproject.Database.Database;
 import com.example.tjgaming.finalproject.Model.Favorite;
-import com.example.tjgaming.finalproject.Model.FavoriteShow;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.Utils.CustomStrings;
 
@@ -40,8 +39,6 @@ public class TVShowsDetailFragment extends Fragment implements View.OnClickListe
     FloatingActionButton mFavorite;
 
     Database mDatabase;
-    FavoriteShow mFavoriteShow;
-
     Favorite favorite;
 
     @Override

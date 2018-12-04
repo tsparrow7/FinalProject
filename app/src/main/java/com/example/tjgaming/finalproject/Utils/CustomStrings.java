@@ -72,7 +72,7 @@ public class CustomStrings {
     public static final String RATING = "rating";
     public static final String USER_RATING = "user_rating";
 
-    public static final String TYPE_OF_MEDIA = "typeOfMedia";
+    public static final String TYPE_OF_MEDIA = "type";
     public static final String TV_SHOWS = "TV Shows";
     public static final String MOVIES = "Movies";
 

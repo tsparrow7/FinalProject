@@ -71,7 +71,7 @@ public class MediaTabbedFragment extends Fragment {
                 getArguments().getString(HomeActivity.sTypeOfBundle).equals(HomeActivity.sSearch)) {
             if (getArguments().getString(HomeActivity.sFragmentBeingFiltered).equals(CustomStrings.MOVIE_FRAGMENT)) {
                 viewPager.setCurrentItem(2,true);
-            } else {
+            } else if (getArguments().getString(HomeActivity.sFragmentBeingFiltered).equals(CustomStrings.TV_SHOWS_FRAGMENT)){
                 viewPager.setCurrentItem(1);
             }
         }

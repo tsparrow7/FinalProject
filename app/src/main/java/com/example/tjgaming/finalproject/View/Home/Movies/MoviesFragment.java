@@ -55,7 +55,7 @@ public class MoviesFragment extends Fragment {
     private Double movieRating = null;
     private String movieTitle = null;
     private String poster = null;
-    private List<Integer> genresList = new ArrayList<>();
+    private List<String> genresList;
 
     RecyclerView mRecyclerView;
     MoviesAdapter mMovieAdapter;
@@ -170,8 +170,72 @@ public class MoviesFragment extends Fragment {
                     movieRating = jsonObject.getDouble("vote_average");
                     //Genre ids list
                     JSONArray jsonArray = jsonObject.getJSONArray("genre_ids");
+                    genresList = new ArrayList<>();
                     for (int j = 0; j < jsonArray.length(); j++) {
-                        genresList.add(jsonArray.getInt(j));
+                        int genre = jsonArray.getInt(j);
+                        String genreStr = null;
+                        switch(genre) {
+                            case 28:
+                                genreStr = "Action";
+                                break;
+                            case 12:
+                                genreStr = "Adventure";
+                                break;
+                            case 16:
+                                genreStr = "Animation";
+                                break;
+                            case 35:
+                                genreStr = "Comedy";
+                                break;
+                            case 80:
+                                genreStr = "Crime";
+                                break;
+                            case 99:
+                                genreStr = "Documentary";
+                                break;
+                            case 18:
+                                genreStr = "Drama";
+                                break;
+                            case 10751:
+                                genreStr = "Family";
+                                break;
+                            case 14:
+                                genreStr = "Fantasy";
+                                break;
+                            case 36:
+                                genreStr = "History";
+                                break;
+                            case 27:
+                                genreStr = "Horror";
+                                break;
+                            case 10402:
+                                genreStr = "Music";
+                                break;
+                            case 9648:
+                                genreStr = "Mystery";
+                                break;
+                            case 10749:
+                                genreStr = "Romance";
+                                break;
+                            case 878:
+                                genreStr = "Science Fiction";
+                                break;
+                            case 10770:
+                                genreStr = "TV Movie";
+                                break;
+                            case 53:
+                                genreStr = "Thriller";
+                                break;
+                            case 10752:
+                                genreStr = "War";
+                                break;
+                            case 37:
+                                genreStr = "Western";
+                                break;
+
+                        }
+                        if (genreStr != null)
+                            genresList.add(genreStr);
                     }
 
                     TMDBMovie movie = new TMDBMovie(movieId, poster, movieTitle, movieRating, genresList);

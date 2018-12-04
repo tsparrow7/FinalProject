@@ -11,12 +11,12 @@ public class TMDBMovie {
     private String moviePosterUrl;
     private String movieTitle;
     private double movieRating;
-    private List<Integer> genreIds;
+    private List<String> genreIds;
 
     public TMDBMovie() {
     }
 
-    public TMDBMovie(String movieId, String moviePosterUrl, String movieTitle, double movieRating, List<Integer> genreIds) {
+    public TMDBMovie(String movieId, String moviePosterUrl, String movieTitle, double movieRating, List<String> genreIds) {
         this.movieId = movieId;
         this.moviePosterUrl = moviePosterUrl;
         this.movieTitle = movieTitle;
@@ -56,11 +56,11 @@ public class TMDBMovie {
         this.movieRating = movieRating;
     }
 
-    public List<Integer> getGenreIds() {
+    public List<String> getGenreIds() {
         return genreIds;
     }
 
-    public void setGenreIds(List<Integer> genreIds) {
+    public void setGenreIds(List<String> genreIds) {
         this.genreIds = genreIds;
     }
 

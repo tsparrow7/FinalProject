@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.Home.TVShows.TVShowsDetailFragment"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:id="@+id/media_feed_details_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:layout_margin="8dp"
+        android:layout_toStartOf="@+id/details_favorite_action_button"
+        android:layout_toLeftOf="@+id/details_favorite_action_button">
+
+        <TextView
+            android:id="@+id/movie_detail_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="title"
+            android:textSize="32sp"
+            android:textColor="@color/primary"/>
+
+        <TextView
+            android:id="@+id/movie_detail_poster_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="url"
+            android:textSize="24sp"
+            android:textColor="@color/primary"/>
+
+        <TextView
+            android:id="@+id/movie_detail_rating"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="6.7"
+            android:textSize="24sp"
+            android:textColor="@color/primary"/>
+
+        <TextView
+            android:id="@+id/movie_detail_genres"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ep:1"
+            android:textSize="24sp"
+            android:textColor="@color/primary"
+            android:layout_marginBottom="25dp"/>
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/movie_favorite_action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/ic_menu_favorites"/>
+
+</RelativeLayout>
