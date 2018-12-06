@@ -72,12 +72,8 @@ public class TVShowsFragment extends Fragment {
                     DIRECTION = Query.Direction.DESCENDING;
                 }
             }
-        } else {
-            try {
-                searchedItem = bundle.getString("searchedItem");
-            } catch (NullPointerException e){
-                e.printStackTrace();
-            }
+        } else if (bundle != null && bundle.containsKey("searchedItem")){
+            searchedItem = bundle.getString("searchedItem");
         }
         mRecyclerView = root.findViewById(R.id.media_feed_recycler);
 

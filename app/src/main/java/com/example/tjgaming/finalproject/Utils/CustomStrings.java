@@ -15,6 +15,8 @@ public class CustomStrings {
     public static final String SHOW_SCHEDULE_TIME = "show.schedule.time";
     public static final String SHOW_TYPE = "show.type";
 
+    public static final String MOVIE_GENRES = "genreIds";
+
     public static final String MOVIE_TITLE = "movieTitle";
     public static final String MOVIE_RATING = "movieRating";
 
@@ -35,6 +37,14 @@ public class CustomStrings {
     public static final String FANTASY = "Fantasy";
     public static final String THRILLER = "Thriller";
 
+    //Types of movie specific genres
+    public static final String ACTION = "Action";
+    public static final String MUSIC = "Music";
+    public static final String MOVIE_SCIENCE_FICTION = "Science Fiction";
+    public static final String TV_MOVIE = "TV Movie";
+    public static final String WAR = "War";
+    public static final String WESTERN = "Western";
+
     //Types of show types
     public static final String SHOW_TYPE_DEFAULT = "Select Type";
     public static final String REALITY = "Reality";
@@ -54,10 +64,12 @@ public class CustomStrings {
     public static final String SATURDAY = "Saturday";
     public static final String SUNDAY = "Sunday";
 
-    //Names of fragments for the viewpager
+    //Names of fragments
     public static final String MOVIE_FRAGMENT = "Movies";
     public static final String TV_SHOWS_FRAGMENT = "TV Shows";
     public static final String FAVORITES_FRAGMENT = "Favorites";
+    public static final String FORUM_FRAGMENT = "Forum";
+    public static final String PROFILE_FRAGMENT = "Profile";
 
 
     //For bundle to pass to viewpager

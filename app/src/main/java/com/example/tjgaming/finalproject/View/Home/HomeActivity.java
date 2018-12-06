@@ -81,6 +81,8 @@ public class HomeActivity extends AppCompatActivity
     private MediaTabbedFragment mMediaTabbedFragment;
     private FavoritesFragment mFavoritesFragment;
 
+    private Menu menu;
+
     RadioButton typeBtn;
     RadioButton genreBtn;
     RadioButton sortBtn;
@@ -157,8 +159,17 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
+    }
+
+    private void hideMenuOption(int id){
+        menu.findItem(id).setVisible(false);
+    }
+
+    private void showMenuOption(int id){
+        menu.findItem(id).setVisible(true);
     }
 
     @Override
@@ -211,16 +222,16 @@ public class HomeActivity extends AppCompatActivity
     public void tvShowRefine() {
         //      TV SHOW REFINE AND FILTER
         final String[] filterTypeArr = {CustomStrings.SHOW_TYPE_DEFAULT,
-                CustomStrings.REALITY, CustomStrings.ANIMATION, CustomStrings.NEWS,
-                CustomStrings.DOCUMENTARY, CustomStrings.TALK_SHOW, CustomStrings.SCRIPTED,
-                CustomStrings.GAME_SHOW};
+                CustomStrings.ANIMATION, CustomStrings.DOCUMENTARY, CustomStrings.GAME_SHOW,
+                CustomStrings.NEWS, CustomStrings.REALITY, CustomStrings.SCRIPTED,
+                CustomStrings.TALK_SHOW};
 
         final String[] filterGenreArr = {CustomStrings.SHOW_GENRE_DEFAULT,
-                CustomStrings.COMEDY, CustomStrings.DRAMA, CustomStrings.ROMANCE,
-                CustomStrings.ADVENTURE, CustomStrings.NATURE, CustomStrings.FAMILY,
-                CustomStrings.CRIME, CustomStrings.MYSTERY, CustomStrings.SUPERNATURAL,
-                CustomStrings.HORROR, CustomStrings.HISTORY, CustomStrings.SCIENCE_FICTION,
-                CustomStrings.FANTASY, CustomStrings.THRILLER};
+                CustomStrings.ADVENTURE, CustomStrings.COMEDY, CustomStrings.CRIME,
+                CustomStrings.DRAMA, CustomStrings.FAMILY, CustomStrings.FANTASY,
+                CustomStrings.HISTORY, CustomStrings.HORROR, CustomStrings.MYSTERY,
+                CustomStrings.NATURE, CustomStrings.ROMANCE, CustomStrings.SCIENCE_FICTION,
+                CustomStrings.SUPERNATURAL, CustomStrings.THRILLER};
 
         final String[] sortingArr = {CustomStrings.SHOW_SORT_DEFAULT,
                 CustomStrings.SHOW_NAME,CustomStrings.SHOW_RATING_AVERAGE};
@@ -340,11 +351,13 @@ public class HomeActivity extends AppCompatActivity
         //      START MOVIE REFINE AND FILTER
 
         final String[] filterMovieGenreArr = {CustomStrings.SHOW_GENRE_DEFAULT,
-                CustomStrings.COMEDY, CustomStrings.DRAMA, CustomStrings.ROMANCE,
-                CustomStrings.ADVENTURE, CustomStrings.NATURE, CustomStrings.FAMILY,
-                CustomStrings.CRIME, CustomStrings.MYSTERY, CustomStrings.SUPERNATURAL,
-                CustomStrings.HORROR, CustomStrings.HISTORY, CustomStrings.SCIENCE_FICTION,
-                CustomStrings.FANTASY, CustomStrings.THRILLER};
+                CustomStrings.ACTION, CustomStrings.ADVENTURE, CustomStrings.ANIMATION,
+                CustomStrings.COMEDY, CustomStrings.CRIME, CustomStrings.DOCUMENTARY,
+                CustomStrings.DRAMA, CustomStrings.FAMILY, CustomStrings.FANTASY,
+                CustomStrings.HISTORY, CustomStrings.HORROR, CustomStrings.MUSIC,
+                CustomStrings.MYSTERY, CustomStrings.ROMANCE, CustomStrings.MOVIE_SCIENCE_FICTION,
+                CustomStrings.TV_MOVIE, CustomStrings.THRILLER, CustomStrings.WAR,
+                CustomStrings.WESTERN};
 
         final String[] sortingMovieArr = {CustomStrings.SHOW_SORT_DEFAULT,
                 CustomStrings.MOVIE_TITLE,CustomStrings.MOVIE_RATING};
@@ -381,10 +394,8 @@ public class HomeActivity extends AppCompatActivity
         genreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-//
-//                if (!filterMovieGenreSpinner.isEnabled())
-//                    filterMovieGenreSpinner.setEnabled(true);
+                if (!filterMovieGenreSpinner.isEnabled())
+                    filterMovieGenreSpinner.setEnabled(true);
             }
         });
 
@@ -403,10 +414,10 @@ public class HomeActivity extends AppCompatActivity
                 mMediaTabbedFragment = new MediaTabbedFragment();
                 mBundle = new Bundle();
 
-//                if (genreBtn.isChecked()) {
-//                    mFilterField = CustomStrings.SHOW_GENRES;
-//                    mFilterSelection = filterMovieGenreSpinner.getSelectedItem().toString();
-//                }
+                if (genreBtn.isChecked()) {
+                    mFilterField = CustomStrings.MOVIE_GENRES;
+                    mFilterSelection = filterMovieGenreSpinner.getSelectedItem().toString();
+                }
                 if (sortBtn.isChecked()) {
                     mSortSelection = sortingMovieSpinner.getSelectedItem().toString();
                     if (mSortSelection.equals(CustomStrings.MOVIE_TITLE)){
@@ -442,17 +453,13 @@ public class HomeActivity extends AppCompatActivity
 
     private void favoritesRefine() {
         //      START FAVORITES REFINE AND FILTER
-        final String[] sortFavoriteArr = {CustomStrings.SHOW_SORT_DEFAULT, CustomStrings.TITLE, CustomStrings.RATING};
         final String[] filterFavoriteArr = {CustomStrings.SHOW_TYPE_DEFAULT, CustomStrings.TV_SHOWS, CustomStrings.MOVIES};
 
         AlertDialog.Builder refineFavoriteBuilder = new AlertDialog.Builder(this);
-        View refineFavoriteDialogView = getLayoutInflater().inflate(R.layout.filter_dialog_spinner, null);
+        View refineFavoriteDialogView = getLayoutInflater().inflate(R.layout.favorites_filter_dialog_spinner, null);
         refineFavoriteBuilder.setTitle(getResources().getString(R.string.action_refine_favorites));
 
         typeBtn = refineFavoriteDialogView.findViewById(R.id.filter_type_button);
-        sortBtn = refineFavoriteDialogView.findViewById(R.id.sort_button);
-        genreBtn = refineFavoriteDialogView.findViewById(R.id.filter_genre_button);
-        genreBtn.setVisibility(View.GONE);
 
         final Spinner filterFavoriteSpinner = (Spinner) refineFavoriteDialogView.findViewById(R.id.filter_type_spinner);
         filterFavoriteSpinner.setEnabled(false);
@@ -461,19 +468,6 @@ public class HomeActivity extends AppCompatActivity
                 android.R.layout.simple_spinner_item, filterFavoriteArr);
         filterFavoriteAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         filterFavoriteSpinner.setAdapter(filterFavoriteAdapter);
-        refineFavoriteBuilder.setView(refineFavoriteDialogView);
-
-        final Spinner filterFavGenreSpinner = (Spinner) refineFavoriteDialogView.findViewById(R.id.filter_genre_spinner);
-        filterFavGenreSpinner.setVisibility(View.GONE);
-
-
-        final Spinner sortingFavoriteSpinner = (Spinner) refineFavoriteDialogView.findViewById(R.id.sort_spinner);
-        sortingFavoriteSpinner.setEnabled(false);
-
-        ArrayAdapter<String> sortingFavoriteAdapter = new ArrayAdapter<String>(HomeActivity.this,
-                android.R.layout.simple_spinner_item, sortFavoriteArr);
-        sortingFavoriteAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sortingFavoriteSpinner.setAdapter(sortingFavoriteAdapter);
         refineFavoriteBuilder.setView(refineFavoriteDialogView);
 
         typeBtn.setOnClickListener(new View.OnClickListener() {
@@ -487,14 +481,6 @@ public class HomeActivity extends AppCompatActivity
         });
 
 
-        sortBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!sortingFavoriteSpinner.isEnabled())
-                    sortingFavoriteSpinner.setEnabled(true);
-            }
-        });
-
         refineFavoriteBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -505,15 +491,6 @@ public class HomeActivity extends AppCompatActivity
                 if (typeBtn.isChecked()) {
                     mFilterField = CustomStrings.TYPE_OF_MEDIA;
                     mFilterSelection = filterFavoriteSpinner.getSelectedItem().toString();
-                }
-
-                if (sortBtn.isChecked()) {
-                    mSortSelection = sortingFavoriteSpinner.getSelectedItem().toString();
-                    if (mSortSelection.equals(CustomStrings.TITLE)){
-                        mSortDirection = "Ascending"; // If we are sorting by name then we want direction to be Ascending
-                    } else if (mSortSelection.equals(CustomStrings.RATING)){
-                        mSortDirection = "Descending";
-                    }
                 }
 
                 mBundle.putString(sTypeOfBundle,sFilter);
@@ -539,7 +516,7 @@ public class HomeActivity extends AppCompatActivity
         });
         AlertDialog refineFavoriteDialog = refineFavoriteBuilder.create();
         refineFavoriteDialog.show();
-//      END MOVIE REFINE AND FILTER
+//      END FAVORITES REFINE AND FILTER
     }
 
     private void logoutDialog() {
@@ -689,6 +666,18 @@ public class HomeActivity extends AppCompatActivity
 
         if (visible){
             visibleFragment = tag;
+
+            if (visibleFragment.equals(CustomStrings.FORUM_FRAGMENT) || visibleFragment.equals(CustomStrings.PROFILE_FRAGMENT)) {
+                hideMenuOption(R.id.action_settings);
+                hideMenuOption(R.id.action_search);
+            } else if(visibleFragment.equals(CustomStrings.FAVORITES_FRAGMENT)) {
+                hideMenuOption(R.id.action_search);
+            }else {
+                if (menu != null) {
+                    showMenuOption(R.id.action_settings);
+                    showMenuOption(R.id.action_search);
+                }
+            }
             Log.i("VisibleFragment", tag + " is visible");
         }
     }

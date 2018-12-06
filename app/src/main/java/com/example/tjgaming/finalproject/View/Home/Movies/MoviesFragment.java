@@ -2,9 +2,7 @@ package com.example.tjgaming.finalproject.View.Home.Movies;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,26 +11,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.example.tjgaming.finalproject.Model.TheMovieDB.TMDBMovie;
 import com.example.tjgaming.finalproject.R;
 import com.example.tjgaming.finalproject.Utils.CustomStrings;
-import com.example.tjgaming.finalproject.Utils.GetMoviesTask;
-import com.example.tjgaming.finalproject.Utils.NetworkChecker;
 import com.example.tjgaming.finalproject.View.Home.MediaFeed.OnFragmentVisibleListener;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,12 +97,9 @@ public class MoviesFragment extends Fragment {
             }
 
             Log.i("MoviesFragment","Field: " + FIELD + "Value: " + VALUE + "Ordering: " + ORDERING);
-        } else {
-            try {
-                searchedItem = bundle.getString("searchedItem");
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
+        } else if (bundle != null && bundle.containsKey("searchedItem")){
+            searchedItem = bundle.getString("searchedItem");
+
         }
 
         mRecyclerView = v.findViewById(R.id._movie_media_feed_recycler);
@@ -136,135 +123,135 @@ public class MoviesFragment extends Fragment {
         startProgress();
         String movieData = "";
 
-        try {
-            if(NetworkChecker.isNetworkActive(getActivity())) {
-
-                Uri.Builder builder = new Uri.Builder();
-                builder.scheme("http")
-                        .authority(BASE_JSON_REQUEST)
-                        .appendPath(JSON_REQUEST_PARAM)
-                        .appendPath(MOVIE_JSON_REQUEST)
-                        .appendPath(POPULAR_MOVIES_PARAM)
-                        .appendQueryParameter(API_KEY_PARAM, mKey);
-                String myUrl = builder.build().toString();
-
-                Log.i("MoviesFragment","URL to call: " + myUrl);
-
-
-                GetMoviesTask movieTask = new GetMoviesTask();
-                movieData = movieTask.execute(myUrl).get();
-            }
-            if (movieData != null) {
-
-                JSONObject moviesObject = new JSONObject(movieData);
-                JSONArray moviesArray = moviesObject.getJSONArray("results");
-
-                for (int i = 0; i < moviesArray.length(); i++) {
-
-                    JSONObject jsonObject = moviesArray.getJSONObject(i);
-
-                    //Creating a movie to save in database after API call finishes
-                    movieId = jsonObject.getString("id");
-                    poster = String.format("%s%s%s", BASE_POSTER_URL, POSTER_SIZE_PARAM, jsonObject.getString("poster_path"));
-                    movieTitle = jsonObject.getString("title");
-                    movieRating = jsonObject.getDouble("vote_average");
-                    //Genre ids list
-                    JSONArray jsonArray = jsonObject.getJSONArray("genre_ids");
-                    genresList = new ArrayList<>();
-                    for (int j = 0; j < jsonArray.length(); j++) {
-                        int genre = jsonArray.getInt(j);
-                        String genreStr = null;
-                        switch(genre) {
-                            case 28:
-                                genreStr = "Action";
-                                break;
-                            case 12:
-                                genreStr = "Adventure";
-                                break;
-                            case 16:
-                                genreStr = "Animation";
-                                break;
-                            case 35:
-                                genreStr = "Comedy";
-                                break;
-                            case 80:
-                                genreStr = "Crime";
-                                break;
-                            case 99:
-                                genreStr = "Documentary";
-                                break;
-                            case 18:
-                                genreStr = "Drama";
-                                break;
-                            case 10751:
-                                genreStr = "Family";
-                                break;
-                            case 14:
-                                genreStr = "Fantasy";
-                                break;
-                            case 36:
-                                genreStr = "History";
-                                break;
-                            case 27:
-                                genreStr = "Horror";
-                                break;
-                            case 10402:
-                                genreStr = "Music";
-                                break;
-                            case 9648:
-                                genreStr = "Mystery";
-                                break;
-                            case 10749:
-                                genreStr = "Romance";
-                                break;
-                            case 878:
-                                genreStr = "Science Fiction";
-                                break;
-                            case 10770:
-                                genreStr = "TV Movie";
-                                break;
-                            case 53:
-                                genreStr = "Thriller";
-                                break;
-                            case 10752:
-                                genreStr = "War";
-                                break;
-                            case 37:
-                                genreStr = "Western";
-                                break;
-
-                        }
-                        if (genreStr != null)
-                            genresList.add(genreStr);
-                    }
-
-                    TMDBMovie movie = new TMDBMovie(movieId, poster, movieTitle, movieRating, genresList);
-
-                    tmdbMoviesList.add(movie);
-
-                    movieIdList.add(jsonObject.getString("id"));
-                    String poster_path = (jsonObject.getString("poster_path"));
-                    String poster_url = BASE_POSTER_URL + POSTER_SIZE_PARAM + poster_path;
-                    posterUrlList.add(poster_url);
-                }
-
-                for (int i = 0; i < tmdbMoviesList.size(); i++) {
-                    documentReference = FirebaseFirestore.getInstance()
-                            .collection("Movies")
-                            .document(tmdbMoviesList.get(i).getMovieTitle());
-
-                    documentReference.set(tmdbMoviesList.get(i)).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d("Saving media to db", "Movie saved");
-                            } else {
-                                Log.d("Saving media to db", "Movie not saved");
-                            }
-                        }
-                    });
-
-                }
+//        try {
+//            if(NetworkChecker.isNetworkActive(getActivity())) {
+//
+//                Uri.Builder builder = new Uri.Builder();
+//                builder.scheme("http")
+//                        .authority(BASE_JSON_REQUEST)
+//                        .appendPath(JSON_REQUEST_PARAM)
+//                        .appendPath(MOVIE_JSON_REQUEST)
+//                        .appendPath(POPULAR_MOVIES_PARAM)
+//                        .appendQueryParameter(API_KEY_PARAM, mKey);
+//                String myUrl = builder.build().toString();
+//
+//                Log.i("MoviesFragment","URL to call: " + myUrl);
+//
+//
+//                GetMoviesTask movieTask = new GetMoviesTask();
+//                movieData = movieTask.execute(myUrl).get();
+//            }
+//            if (movieData != null) {
+//
+//                JSONObject moviesObject = new JSONObject(movieData);
+//                JSONArray moviesArray = moviesObject.getJSONArray("results");
+//
+//                for (int i = 0; i < moviesArray.length(); i++) {
+//
+//                    JSONObject jsonObject = moviesArray.getJSONObject(i);
+//
+//                    //Creating a movie to save in database after API call finishes
+//                    movieId = jsonObject.getString("id");
+//                    poster = String.format("%s%s%s", BASE_POSTER_URL, POSTER_SIZE_PARAM, jsonObject.getString("poster_path"));
+//                    movieTitle = jsonObject.getString("title");
+//                    movieRating = jsonObject.getDouble("vote_average");
+//                    //Genre ids list
+//                    JSONArray jsonArray = jsonObject.getJSONArray("genre_ids");
+//                    genresList = new ArrayList<>();
+//                    for (int j = 0; j < jsonArray.length(); j++) {
+//                        int genre = jsonArray.getInt(j);
+//                        String genreStr = null;
+//                        switch(genre) {
+//                            case 28:
+//                                genreStr = "Action";
+//                                break;
+//                            case 12:
+//                                genreStr = "Adventure";
+//                                break;
+//                            case 16:
+//                                genreStr = "Animation";
+//                                break;
+//                            case 35:
+//                                genreStr = "Comedy";
+//                                break;
+//                            case 80:
+//                                genreStr = "Crime";
+//                                break;
+//                            case 99:
+//                                genreStr = "Documentary";
+//                                break;
+//                            case 18:
+//                                genreStr = "Drama";
+//                                break;
+//                            case 10751:
+//                                genreStr = "Family";
+//                                break;
+//                            case 14:
+//                                genreStr = "Fantasy";
+//                                break;
+//                            case 36:
+//                                genreStr = "History";
+//                                break;
+//                            case 27:
+//                                genreStr = "Horror";
+//                                break;
+//                            case 10402:
+//                                genreStr = "Music";
+//                                break;
+//                            case 9648:
+//                                genreStr = "Mystery";
+//                                break;
+//                            case 10749:
+//                                genreStr = "Romance";
+//                                break;
+//                            case 878:
+//                                genreStr = "Science Fiction";
+//                                break;
+//                            case 10770:
+//                                genreStr = "TV Movie";
+//                                break;
+//                            case 53:
+//                                genreStr = "Thriller";
+//                                break;
+//                            case 10752:
+//                                genreStr = "War";
+//                                break;
+//                            case 37:
+//                                genreStr = "Western";
+//                                break;
+//
+//                        }
+//                        if (genreStr != null)
+//                            genresList.add(genreStr);
+//                    }
+//
+//                    TMDBMovie movie = new TMDBMovie(movieId, poster, movieTitle, movieRating, genresList);
+//
+//                    tmdbMoviesList.add(movie);
+//
+//                    movieIdList.add(jsonObject.getString("id"));
+//                    String poster_path = (jsonObject.getString("poster_path"));
+//                    String poster_url = BASE_POSTER_URL + POSTER_SIZE_PARAM + poster_path;
+//                    posterUrlList.add(poster_url);
+//                }
+//
+//                for (int i = 0; i < tmdbMoviesList.size(); i++) {
+//                    documentReference = FirebaseFirestore.getInstance()
+//                            .collection("Movies")
+//                            .document(tmdbMoviesList.get(i).getMovieTitle());
+//
+//                    documentReference.set(tmdbMoviesList.get(i)).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<Void> task) {
+//                            if (task.isSuccessful()) {
+//                                Log.d("Saving media to db", "Movie saved");
+//                            } else {
+//                                Log.d("Saving media to db", "Movie not saved");
+//                            }
+//                        }
+//                    });
+//
+//                }
                 tmdbMoviesList.clear();
                 mFirestore = FirebaseFirestore.getInstance();
                 mCollectionRef = mFirestore.collection("Movies");
@@ -287,7 +274,7 @@ public class MoviesFragment extends Fragment {
                             });
                 } else {
                     if (FIELD != null) {
-                        if (FIELD.equals(CustomStrings.SHOW_GENRES) && VALUE != null) {
+                        if (FIELD.equals(CustomStrings.MOVIE_GENRES) && VALUE != null) {
 
                             if (ORDERING != null) {
                                 mCollectionRef
@@ -299,6 +286,8 @@ public class MoviesFragment extends Fragment {
                                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                                 for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                                                     TMDBMovie tmdbMovie = queryDocumentSnapshot.toObject(TMDBMovie.class);
+                                                    Log.i("MovieFragment", FIELD + " " + VALUE + " " + ORDERING + " " + DIRECTION);
+                                                    Log.i("MovieFragment", tmdbMovie.toString());
 
                                                     tmdbMoviesList.add(tmdbMovie);
                                                 }
@@ -361,15 +350,15 @@ public class MoviesFragment extends Fragment {
                                 });
                     }
                 }
-            }
-            else{
-                Toast.makeText(getActivity(), "Network currently not available", Toast.LENGTH_LONG)
-                        .show();
-            }
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+//            }
+//            else{
+//                Toast.makeText(getActivity(), "Network currently not available", Toast.LENGTH_LONG)
+//                        .show();
+//            }
+//        }
+//        catch (Exception e){
+//            e.printStackTrace();
+//        }
     }
 
     private void startProgress() {

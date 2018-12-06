@@ -1,5 +1,6 @@
 package com.example.tjgaming.finalproject.View.Home.Forum;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +16,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.tjgaming.finalproject.R;
+import com.example.tjgaming.finalproject.Utils.CustomStrings;
+import com.example.tjgaming.finalproject.View.Home.MediaFeed.OnFragmentVisibleListener;
 
 /**
  * Created by TJ on 10/5/2018.
@@ -23,6 +26,8 @@ import com.example.tjgaming.finalproject.R;
 public class ForumFragment extends Fragment {
 
     private WebView mWebView;
+    private OnFragmentVisibleListener mVisibilityListener;
+    boolean isAttached;
 
     private Handler handler = new Handler(){
         @Override
@@ -67,5 +72,26 @@ public class ForumFragment extends Fragment {
 
     private void webViewBackPressed() {
         mWebView.goBack();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mVisibilityListener = (OnFragmentVisibleListener)context;
+            isAttached = true;
+        } catch (ClassCastException e){
+            throw new ClassCastException(getActivity().toString()
+                    + " must implement OnFragmentVisibleListener");
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mVisibilityListener.fragmentVisible(true, CustomStrings.FORUM_FRAGMENT);
     }
 }
