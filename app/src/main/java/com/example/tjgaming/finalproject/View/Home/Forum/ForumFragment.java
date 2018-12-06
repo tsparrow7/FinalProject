@@ -27,7 +27,7 @@ public class ForumFragment extends Fragment {
         mWebView = (WebView) view.findViewById(R.id.webView);
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        mWebView.loadUrl("https://stackoverflow.com/");
+        mWebView.loadUrl("https://mediahubforum.000webhostapp.com/mybb_1819/Upload/index.php    ");
         mWebView.setWebViewClient(new WebViewClient());
         return view;
     }
