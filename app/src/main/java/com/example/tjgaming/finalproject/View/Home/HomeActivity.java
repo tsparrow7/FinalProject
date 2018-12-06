@@ -550,6 +550,7 @@ public class HomeActivity extends AppCompatActivity
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        mFirebaseAuth.signOut();
                         startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                         finish();
                     }

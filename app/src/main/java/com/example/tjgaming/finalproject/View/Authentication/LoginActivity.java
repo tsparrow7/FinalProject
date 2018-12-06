@@ -68,7 +68,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        if (mFirebaseAuth.getCurrentUser() != null){
+            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+            intent.putExtra("user_id",mFirebaseAuth.getCurrentUser().getUid());
+            finish();
+            startActivity(intent);
+        }
     }
 
     private void initializeViews() {
@@ -77,8 +82,9 @@ public class LoginActivity extends AppCompatActivity {
         mLoginButton = findViewById(R.id.btn_login);
         mSignUpLink = findViewById(R.id.link_signup);
 
-
-        firstTimeUser = getIntent().getBooleanExtra("firstTimeUser", false);
+        if (getIntent() != null){
+            firstTimeUser = getIntent().getBooleanExtra("firstTimeUser", false);
+        }
 
         if (firstTimeUser) {
             String email = getIntent().getStringExtra("email");
@@ -86,7 +92,6 @@ public class LoginActivity extends AppCompatActivity {
             mEmailText.clearFocus();
             mPasswordText.requestFocus();
         }
-
     }
 
     public void login() {
