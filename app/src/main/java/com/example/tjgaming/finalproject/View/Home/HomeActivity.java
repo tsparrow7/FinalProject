@@ -64,8 +64,8 @@ public class HomeActivity extends AppCompatActivity
 
     private DocumentReference mDocRef;
     private FirebaseAuth mFirebaseAuth;
-    private StorageReference mStorageRef;
     private Database mDatabase;
+    private StorageReference mStorageRef;
     private User mUser;
     private TextView mUserName;
     private TextView mUserEmail;
@@ -122,11 +122,10 @@ public class HomeActivity extends AppCompatActivity
         mDatabase = new Database(HomeActivity.this);
         mDatabase.setWatcher(this);
         //Get a Firebase Database Reference and get the data of the user logging in
+        mStorageRef = FirebaseStorage.getInstance().getReference("profile_pictures");
         mDocRef = FirebaseFirestore.getInstance().collection("users").document(uid);
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseAuth.getCurrentUser();
-
-        mStorageRef = FirebaseStorage.getInstance().getReference("profile_pictures");
 
         mDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -135,6 +134,7 @@ public class HomeActivity extends AppCompatActivity
                     mUser = task.getResult().toObject(User.class);
                     mUserEmail.setText(mUser.getEmail());
                     mUserName.setText(mUser.getUsername());
+                    Log.d("HomeActivity", mUser.toString());
 
                     String imgName = mUser.getUsername()+ ".jpg";
 
@@ -149,7 +149,6 @@ public class HomeActivity extends AppCompatActivity
                             // Handle any errors
                         }
                     });
-                    Log.d("HomeActivity", mUser.toString());
                 }
             }
         });
