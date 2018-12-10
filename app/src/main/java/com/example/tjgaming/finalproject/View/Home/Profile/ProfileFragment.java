@@ -68,6 +68,8 @@ public class ProfileFragment extends Fragment {
 
     private String user;
 
+    String urlImage;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -77,12 +79,13 @@ public class ProfileFragment extends Fragment {
 
         String uid = getActivity().getIntent().getStringExtra("user_id");
         mDocRef = FirebaseFirestore.getInstance().collection("users").document(uid);
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseAuth.getCurrentUser();
 
         mUsername = (TextView) v.findViewById(R.id.username);
         mChoose = (Button) v.findViewById(R.id.choose_picture);
         mImageView = (ImageView) v.findViewById(R.id.profile_picture);
         mUpload = (Button) v.findViewById(R.id.upload_picture);
-        mFirebaseAuth = FirebaseAuth.getInstance();
 
         mStorageRef = FirebaseStorage.getInstance().getReference("profile_pictures");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("profile_pictures");
@@ -95,6 +98,20 @@ public class ProfileFragment extends Fragment {
                     mUser = task.getResult().toObject(User.class);
                     mUsername.setText(mUser.getUsername());
                     Log.d("ProfileFragment", mUser.toString());
+
+                    String imgName = mUser.getUsername()+ ".jpg";
+
+                    mStorageRef.child(imgName).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Picasso.with(getActivity()).load(uri).fit().into(mImageView);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                        }
+                    });
                 }
             }
         });
@@ -118,8 +135,12 @@ public class ProfileFragment extends Fragment {
                 else {
                     uploadFile();
                 }
+
+
             }
         });
+
+
 
         return v;
     }
@@ -154,7 +175,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void uploadFile(){
-        StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + "."
+        StorageReference fileReference = mStorageRef.child(mUser.getUsername() + "."
                 + getFileExtension(mImageURI));
 
 
