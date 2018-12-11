@@ -2,6 +2,7 @@ package com.example.tjgaming.finalproject.View.Home;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -39,11 +40,16 @@ import com.example.tjgaming.finalproject.View.Home.MediaFeed.OnFragmentVisibleLi
 import com.example.tjgaming.finalproject.View.Home.Profile.ProfileFragment;
 import com.example.tjgaming.finalproject.View.Home.TVShows.TVShowsFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +65,7 @@ public class HomeActivity extends AppCompatActivity
     private DocumentReference mDocRef;
     private FirebaseAuth mFirebaseAuth;
     private Database mDatabase;
+    private StorageReference mStorageRef;
     private User mUser;
     private TextView mUserName;
     private TextView mUserEmail;
@@ -108,13 +115,14 @@ public class HomeActivity extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
         mUserName = headerView.findViewById(R.id.nav_header_user_name);
         mUserEmail = headerView.findViewById(R.id.nav_header_user_email);
-        ImageView mProfileImage = headerView.findViewById(R.id.nav_header_profile_image);
+        final ImageView mProfileImage = headerView.findViewById(R.id.nav_header_profile_image);
 
         String uid = getIntent().getStringExtra("user_id");
 
         mDatabase = new Database(HomeActivity.this);
         mDatabase.setWatcher(this);
         //Get a Firebase Database Reference and get the data of the user logging in
+        mStorageRef = FirebaseStorage.getInstance().getReference("profile_pictures");
         mDocRef = FirebaseFirestore.getInstance().collection("users").document(uid);
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseAuth.getCurrentUser();
@@ -127,6 +135,20 @@ public class HomeActivity extends AppCompatActivity
                     mUserEmail.setText(mUser.getEmail());
                     mUserName.setText(mUser.getUsername());
                     Log.d("HomeActivity", mUser.toString());
+
+                    String imgName = mUser.getUsername()+ ".jpg";
+
+                    mStorageRef.child(imgName).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Picasso.with(HomeActivity.this).load(uri).fit().into(mProfileImage);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                        }
+                    });
                 }
             }
         });
