@@ -3,11 +3,13 @@ package com.example.tjgaming.finalproject.View.Home.TVShows;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.example.tjgaming.finalproject.Database.Database;
 import com.example.tjgaming.finalproject.Model.Favorite;
@@ -35,6 +37,7 @@ public class TVShowsDetailFragment extends Fragment implements View.OnClickListe
     TextView mDaysTextView;
     TextView mNetworkTextView;
     TextView mRatingTextView;
+    Toolbar mToolbar;
 
     FloatingActionButton mFavorite;
 
@@ -58,7 +61,9 @@ public class TVShowsDetailFragment extends Fragment implements View.OnClickListe
 
         (mFavorite = root.findViewById(R.id.details_favorite_action_button)).setOnClickListener(this);
 
+
         return root;
+
     }
 
     @Override
