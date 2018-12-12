@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.example.tjgaming.finalproject.Model.Favorite;
 import com.example.tjgaming.finalproject.Model.FavoriteAnalytics;
-import com.example.tjgaming.finalproject.Model.FavoriteShow;
 import com.example.tjgaming.finalproject.Model.MediaAnalytics;
 import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.Model.TheMovieDB.TMDBMovie;
@@ -51,32 +50,6 @@ public class Database {
 
     public Database(Context context) {
         mContext = context;
-    }
-
-    public void addToFavorites(FavoriteShow favoriteShow) {
-        mDocumentReference = FirebaseFirestore.getInstance()
-                .collection("favorites")
-                .document(getUserLoggedIn().getUid())
-                .collection(getUserLoggedIn().getUid() + "-favorites")
-                .document(favoriteShow.getShow_name());
-
-        Map<String, Object> favorite = new HashMap<>();
-        favorite.put("show_name", favoriteShow.getShow_name());
-        favorite.put("network", favoriteShow.getNetwork());
-        favorite.put("days", favoriteShow.getDays());
-        favorite.put("times", favoriteShow.getTimes());
-        favorite.put("rating", favoriteShow.getRating());
-
-        mDocumentReference.set(favorite).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "Document saved!");
-                } else {
-                    Log.d(TAG, "Document not saved", task.getException());
-                }
-            }
-        });
     }
 
     public void addFavorite(final Favorite favorite) {
