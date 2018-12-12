@@ -1,14 +1,22 @@
 package com.example.tjgaming.finalproject.View.Home.Movies;
 
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.transition.Transition;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.tjgaming.finalproject.Database.Database;
 import com.example.tjgaming.finalproject.Model.Favorite;
 import com.example.tjgaming.finalproject.R;
@@ -28,6 +36,7 @@ public class MoviesDetailFragment extends Fragment implements View.OnClickListen
     TextView mMoviePosterTextView;
     TextView mMovieGenresTextView;
 
+    CollapsingToolbarLayout mCollapsingToolbar;
     FloatingActionButton mFavorite;
 
     Database mDatabase;
@@ -43,10 +52,17 @@ public class MoviesDetailFragment extends Fragment implements View.OnClickListen
 
         (mMovieTitleTextView = root.findViewById(R.id.movie_detail_title)).setText(mMovieTitle);
         (mMovieRatingTextView = root.findViewById(R.id.movie_detail_rating)).setText(String.valueOf(mMovieRating));
-        (mMoviePosterTextView = root.findViewById(R.id.movie_detail_poster_url)).setText(mMoviePosterUrl);
         (mMovieGenresTextView = root.findViewById(R.id.movie_detail_genres)).setText(mGenresList.toString());
 
         (mFavorite = root.findViewById(R.id.movie_favorite_action_button)).setOnClickListener(this);
+        mCollapsingToolbar = root.findViewById(R.id.movie_detail_collapsible_toolbar);
+
+        Glide.with(this).load(mMoviePosterUrl).into(new SimpleTarget<Drawable>() {
+            @Override
+            public void onResourceReady(@NonNull Drawable resource, @Nullable com.bumptech.glide.request.transition.Transition<? super Drawable> transition) {
+                    mCollapsingToolbar.setBackground(resource);
+            }
+        });
 
         return root;
     }

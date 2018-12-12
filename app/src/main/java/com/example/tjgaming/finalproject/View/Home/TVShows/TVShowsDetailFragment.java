@@ -1,6 +1,10 @@
 package com.example.tjgaming.finalproject.View.Home.TVShows;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.tjgaming.finalproject.Database.Database;
 import com.example.tjgaming.finalproject.Model.Favorite;
 import com.example.tjgaming.finalproject.R;
@@ -28,6 +34,7 @@ public class TVShowsDetailFragment extends Fragment implements View.OnClickListe
     private List<String> mDays;
     private String mNetwork;
     private double mRating;
+    private String mPosterUrl;
 
     TextView mShowTextView;
     TextView mEpisodeNameTextView;
@@ -38,6 +45,7 @@ public class TVShowsDetailFragment extends Fragment implements View.OnClickListe
     TextView mNetworkTextView;
     TextView mRatingTextView;
     Toolbar mToolbar;
+    CollapsingToolbarLayout mCollapsingToolbar;
 
     FloatingActionButton mFavorite;
 
@@ -58,12 +66,18 @@ public class TVShowsDetailFragment extends Fragment implements View.OnClickListe
         (mDaysTextView = root.findViewById(R.id.media_feed_details_days)).setText(mDays.toString());
         (mNetworkTextView = root.findViewById(R.id.media_feed_details_network)).setText(mNetwork);
         (mRatingTextView = root.findViewById(R.id.media_feed_details_rating)).setText(String.valueOf(mRating));
-
         (mFavorite = root.findViewById(R.id.details_favorite_action_button)).setOnClickListener(this);
 
+        mCollapsingToolbar = root.findViewById(R.id.tv_detail_collapsing_toolbar);
+
+        Glide.with(this).load(mPosterUrl).into(new SimpleTarget<Drawable>() {
+            @Override
+            public void onResourceReady(@NonNull Drawable resource, @Nullable com.bumptech.glide.request.transition.Transition<? super Drawable> transition) {
+                mCollapsingToolbar.setBackground(resource);
+            }
+        });
 
         return root;
-
     }
 
     @Override
@@ -78,6 +92,7 @@ public class TVShowsDetailFragment extends Fragment implements View.OnClickListe
         mDays = args.getStringArrayList("days");
         mNetwork = args.getString("network");
         mRating = args.getDouble("rating");
+        mPosterUrl = args.getString("poster_url");
     }
 
     @Override

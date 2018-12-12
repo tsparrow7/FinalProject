@@ -19,24 +19,14 @@
         >
 
         <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/movie_detail_collapsible_toolbar"
             android:layout_width="match_parent"
             android:layout_height="350dp"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-            app:contentScrim="?attr/colorAccent"
+            app:contentScrim="@color/accent"
             app:expandedTitleTextAppearance="@android:color/transparent"
             android:fitsSystemWindows="true"
             >
-
-
-            <TextView
-                android:id="@+id/movie_detail_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="title"
-                android:textSize="70sp"
-                android:textColor="@color/accent"
-                android:layout_gravity="bottom"/>
-
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
@@ -67,14 +57,14 @@
                 android:layout_toStartOf="@+id/details_favorite_action_button"
                 android:layout_toLeftOf="@+id/details_favorite_action_button">
 
-
-                <!--<TextView-->
-                    <!--android:id="@+id/movie_detail_poster_url"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="url"-->
-                    <!--android:textSize="24sp"-->
-                    <!--android:textColor="@color/primary"/>-->
+                <TextView
+                    android:id="@+id/movie_detail_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="title"
+                    android:textSize="36sp"
+                    android:textColor="@color/accent"
+                    android:layout_gravity="bottom"/>
 
                 <TextView
                     android:id="@+id/movie_detail_rating"

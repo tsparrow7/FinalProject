@@ -86,6 +86,15 @@ public class TVShowsAdapter extends RecyclerView.Adapter<TVShowsAdapter.MediaFee
         args.putString("time",mList.get(itemPosition).getShow().getSchedule().getTime());
         args.putStringArrayList("days",(ArrayList<String>)mList.get(itemPosition).getShow().getSchedule().getDays());
         try {
+            args.putString("poster_url", mList.get(itemPosition).getShow().getImage().getOriginal());
+        } catch (NullPointerException e){
+            try {
+                args.putString("poster_url", mList.get(itemPosition).getShow().getImage().getMedium());
+            } catch (NullPointerException ne){
+                args.putString("poster_url", "Empty");
+            }
+        }
+        try {
             args.putString("network", mList.get(itemPosition).getShow().getNetwork().getName());
         } catch (NullPointerException e){
             args.putString("network", "N/A");

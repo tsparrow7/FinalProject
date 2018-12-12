@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (mFirebaseAuth.getCurrentUser() != null){
+        if (mFirebaseAuth.getCurrentUser() != null && !firstTimeUser){
             Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
             intent.putExtra("user_id",mFirebaseAuth.getCurrentUser().getUid());
             finish();
