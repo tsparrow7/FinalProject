@@ -21,7 +21,7 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/tv_detail_collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="500dp"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
             app:contentScrim="?attr/colorAccent"
             app:expandedTitleTextAppearance="@android:color/transparent"
@@ -35,17 +35,17 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
 
         <android.support.v7.widget.CardView
+            android:id="@+id/cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardElevation="5dp"
             app:cardUseCompatPadding="true"
+            app:cardElevation="9dp"
             >
 
             <LinearLayout
@@ -53,8 +53,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@color/white"
                 android:layout_margin="8dp"
+                android:background="@color/lightgrey"
                 android:layout_toStartOf="@+id/details_favorite_action_button"
                 android:layout_toLeftOf="@+id/details_favorite_action_button">
 
@@ -64,9 +64,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="show name"
-                    android:textSize="36sp"
+                    android:textSize="50sp"
                     android:textColor="@color/accent"
-                    android:layout_gravity="bottom"/>
+                    android:gravity="left"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="15dp"
+                    />
 
 
                 <TextView
@@ -75,6 +78,7 @@
                     android:layout_height="wrap_content"
                     android:text="episode name"
                     android:textSize="24sp"
+                    android:gravity="right"
                     android:textColor="@color/primary"/>
 
                 <TextView
@@ -83,6 +87,7 @@
                     android:layout_height="wrap_content"
                     android:text="Season:1"
                     android:textSize="24sp"
+                    android:gravity="right"
                     android:textColor="@color/primary"/>
 
                 <TextView
@@ -91,6 +96,7 @@
                     android:layout_height="wrap_content"
                     android:text="Ep:1"
                     android:textSize="24sp"
+                    android:gravity="right"
                     android:textColor="@color/primary"
                     android:layout_marginBottom="25dp"/>
 
@@ -98,21 +104,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="When to watch"
-                    android:textSize="32sp"
-                    android:textColor="@color/primary"/>
+                    android:textSize="35sp"
+                    android:gravity="left"
+                    android:textColor="@color/primary"
+                    />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="25dp">
+                    android:orientation="vertical"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="25dp"
+                    android:gravity="right">
 
                     <TextView
                         android:id="@+id/media_feed_details_days"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="MondayTuesdayThursday"
-                        android:textSize="16sp"
+                        android:textSize="24sp"
                         android:textColor="@color/primary" />
 
                     <TextView
@@ -122,7 +132,7 @@
                         android:text="1:00pm"
                         android:textSize="24sp"
                         android:textColor="@color/primary"
-                        android:layout_marginBottom="25dp"/>
+                        android:layout_marginBottom="5dp"/>
 
                 </LinearLayout>
 
@@ -130,14 +140,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Where to watch"
-                    android:textSize="32sp"
+                    android:textSize="35sp"
+                    android:gravity="left"
                     android:textColor="@color/primary"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="25dp">
+                    android:layout_marginBottom="20dp"
+                    android:gravity="right">
 
                     <TextView
                         android:id="@+id/media_feed_details_network"
@@ -146,7 +158,7 @@
                         android:text="ABC"
                         android:textSize="24sp"
                         android:textColor="@color/primary"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginEnd="10dp"
                         android:layout_marginRight="16dp"/>
 
                     <!--<TextView-->
@@ -172,21 +184,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Show Rating"
-                    android:textSize="32sp"
+                    android:textSize="35sp"
+                    android:gravity="left"
                     android:textColor="@color/primary"/>
 
                 <TextView
                     android:id="@+id/media_feed_details_rating"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="10"
                     android:textSize="24sp"
+                    android:gravity="right"
                     android:textColor="@color/primary" />
 
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
-
 
     </android.support.v4.widget.NestedScrollView>
 

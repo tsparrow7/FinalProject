@@ -21,7 +21,7 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/movie_detail_collapsible_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="475dp"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
             app:contentScrim="@color/accent"
             app:expandedTitleTextAppearance="@android:color/transparent"
@@ -34,7 +34,7 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardElevation="5dp"
+            app:cardElevation="9dp"
             app:cardUseCompatPadding="true"
             >
 
@@ -52,8 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@color/white"
-                android:layout_margin="8dp"
+                android:background="@color/lightgrey"
                 android:layout_toStartOf="@+id/details_favorite_action_button"
                 android:layout_toLeftOf="@+id/details_favorite_action_button">
 
@@ -62,9 +61,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="title"
-                    android:textSize="36sp"
+                    android:textSize="50sp"
                     android:textColor="@color/accent"
-                    android:layout_gravity="bottom"/>
+                    android:gravity="left"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="45dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Rating"
+                    android:textSize="35sp"
+                    android:gravity="left"
+                    android:textColor="@color/primary"/>
 
                 <TextView
                     android:id="@+id/movie_detail_rating"
@@ -72,6 +81,16 @@
                     android:layout_height="wrap_content"
                     android:text="6.7"
                     android:textSize="24sp"
+                    android:gravity="right"
+                    android:textColor="@color/primary"
+                    android:layout_marginBottom="20dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Genre"
+                    android:textSize="35sp"
+                    android:gravity="left"
                     android:textColor="@color/primary"/>
 
                 <TextView
@@ -81,6 +100,7 @@
                     android:text="Ep:1"
                     android:textSize="24sp"
                     android:textColor="@color/primary"
+                    android:gravity="right"
                     android:layout_marginBottom="25dp"/>
 
             </LinearLayout>

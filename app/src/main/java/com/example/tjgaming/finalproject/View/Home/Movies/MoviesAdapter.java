@@ -88,6 +88,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MediaFeedV
         fragment.setArguments(args);
 
         activity.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_up, 0,0, R.anim.slide_down)
                 .add(R.id.fragment_container, fragment)
                 .addToBackStack(null)
                 .commit();

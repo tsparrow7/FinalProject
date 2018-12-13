@@ -1,5 +1,7 @@
 package com.example.tjgaming.finalproject.View.Home.TVShows;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -78,6 +80,7 @@ public class TVShowsAdapter extends RecyclerView.Adapter<TVShowsAdapter.MediaFee
         AppCompatActivity activity = (AppCompatActivity) mContext;
         TVShowsDetailFragment fragment = new TVShowsDetailFragment();
 
+
         Bundle args = new Bundle();
         args.putString("show_name",mList.get(itemPosition).getShow().getName());
         args.putString("episode_name",mList.get(itemPosition).getName());
@@ -103,7 +106,9 @@ public class TVShowsAdapter extends RecyclerView.Adapter<TVShowsAdapter.MediaFee
 
         fragment.setArguments(args);
 
+
         activity.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_up, 0,0, R.anim.slide_down)
                 .add(R.id.fragment_container, fragment)
                 .addToBackStack(null)
                 .commit();

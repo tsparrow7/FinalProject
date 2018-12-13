@@ -63,7 +63,10 @@ public class TVShowsDetailFragment extends Fragment implements View.OnClickListe
         (mSeasonTextView = root.findViewById(R.id.media_feed_details_season)).setText(String.valueOf("Season: " +mSeason));
         (mEpisodeTextView = root.findViewById(R.id.media_feed_details_episode)).setText(String.valueOf("Episode: " +mEpisode));
         (mTimeTextView = root.findViewById(R.id.media_feed_details_times)).setText(" @ " + mTime);
-        (mDaysTextView = root.findViewById(R.id.media_feed_details_days)).setText(mDays.toString());
+        (mDaysTextView = root.findViewById(R.id.media_feed_details_days)).setText("");
+        for (int i = 0; i < mDays.size(); i++) {
+            mDaysTextView.append(mDays.get(i) + "\n");
+        }
         (mNetworkTextView = root.findViewById(R.id.media_feed_details_network)).setText(mNetwork);
         (mRatingTextView = root.findViewById(R.id.media_feed_details_rating)).setText(String.valueOf(mRating));
         (mFavorite = root.findViewById(R.id.details_favorite_action_button)).setOnClickListener(this);
