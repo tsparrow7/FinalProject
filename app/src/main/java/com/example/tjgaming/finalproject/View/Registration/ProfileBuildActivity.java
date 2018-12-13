@@ -125,8 +125,6 @@ public class ProfileBuildActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mMonth = mMonthSpinner.getSelectedItem().toString();
-
-                Toast.makeText(ProfileBuildActivity.this, mMonth + " is the month.", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -139,8 +137,6 @@ public class ProfileBuildActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mDay = mDaySpinner.getSelectedItem().toString();
-
-                Toast.makeText(ProfileBuildActivity.this, mDay + " is the day.", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -153,8 +149,6 @@ public class ProfileBuildActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mYear = mYearSpinner.getSelectedItem().toString();
-
-                Toast.makeText(ProfileBuildActivity.this, mYear + " is the year.", Toast.LENGTH_SHORT).show();
             }
 
             @Override
