@@ -121,9 +121,6 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
 
                             if (firstTimeUser){
-
-                                //TODO: launch profile building activities and add this code below once done creating profile.
-
                                 Intent profBuildIntent = new Intent(LoginActivity.this,ProfileBuildActivity.class);
                                 profBuildIntent.putExtra("uid",user.getUid());
                                 profBuildIntent.putExtra("email",email);

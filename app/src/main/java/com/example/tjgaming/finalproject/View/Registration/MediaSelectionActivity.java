@@ -106,7 +106,7 @@ public class MediaSelectionActivity extends AppCompatActivity implements View.On
                     user.put("gender",mGender);
                     user.put("birthdate",mBirthDate);
                     user.put("mediaTypes",mediaList);
-                    user.put("typeOfUser","normal");  //TODO: Add check to main registration if creating a corporate user, or normal user
+                    user.put("typeOfUser","normal");
 
                     documentReference.set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -118,8 +118,6 @@ public class MediaSelectionActivity extends AppCompatActivity implements View.On
                             }
                         }
                     });
-
-                    //TODO: Start home activity intent
 
                     startActivity(new Intent(getApplicationContext(),HomeActivity.class).putExtra("user_id",mUid));
                     finish();
