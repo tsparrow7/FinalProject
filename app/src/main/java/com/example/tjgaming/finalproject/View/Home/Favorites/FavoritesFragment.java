@@ -248,4 +248,5 @@ public class FavoritesFragment extends Fragment {
 
         mVisibilityListener.fragmentVisible(true, CustomStrings.FAVORITES_FRAGMENT);
     }
+
 }

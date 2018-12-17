@@ -1,5 +1,6 @@
 package com.example.tjgaming.finalproject.View.Home.TVShows;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,13 +8,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v7.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -35,6 +34,10 @@ public class TVShowsDetailFragment extends Fragment implements View.OnClickListe
     private String mNetwork;
     private double mRating;
     private String mPosterUrl;
+    private String title;
+    private String content;
+    Context context;
+
 
     TextView mShowTextView;
     TextView mEpisodeNameTextView;
@@ -44,7 +47,6 @@ public class TVShowsDetailFragment extends Fragment implements View.OnClickListe
     TextView mDaysTextView;
     TextView mNetworkTextView;
     TextView mRatingTextView;
-    Toolbar mToolbar;
     CollapsingToolbarLayout mCollapsingToolbar;
 
     FloatingActionButton mFavorite;
@@ -106,11 +108,22 @@ public class TVShowsDetailFragment extends Fragment implements View.OnClickListe
         favorite.setTypeOfMedia(CustomStrings.TV_SHOWS);
         mDatabase = new Database(getContext());
         mDatabase.addFavorite(favorite);
+        for (int i = 0; i < mDays.size(); i++) {
+            mDatabase.setNotification(getContext(), extractHoursAndMins(mTime), mDays.get(i), mShowName);
+        }
 
 //        mFavoriteShow = new FavoriteShow(mShowName,mDays,mTime,mNetwork,mRating);
 //        mDatabase = new Database(getContext());
 //        mDatabase.addToFavorites(mFavoriteShow);
+    }
 
+    private int[] extractHoursAndMins(String s) {
+        int[] arr = new int[2];
 
+        String[] hourMin = s.split(":");
+        arr[0] = Integer.parseInt(hourMin[0]);
+        arr[1] = Integer.parseInt(hourMin[1]);
+
+        return arr;
     }
 }

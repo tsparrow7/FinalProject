@@ -1,6 +1,11 @@
 package com.example.tjgaming.finalproject.Database;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -32,6 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.Context.ALARM_SERVICE;
+
 /**
  * Created by TJ on 10/24/2018.
  */
@@ -48,6 +55,7 @@ public class Database {
     private ArrayList<String> mList;
     private ArrayList<UserReview> mUserReviewList;
 
+    public static final int DAILY_REMINDER_REQUEST_CODE=100;
 
     public Database(Context context) {
         mContext = context;
@@ -155,13 +163,97 @@ public class Database {
                 }
             }
         });
-
     }
-
 
     public FirebaseUser getUserLoggedIn() {
         mFirebaseAuth = FirebaseAuth.getInstance();
         return mFirebaseAuth.getCurrentUser();
+    }
+
+    public void setNotification(Context context, int[] hoursAndMins, String day, String showName) {
+        int[] showTimes = hoursAndMins;
+
+        int hour = hoursAndMins[0];
+        int minute = hoursAndMins[1];
+        int day_of_week = 0;
+
+        Log.d(TAG, hour + ":" + minute);
+
+        /* We want the user to be notified 5 minutes
+        before the start time of the show so we subtract 5 from the mins */
+        if (minute > 5) {
+            minute = minute - 5;
+        } else {
+            hour = hour - 1;
+            minute = ((60 + minute) - 5);
+        }
+
+        Log.d(TAG, hour + ":"+ minute);
+
+        Calendar calendar = Calendar.getInstance();
+
+        Log.d(TAG, day);
+
+        //setCalendar.set(Calendar.HOUR_OF_DAY, mTime);
+
+        switch (day){
+
+            case "Sunday":
+                day_of_week = Calendar.SUNDAY;
+                break;
+
+            case "Monday":
+                day_of_week = Calendar.MONDAY;
+                break;
+
+            case "Tuesday":
+                day_of_week = Calendar.TUESDAY;
+                break;
+
+            case "Wednesday":
+                day_of_week = Calendar.WEDNESDAY;
+                break;
+
+            case "Thursday":
+                day_of_week = Calendar.THURSDAY;
+                break;
+
+            case "Friday":
+                day_of_week = Calendar.FRIDAY;
+                break;
+
+            case "Saturday":
+                day_of_week = Calendar.SATURDAY;
+                break;
+        }
+
+        Calendar setCalendar = Calendar.getInstance();
+        setCalendar.set(setCalendar.get(Calendar.YEAR),setCalendar.get(Calendar.MONTH),setCalendar.get(Calendar.DAY_OF_MONTH),hour,minute);
+        setCalendar.set(Calendar.DAY_OF_WEEK, day_of_week);
+
+        //Demo purpose
+        //setCalendar.add(Calendar.SECOND,5);
+
+        ComponentName receiver = new ComponentName(context, AlarmReceiver.class);
+        PackageManager pm = context.getPackageManager();
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);
+
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra("Show Name", showName);
+        intent.putExtra("Show Times", showTimes);
+
+        PendingIntent brodcast = PendingIntent.getBroadcast(context,
+                DAILY_REMINDER_REQUEST_CODE, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, setCalendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, brodcast);
+
+        Log.d(TAG, "Set time in millis: " + setCalendar.getTimeInMillis());
+        Log.d(TAG, "Current time in millis: " + calendar.getTimeInMillis());
+
     }
 
     public void getAllShowsForSearch() {
