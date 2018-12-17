@@ -88,6 +88,16 @@ public class ProfileBuildActivity extends AppCompatActivity {
                     mMaleButton.setBackgroundColor(unselectedColor);
                     mFemaleButton.setBackgroundColor(selectedColor);
                 }
+
+                mFemaleBgColor = ( (ColorDrawable)mFemaleButton.getBackground() ).getColor();
+                mMaleBgColor = ( (ColorDrawable)mMaleButton.getBackground() ).getColor();
+
+                if (mFemaleBgColor == selectedColor)
+                    mGender = "Female";
+                else if (mMaleBgColor == selectedColor)
+                    mGender = "Male";
+                else if (mMaleBgColor == unselectedColor && mFemaleBgColor == unselectedColor)
+                    mGender = "N/A";
             }
         });
 
