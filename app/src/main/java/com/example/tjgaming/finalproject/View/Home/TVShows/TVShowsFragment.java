@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.tjgaming.finalproject.Model.Utelly.UtellyResult;
 import com.example.tjgaming.finalproject.Utils.CustomStrings;
 import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
 import com.example.tjgaming.finalproject.R;
@@ -36,6 +37,7 @@ public class TVShowsFragment extends Fragment {
     RecyclerView mRecyclerView;
     TVShowsAdapter mAdapter;
     List<TVMazeResult> mList = new ArrayList<>();
+    List<UtellyResult> mUtellyList = new ArrayList<>();
     ProgressDialog progressDialog;
 
     OnListCreatedListener mListener;
@@ -130,6 +132,7 @@ public class TVShowsFragment extends Fragment {
 
                 //Retrieve data from database and set to the data in the adapter.
                 mList.clear();
+                mUtellyList.clear();
                 mFirestore = FirebaseFirestore.getInstance();
                 mCollectionRef = mFirestore.collection("TV Shows");
 
@@ -142,8 +145,10 @@ public class TVShowsFragment extends Fragment {
                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                     for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                                         TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
+                                        UtellyResult utellyResult = queryDocumentSnapshot.toObject(UtellyResult.class);
 
                                         mList.add(tvMazeResult);
+                                        mUtellyList.add(utellyResult);
                                     }
                                     stopProgress();
                                     mAdapter.setData(mList);
@@ -163,8 +168,10 @@ public class TVShowsFragment extends Fragment {
                                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                                 for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                                                     TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
+                                                    UtellyResult utellyResult = queryDocumentSnapshot.toObject(UtellyResult.class);
 
                                                     mList.add(tvMazeResult);
+                                                    mUtellyList.add(utellyResult);
                                                 }
                                                 stopProgress();
                                                 mAdapter.setData(mList);
@@ -179,8 +186,10 @@ public class TVShowsFragment extends Fragment {
                                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                                 for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                                                     TVMazeResult tvMazeResult = queryDocumentSnapshot.toObject(TVMazeResult.class);
+                                                    UtellyResult utellyResult = queryDocumentSnapshot.toObject(UtellyResult.class);
 
                                                     mList.add(tvMazeResult);
+                                                    mUtellyList.add(utellyResult);
                                                 }
                                                 stopProgress();
                                                 mAdapter.setData(mList);
