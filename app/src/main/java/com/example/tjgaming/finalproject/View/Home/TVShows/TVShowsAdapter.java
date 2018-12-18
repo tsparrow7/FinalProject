@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.tjgaming.finalproject.Model.TVMaze.TVMazeResult;
+import com.example.tjgaming.finalproject.Model.Utelly.UtellyResult;
 import com.example.tjgaming.finalproject.R;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class TVShowsAdapter extends RecyclerView.Adapter<TVShowsAdapter.MediaFee
 
     private Context mContext;
     private List<TVMazeResult> mList;
+    private List<UtellyResult> mUtellyList;
     private RecyclerView mRecyclerView;
 
     public TVShowsAdapter(Context context) {
@@ -99,6 +101,8 @@ public class TVShowsAdapter extends RecyclerView.Adapter<TVShowsAdapter.MediaFee
         }
         try {
             args.putString("network", mList.get(itemPosition).getShow().getNetwork().getName());
+            //args.putString("network", mUtellyList.get(itemPosition).getPicture().getName().getLocations());
+
         } catch (NullPointerException e){
             args.putString("network", "N/A");
         }
@@ -137,6 +141,11 @@ public class TVShowsAdapter extends RecyclerView.Adapter<TVShowsAdapter.MediaFee
 
     public void setData(List<TVMazeResult> list) {
         mList = list;
+        notifyDataSetChanged();
+    }
+
+    public void setLocationData(List<UtellyResult> utellyList){
+        mUtellyList = utellyList;
         notifyDataSetChanged();
     }
 }
